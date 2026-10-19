@@ -7,7 +7,7 @@ S2 CFD 後處理：呼吸區供氣比例（SAF）、噴流捲吸、驗證檢查�
   呼吸區＝臉前 5–25 mm、上下 ±12 mm 的方框（2D 斷面上的口鼻位置，臉距出風口 35 cm）。
   每 0.01 s 記錄一次方框平均 c，暖機期（前 3–4 s）後取平均、標準差與第 10 百分位（最差時刻）。
   捲吸比＝某斷面上順流方向的總體積通量 ÷ 出風口送出的體積通量。
-  驗證：出口下游 3 cm 斷面的示蹤劑通量 ∫c·u dy 應等於設定供氣量 q（質量守恆）。
+  驗證：出口緊鄰處（+1 mm）斷面的示蹤劑通量 ∫c·u dy 應等於設定供氣量 q（質量守恆）。
 """
 import glob
 import json
@@ -50,13 +50,13 @@ def load(name):
     return r
 
 
-def section(r, xpos):
+def section(r, xpos, half=0.12):
     m = r["meta"]
     i = int(round(xpos / m["dx"]))
     fluid = r["type"][:, i] != 1
     ux, c = r["ux"][:, i] * fluid, r["c"][:, i] * fluid
     y = (np.arange(m["ny"]) + 0.5) * m["dx"]
-    band = np.abs(y - m["y0"]) < 0.12
+    band = np.abs(y - m["y0"]) < half
     q_supply = float(np.sum(c * ux * band) * m["dx"])
     q_total = float(np.sum(np.clip(ux, 0, None) * band) * m["dx"])
     return q_supply, q_total
@@ -65,8 +65,9 @@ def section(r, xpos):
 def metrics(r):
     m = r["meta"]
     out = dict(r["saf"])
-    qs3, qt3 = section(r, m["x0"] + 0.03)
-    out["supply_flux_ratio"] = qs3 / m["q"]
+    # 出口緊鄰處（+1 mm、±25 mm）的示蹤劑通量：此處擺動小，平均場乘積≈真實通量
+    qs1, _ = section(r, m["x0"] + 0.001, half=0.025)
+    out["supply_flux_ratio"] = qs1 / m["q"]
     out["entrain"] = {}
     for dxp in (0.03, 0.10, 0.20, 0.30):
         qs, qt = section(r, m["x0"] + dxp)
@@ -76,6 +77,7 @@ def metrics(r):
 
 def field_panel(cases, title, fname, xr=(0.0, 0.62)):
     fig, axs = plt.subplots(2, 2, figsize=(12, 7.4), sharex=True, sharey=True)
+    im = None
     for ax, nz in zip(axs.flat, NOZZLES):
         r = cases.get(nz)
         ax.set_title(NOZZLE_LABEL[nz], loc="left", fontsize=11)
@@ -104,6 +106,9 @@ def field_panel(cases, title, fname, xr=(0.0, 0.62)):
         ax.set_xlabel("沿噴流方向（cm）")
     for ax in axs[:, 0]:
         ax.set_ylabel("cm")
+    if not any(v is not None for v in cases.values()):
+        plt.close(fig)
+        return None
     cb = fig.colorbar(im, ax=axs, shrink=0.75, pad=0.015)
     cb.set_label("時間平均供氣比例 SAF（1 = 全是出風口的空氣）")
     fig.suptitle(title, x=0.06, ha="left", fontsize=13)
