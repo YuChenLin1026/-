@@ -29,6 +29,9 @@ s1, s2, s3, s4, val = (J("s1_results.json"), J("s2_results.json") or {}, J("s3_r
 for f in os.listdir(OUT):
     if f.endswith((".png", ".mp4")) and not f.startswith(("_", "geom_check")):
         shutil.copy2(os.path.join(OUT, f), os.path.join(ASSETS, f))
+RENDERS = os.path.join(HERE, "renders")   # 設計渲染圖（使用者提供）
+for f in os.listdir(RENDERS) if os.path.isdir(RENDERS) else []:
+    shutil.copy2(os.path.join(RENDERS, f), os.path.join(ASSETS, f))
 
 
 # ---------------- 小工具 ----------------
@@ -58,6 +61,11 @@ def tag(kind):
 
 def pct(x, d=0):
     return "—" if x is None else f"{x*100:.{d}f}%"
+
+
+def render(name, alt, caption):
+    return (f'<figure class="fig render"><img class="img-any" src="assets/{name}" alt="{html.escape(alt)}" loading="lazy">'
+            f'<figcaption>{caption}</figcaption></figure>')
 
 
 def graphic(svg, caption):
@@ -257,7 +265,8 @@ PAGE = f"""<title>扶手送風模擬報告</title>
 <section id="summary">
   <h2><span class="no">00</span>一頁看懂</h2>
   {oneliner("平時流通與淨化空氣，火災時標示並守護一條乾淨的疏散路線。")}
-  {graphic(D.dual_mode(), "同一套扶手系統的兩種模式。左：平時有人的樓層送風、其他樓層細流。右：火災時每層偵測空氣，燈光只指向乾淨的路，有煙的樓層關閉風門。")}
+  {render("render_dual_mode.webp", "平時與火災雙模式的扶手系統渲染圖", "同一套扶手系統的兩種模式（設計渲染圖）。左：平時有人的樓層送風、其他樓層細流。右：火災時每層偵測空氣，燈光只指向乾淨的路，有煙的樓層關閉平台風門。下排：只有內側連貫扶手有送風與燈光、扶手截面、導風腔尺寸比較。")}
+  {details("展開簡化示意圖", graphic(D.dual_mode(), "同一個概念的簡化示意。"))}
   <div class="takes">{takeaways}</div>
   <h3>每項技術的判定</h3>
   <div class="tcards">{cards}</div>
@@ -279,7 +288,7 @@ PAGE = f"""<title>扶手送風模擬報告</title>
 <section id="method">
   <h2><span class="no">01</span>怎麼測的</h2>
   {oneliner("在電腦裡做一個扶手和人頭的剖面，把出風口送出的空氣「染色」，看它有幾成能跑到臉前。")}
-  {graphic(D.saf_explainer(), "乾淨空氣從出風口出來後，一路把周圍空氣拉進來混合。到口鼻時剩下的比例，就是「乾淨空氣比例」。")}
+  {render("render_saf.webp", "扶手側面出風口送出的乾淨空氣混入周圍空氣後到達口鼻", "乾淨空氣從扶手側面出風口出來後，一路把周圍空氣拉進來混合。到口鼻時剩下的比例，就是「乾淨空氣比例」（圖中 40% 為示意數字；設計渲染圖）。")}
   <div class="points prose">
     <p>為什麼不能只看出風口？因為出風口的空氣再乾淨，走到臉前時也已經混進周圍的空氣。所以這份報告<b>只看口鼻位置</b>量到的比例。</p>
     <p>有了這個比例，口鼻吸到的污染就能直接算：</p>
@@ -328,6 +337,7 @@ PAGE = f"""<title>扶手送風模擬報告</title>
 <section id="nozzle">
   <h2><span class="no">04</span>四種出風口比一比</h2>
   {oneliner(FIND["nozzle_one"])}
+  {render("render_nozzles.webp", "四種扶手側面出風口形式比較", "四種出風口的造型構想（設計渲染圖）。<b>圖中各欄下方的文字是設計時的預期</b>，電腦模擬的實際結果不同：B 康達的氣流沒有沿曲面轉彎；D 氣流倍增的送風範圍雖廣，但臉前的乾淨空氣只有約兩成；C 低混合同軸在無側風時最好。請以下方的模擬結果為準。")}
   {fig("s2_saf_bars.png", "四種出風口在三種側風下的乾淨空氣比例", "每條橫條代表 100% 的吸入空氣，彩色部分是來自出風口的乾淨空氣。黑色短線是最差 10% 的時刻（氣流晃開的瞬間）。")}
   <div class="points prose">{FIND["nozzle_points"]}</div>
   {fig("s2_head_vc00_fields.png", "無側風時的平均乾淨空氣分布", "無側風時，平均下乾淨空氣分布在哪裡。顏色越深，代表出風口的空氣越多；灰色細線是平均氣流方向。")}

@@ -151,6 +151,7 @@ code { font-family: var(--f-mono); font-size: .9em; background: var(--surface2);
 .g-sep { stroke: var(--line); stroke-width: 1; stroke-dasharray: 4 4; }
 footer { margin-top: 48px; padding-top: 20px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; display: grid; gap: 6px; }
 @media (max-width: 560px) { .gloss dl { grid-template-columns: 1fr; gap: 0; } .gloss dd { margin-bottom: 8px; } tbody th { white-space: normal; } }
+.fig.render img { background: #0b0e0d; }
 
 </style>
 
@@ -170,11 +171,12 @@ footer { margin-top: 48px; padding-top: 20px; border-top: 1px solid var(--line);
 <section id="summary">
   <h2><span class="no">00</span>一頁看懂</h2>
   <p class="oneliner">平時流通與淨化空氣，火災時標示並守護一條乾淨的疏散路線。</p>
-  <figure class="fig">
+  <figure class="fig render"><img class="img-any" src="assets/render_dual_mode.webp" alt="平時與火災雙模式的扶手系統渲染圖" loading="lazy"><figcaption>同一套扶手系統的兩種模式（設計渲染圖）。左：平時有人的樓層送風、其他樓層細流。右：火災時每層偵測空氣，燈光只指向乾淨的路，有煙的樓層關閉平台風門。下排：只有內側連貫扶手有送風與燈光、扶手截面、導風腔尺寸比較。</figcaption></figure>
+  <details class="more"><summary>展開簡化示意圖</summary><div class="more-body"><figure class="fig">
 <svg class="graphic" viewBox="0 0 820 340" role="img" aria-label="同一套扶手系統，平時依有人與否送風，火災時各層偵測空氣並用燈光標示乾淨路線、有煙的樓層關閉風門">
 <text x="20" y="26" class="g-b">平時：流通與淨化空氣</text><text x="20" y="44" class="g-s">有人的樓層送風，其他樓層細流</text><rect x="100" y="58" width="70" height="26" rx="4" class="g-host"/><text x="135" y="76" text-anchor="middle" class="g-on">頂樓主機</text><line x1="135" y1="84" x2="135" y2="96" class="g-railv"/><line x1="135" y1="96" x2="275" y2="140" class="g-railv"/><circle cx="275" cy="140" r="9" class="g-node-idle"/><text x="205" y="132" text-anchor="middle" class="g-s">5F</text><text x="291" y="144" text-anchor="start" class="g-s">細流 0.5 L/s</text><line x1="275" y1="140" x2="135" y2="184" class="g-railv"/><circle cx="135" cy="184" r="9" class="g-node-ok"/><text x="205" y="176" text-anchor="middle" class="g-s">4F</text><text x="119" y="188" text-anchor="end" class="g-s">有人：送風 5 L/s</text><line x1="135" y1="184" x2="275" y2="228" class="g-railv"/><circle cx="275" cy="228" r="9" class="g-node-ok"/><text x="205" y="220" text-anchor="middle" class="g-s">3F</text><text x="291" y="232" text-anchor="start" class="g-s">有人：送風 5 L/s</text><line x1="275" y1="228" x2="135" y2="272" class="g-railv"/><circle cx="135" cy="272" r="9" class="g-node-idle"/><text x="205" y="264" text-anchor="middle" class="g-s">2F</text><text x="119" y="276" text-anchor="end" class="g-s">細流 0.5 L/s</text><line x1="135" y1="272" x2="275" y2="316" class="g-railv"/><circle cx="275" cy="316" r="9" class="g-node-idle"/><text x="205" y="308" text-anchor="middle" class="g-s">1F</text><text x="291" y="320" text-anchor="start" class="g-s">細流 0.5 L/s</text><text x="425" y="26" class="g-b">火災：標示並守護疏散路線</text><text x="425" y="44" class="g-s">各層偵測站判斷，燈光只指向乾淨的路</text><rect x="505" y="58" width="70" height="26" rx="4" class="g-host"/><text x="540" y="76" text-anchor="middle" class="g-on">頂樓主機</text><line x1="540" y1="84" x2="540" y2="96" class="g-railv"/><line x1="540" y1="96" x2="680" y2="140" class="g-railv"/><circle cx="680" cy="140" r="9" class="g-node-warn"/><text x="610" y="132" text-anchor="middle" class="g-s">5F</text><text x="696" y="144" text-anchor="start" class="g-s">不確定：琥珀燈</text><line x1="680" y1="140" x2="540" y2="184" class="g-railv"/><circle cx="540" cy="184" r="9" class="g-node-crit"/><text x="610" y="176" text-anchor="middle" class="g-s">4F</text><text x="524" y="188" text-anchor="end" class="g-s">有煙：風門關閉</text><line x1="540" y1="184" x2="680" y2="228" class="g-railv"/><circle cx="680" cy="228" r="9" class="g-node-ok"/><text x="610" y="220" text-anchor="middle" class="g-s">3F</text><text x="696" y="232" text-anchor="start" class="g-s">乾淨：綠光標示</text><line x1="680" y1="228" x2="540" y2="272" class="g-railv"/><circle cx="540" cy="272" r="9" class="g-node-ok"/><text x="610" y="264" text-anchor="middle" class="g-s">2F</text><text x="524" y="276" text-anchor="end" class="g-s">乾淨：綠光標示</text><line x1="540" y1="272" x2="680" y2="316" class="g-railv"/><circle cx="680" cy="316" r="9" class="g-node-ok"/><text x="610" y="308" text-anchor="middle" class="g-s">1F</text><text x="696" y="320" text-anchor="start" class="g-s">乾淨：綠光標示</text>
   <line x1="410" y1="20" x2="410" y2="330" class="g-sep"/>
-</svg><figcaption>同一套扶手系統的兩種模式。左：平時有人的樓層送風、其他樓層細流。右：火災時每層偵測空氣，燈光只指向乾淨的路，有煙的樓層關閉風門。</figcaption></figure>
+</svg><figcaption>同一個概念的簡化示意。</figcaption></figure></div></details>
   <div class="takes"><div class="take"><div class="big">5 W</div><p><b>平時：</b>頂樓一台主機經扶手導風腔送風，不必另拉管、不必每層裝增壓機。有人才送風時，同時 3 層也只要約 5 W。</p></div><div class="take"><div class="big">91%</div><p><b>火災（無側風）：</b>低混合率出風口在臉前 35 cm 送到 91% 的乾淨空氣，CO 只剩約一成，可撐的時間理論上可多約 10 倍。</p></div><div class="take"><div class="big">0%</div><p><b>但只要有 0.15 m/s 的側風</b>，四種出風口都送不到臉前。下一步要讓扶手周圍 40–60 cm 守得住。</p></div><div class="take"><div class="big">0%</div><p>吸樓梯間的空氣過濾後再送，口鼻的 CO <b>一點都不會減少</b>。氣源一定要先確認乾淨。</p></div></div>
   <h3>每項技術的判定</h3>
   <div class="tcards"><article class="tcard"><div class="tcard-top"><h3>扶手一體導風腔（150×60 mm）</h3><span class="pill ok">可行</span></div><p>頂樓一台主機就推得動 10 層（全開約 304 Pa），不必另拉管、不必裝增壓機。</p><span class="tsrc">第 02 章</span></article><article class="tcard"><div class="tcard-top"><h3>有人才送風＋細流＋預測預開</h3><span class="pill ok">可行</span></div><p>細流讓管內空氣約 2 分鐘換一次，有人時立刻有新鮮風；一天約 0.05 度電。</p><span class="tsrc">第 02 章</span></article><article class="tcard"><div class="tcard-top"><h3>一般圓扶手當風管</h3><span class="pill bad">太細</span></div><p>整棟只送得出每層約 0.5 L/s，必須改成一體導風腔斷面。</p><span class="tsrc">第 02 章</span></article><article class="tcard"><div class="tcard-top"><h3>低混合率同軸噴嘴</h3><span class="pill ok">無風時最好</span></div><p>臉前 35 cm 的乾淨空氣：無側風 91%，有側風 0%。準，但怕風。</p><span class="tsrc">第 04 章</span></article><article class="tcard"><div class="tcard-top"><h3>一般定向噴嘴</h3><span class="pill mid">效果有限</span></div><p>臉前 35 cm 的乾淨空氣：無側風 24%，有側風 0%。</p><span class="tsrc">第 04 章</span></article><article class="tcard"><div class="tcard-top"><h3>氣流倍增式（Dyson 式）</h3><span class="pill bad">火災不適用</span></div><p>臉前 35 cm 的乾淨空氣：無側風 23%，有側風 0%。借來的是周圍空氣；平時用來散開新鮮空氣可以。</p><span class="tsrc">第 04 章</span></article><article class="tcard"><div class="tcard-top"><h3>康達曲面導流</h3><span class="pill bad">這次失敗</span></div><p>臉前 35 cm 的乾淨空氣：無側風 4%，有側風 0%。氣流沒有沿曲面轉彎。</p><span class="tsrc">第 04 章</span></article><article class="tcard"><div class="tcard-top"><h3>氣源</h3><span class="pill mid">要確認乾淨</span></div><p>進氣口要有 CO／煙霧感測，量到污染就關閉。濾網擋不住 CO。</p><span class="tsrc">第 05 章</span></article><article class="tcard"><div class="tcard-top"><h3>初濾＋HEPA</h3><span class="pill mid">只擋煙粒</span></div><p>平時淨化 PM2.5 很好；火災煙粒擋下 99.9% 以上，但 CO 擋下 0%。</p><span class="tsrc">第 06 章</span></article><article class="tcard"><div class="tcard-top"><h3>活性碳、觸媒</h3><span class="pill mid">要做實驗</span></div><p>活性碳幾乎擋不住 CO；觸媒有機會，但怕濕氣、有壽命。</p><span class="tsrc">第 06 章</span></article><article class="tcard"><div class="tcard-top"><h3>氣旋分離</h3><span class="pill bad">不採用</span></div><p>火災煙粒太小，只抓到約 3%（重量），還要 856 Pa 的推力。</p><span class="tsrc">第 06 章</span></article><article class="tcard"><div class="tcard-top"><h3>扶手當排煙管</h3><span class="pill bad">不採用</span></div><p>整根扶手全力排煙只有一扇門的 0.7%。</p><span class="tsrc">第 07 章</span></article></div>
@@ -196,44 +198,7 @@ footer { margin-top: 48px; padding-top: 20px; border-top: 1px solid var(--line);
 <section id="method">
   <h2><span class="no">01</span>怎麼測的</h2>
   <p class="oneliner">在電腦裡做一個扶手和人頭的剖面，把出風口送出的空氣「染色」，看它有幾成能跑到臉前。</p>
-  <figure class="fig">
-<svg class="graphic" viewBox="0 0 760 290" role="img" aria-label="出風口送出的乾淨空氣一路上把周圍空氣拉進來混合，吸到口鼻時只剩一部分是乾淨空氣">
-
-<defs>
-  <marker id="sa" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="g-accent-fill"/></marker>
-  <marker id="sm" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="g-muted-fill"/></marker>
-  <marker id="sc" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="g-crit-fill"/></marker>
-</defs>
-  <circle cx="70" cy="140" r="28" class="g-solid"/>
-  <rect x="94" y="135" width="22" height="10" class="g-solid"/>
-  <text x="70" y="196" text-anchor="middle" class="g-t">扶手出風口</text>
-  <path d="M116,137 C220,128 330,105 430,92 L430,188 C330,175 220,152 116,143 Z" class="g-plume"/>
-  <path d="M116,140 C200,139 260,138 300,140" class="g-core"/>
-  <text x="122" y="116" class="g-s">剛出口：100% 乾淨</text>
-  <g class="g-entrain">
-    <path d="M262,36 C270,72 282,98 296,118" marker-end="url(#sm)"/>
-    <path d="M370,30 C374,62 382,84 394,104" marker-end="url(#sm)"/>
-    <path d="M262,252 C270,212 282,186 296,162" marker-end="url(#sm)"/>
-    <path d="M370,262 C374,222 382,200 394,180" marker-end="url(#sm)"/>
-  </g>
-  <text x="330" y="22" text-anchor="middle" class="g-t">周圍空氣一路被拉進來混合</text>
-  <circle cx="520" cy="140" r="64" class="g-head"/>
-  <rect x="440" y="128" width="16" height="24" class="g-probe"/>
-  <text x="520" y="146" text-anchor="middle" class="g-s">頭</text>
-  <text x="448" y="228" text-anchor="middle" class="g-s">口鼻</text>
-  <line x1="448" y1="156" x2="448" y2="214" class="g-leader"/>
-  <rect x="630" y="50" width="54" height="180" rx="4" class="g-amb"/>
-  <rect x="630" y="158" width="54" height="72" rx="4" class="g-clean"/>
-  <text x="657" y="200" text-anchor="middle" class="g-on">40%</text>
-  <text x="657" y="110" text-anchor="middle" class="g-t">60%</text>
-  <text x="692" y="198" class="g-s">出風口</text>
-  <text x="692" y="214" class="g-s">的空氣</text>
-  <text x="692" y="106" class="g-s">周圍</text>
-  <text x="692" y="122" class="g-s">空氣</text>
-  <text x="657" y="38" text-anchor="middle" class="g-t">吸進去的空氣</text>
-  <text x="657" y="256" text-anchor="middle" class="g-b">乾淨空氣比例 40%</text>
-  <text x="657" y="274" text-anchor="middle" class="g-s">（示意數字）</text>
-</svg><figcaption>乾淨空氣從出風口出來後，一路把周圍空氣拉進來混合。到口鼻時剩下的比例，就是「乾淨空氣比例」。</figcaption></figure>
+  <figure class="fig render"><img class="img-any" src="assets/render_saf.webp" alt="扶手側面出風口送出的乾淨空氣混入周圍空氣後到達口鼻" loading="lazy"><figcaption>乾淨空氣從扶手側面出風口出來後，一路把周圍空氣拉進來混合。到口鼻時剩下的比例，就是「乾淨空氣比例」（圖中 40% 為示意數字；設計渲染圖）。</figcaption></figure>
   <div class="points prose">
     <p>為什麼不能只看出風口？因為出風口的空氣再乾淨，走到臉前時也已經混進周圍的空氣。所以這份報告<b>只看口鼻位置</b>量到的比例。</p>
     <p>有了這個比例，口鼻吸到的污染就能直接算：</p>
@@ -430,6 +395,7 @@ footer { margin-top: 48px; padding-top: 20px; border-top: 1px solid var(--line);
 <section id="nozzle">
   <h2><span class="no">04</span>四種出風口比一比</h2>
   <p class="oneliner">沒有風時，低混合率出風口在臉前送到 91% 的乾淨空氣；但只要有 0.15 m/s 的側風，四種出風口都是 0%。</p>
+  <figure class="fig render"><img class="img-any" src="assets/render_nozzles.webp" alt="四種扶手側面出風口形式比較" loading="lazy"><figcaption>四種出風口的造型構想（設計渲染圖）。<b>圖中各欄下方的文字是設計時的預期</b>，電腦模擬的實際結果不同：B 康達的氣流沒有沿曲面轉彎；D 氣流倍增的送風範圍雖廣，但臉前的乾淨空氣只有約兩成；C 低混合同軸在無側風時最好。請以下方的模擬結果為準。</figcaption></figure>
   <figure class="fig"><img class="img-light" src="assets/s2_saf_bars.png" alt="四種出風口在三種側風下的乾淨空氣比例" loading="lazy"><img class="img-dark" src="assets/s2_saf_bars_dark.png" alt="四種出風口在三種側風下的乾淨空氣比例" loading="lazy"><figcaption>每條橫條代表 100% 的吸入空氣，彩色部分是來自出風口的乾淨空氣。黑色短線是最差 10% 的時刻（氣流晃開的瞬間）。</figcaption></figure>
   <div class="points prose">
 <ul>
