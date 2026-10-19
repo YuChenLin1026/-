@@ -329,3 +329,65 @@ def dual_mode():
 {left}{right}
   <line x1="410" y1="20" x2="410" y2="330" class="g-sep"/>
 </svg>"""
+
+
+def handrail_dims():
+    """扶手斷面尺寸圖（比例正確：1 mm = 2 px）。"""
+    k = 2.0
+    ox, oy = 150, 40                     # 導風腔左上角
+    W, H, wall = 150, 60, 2.5
+    grip_d, neck_w, neck_h = 48, 16, 38
+    cx = ox + (W / 2) * k
+    grip_cy = oy + (H + neck_h + grip_d / 2) * k   # 先算總高再翻轉
+    total_h = (grip_d + neck_h + H) * k
+    top = 40
+    g_cy = top + grip_d / 2 * k
+    n_top = top + grip_d * k - 6
+    c_top = top + (grip_d + neck_h) * k
+    def dim_h(x1, x2, y, label):
+        return (f'<line x1="{x1}" y1="{y}" x2="{x2}" y2="{y}" class="g-dimline"/>'
+                f'<line x1="{x1}" y1="{y-6}" x2="{x1}" y2="{y+6}" class="g-dimline"/><line x1="{x2}" y1="{y-6}" x2="{x2}" y2="{y+6}" class="g-dimline"/>'
+                f'<text x="{(x1+x2)/2}" y="{y-6}" text-anchor="middle" class="g-dim">{label}</text>')
+    def dim_v(x, y1, y2, label, side=1):
+        tx = x + 8 * side
+        anchor = "start" if side > 0 else "end"
+        return (f'<line x1="{x}" y1="{y1}" x2="{x}" y2="{y2}" class="g-dimline"/>'
+                f'<line x1="{x-6}" y1="{y1}" x2="{x+6}" y2="{y1}" class="g-dimline"/><line x1="{x-6}" y1="{y2}" x2="{x+6}" y2="{y2}" class="g-dimline"/>'
+                f'<text x="{tx}" y="{(y1+y2)/2+4}" text-anchor="{anchor}" class="g-dim">{label}</text>')
+    cl = cx - W / 2 * k
+    cr = cx + W / 2 * k
+    slot_y = c_top + (H - 14) * k
+    return f"""
+<svg class="graphic" viewBox="0 0 760 430" role="img" aria-label="扶手斷面尺寸圖：握把直徑 48 毫米、細頸 38 毫米高、導風腔 150 乘 60 毫米，出風縫 6 毫米朝使用者">
+{defs("d")}
+  <circle cx="{cx}" cy="{g_cy}" r="{grip_d/2*k}" class="g-solid-light"/>
+  <path d="M{cx-grip_d/2*k*0.72},{g_cy-grip_d/2*k*0.69} A{grip_d/2*k},{grip_d/2*k} 0 0 1 {cx+grip_d/2*k*0.72},{g_cy-grip_d/2*k*0.69}" class="g-led"/>
+  <rect x="{cx-neck_w/2*k}" y="{n_top}" width="{neck_w*k}" height="{neck_h*k+6}" class="g-solid-light"/>
+  <rect x="{cl}" y="{c_top}" width="{W*k}" height="{H*k}" rx="8" class="g-solid-light"/>
+  <rect x="{cl+wall*k}" y="{c_top+wall*k}" width="{(W-2*wall)*k}" height="{(H-2*wall)*k}" rx="6" class="g-cavity"/>
+  <rect x="{cl+wall*k+6}" y="{c_top+wall*k+6}" width="{22*k}" height="{14*k}" rx="3" class="g-solid-light"/>
+  <line x1="{cr-12*k}" y1="{c_top+wall*k+4}" x2="{cr-12*k}" y2="{c_top+(H-wall)*k-4}" class="g-mesh"/>
+  <rect x="{cr-wall*k-1}" y="{slot_y}" width="{wall*k+2}" height="{6*k}" class="g-slot"/>
+  <line x1="{cr+4}" y1="{slot_y+6}" x2="{cr+70}" y2="{slot_y+6}" class="g-arrow-ok" marker-end="url(#da)"/>
+  {dim_v(cx - grip_d/2*k - 30, top, top + grip_d*k, "Ø48", -1)}
+  {dim_v(cx - grip_d/2*k - 30, top + grip_d*k, c_top, "38", -1)}
+  {dim_v(cl - 30, c_top, c_top + H*k, "60", -1)}
+  {dim_h(cl, cr, c_top + H*k + 30, "150")}
+  {dim_h(cx - neck_w/2*k, cx + neck_w/2*k, n_top + 30, "16")}
+  {dim_v(cr + 110, slot_y, slot_y + 6*k, "出風縫 6", 1)}
+  <text x="{cr+20}" y="{c_top+18}" class="g-s">均流層</text>
+  <text x="{cl+wall*k+6}" y="{c_top+wall*k+6+14*k+16}" class="g-s">線路槽 22×14</text>
+  <text x="{cx+grip_d/2*k+14}" y="{top+12}" class="g-s">導引燈（燈罩下）</text>
+  <text x="{cx+grip_d/2*k+14}" y="{top+70}" class="g-s">握把：手可完整握住</text>
+  <text x="{cx+neck_w/2*k+14}" y="{n_top+46}" class="g-s">細頸：手指勾住的空間</text>
+  <text x="{cx}" y="{c_top+H*k/2+40}" text-anchor="middle" class="g-s">導風腔（壁厚 2.5，鋁擠型）</text>
+  <text x="560" y="40" class="g-b">尺寸（mm）</text>
+  <text x="560" y="64" class="g-s">總高約 146，最寬 150</text>
+  <text x="560" y="84" class="g-s">導風腔內徑約 145 × 55</text>
+  <text x="560" y="104" class="g-s">出風縫朝使用者（樓梯側）</text>
+  <text x="560" y="140" class="g-t">待查證</text>
+  <text x="560" y="160" class="g-s">扶手高度、握把直徑範圍、</text>
+  <text x="560" y="178" class="g-s">握把下方障礙物距離，</text>
+  <text x="560" y="196" class="g-s">以建築技術規則為準</text>
+  <text x="20" y="420" class="g-s">比例：1 mm ＝ 2 px，所有尺寸為概念值</text>
+</svg>"""

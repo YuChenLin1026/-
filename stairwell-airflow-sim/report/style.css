@@ -146,3 +146,7 @@ code { font-family: var(--f-mono); font-size: .9em; background: var(--surface2);
 footer { margin-top: 48px; padding-top: 20px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; display: grid; gap: 6px; }
 @media (max-width: 560px) { .gloss dl { grid-template-columns: 1fr; gap: 0; } .gloss dd { margin-bottom: 8px; } tbody th { white-space: normal; } }
 .fig.render img { background: #0b0e0d; }
+.g-solid-light { fill: var(--surface2); stroke: var(--fg2); stroke-width: 1.4; }
+.g-dimline { stroke: var(--accent); stroke-width: 1; }
+.g-dim { fill: var(--accent); font-size: 13px; font-weight: 600; }
+.g-slot { fill: var(--accent); }
