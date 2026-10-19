@@ -49,7 +49,7 @@ def build_findings(ctx):
         dict(big=f"{en['P_3floors_W']:.0f} W",
              text=f"<b>平時：</b>頂樓一台主機經扶手導風腔送風，不必另拉管、不必每層裝增壓機。有人才送風時，同時 3 層也只要約 {en['P_3floors_W']:.0f} W。"),
         dict(big=pct(coax0),
-             text=f"<b>火災（無側風）：</b>低混合率出風口在臉前 35 cm 送到 {pct(coax0)} 的乾淨空氣，CO 只剩約一成，可撐的時間理論上可多約 10 倍。"),
+             text=f"<b>火災（無側風）：</b>低混合率出風口在臉前 35 cm（早期設定）送到 {pct(coax0)} 的乾淨空氣。臉在斜上方的重算見第 04 章。"),
         dict(big=pct(z6['W_q20_vc15']['upper50']),
              text="<b>有側風時：</b>窄的出風口都被吹散；改用寬 80 mm 的「空氣牆」、每公尺 20 L/s，扶手上方（站姿的臉）有這麼大的範圍乾淨空氣過半。"),
         dict(big="0%", text="吸樓梯間的空氣過濾後再送，口鼻的 CO <b>一點都不會減少</b>。氣源一定要先確認乾淨。"),
@@ -57,7 +57,7 @@ def build_findings(ctx):
 
     def card(nz, name, verdict, cls, extra=""):
         return dict(name=name, verdict=verdict, cls=cls,
-                    why=f"臉前 35 cm 的乾淨空氣：無側風 {pct(v(nz))}，有側風 {pct(v(nz,'head_vc15'))}。{extra}", where="第 04 章")
+                    why=f"早期設定（臉在正前方 35 cm）：無側風 {pct(v(nz))}，有側風 {pct(v(nz,'head_vc15'))}。{extra}", where="第 04 章")
 
     cards = [
         dict(name="扶手一體導風腔（150×60 mm）", verdict="可行", cls="ok",
@@ -247,6 +247,29 @@ def build_findings(ctx):
 <li><b>完成以上之前，不做任何真實煙霧或火場測試。</b></li>
 </ol>"""
 
+    # ---------- S2 改版：臉在斜上方 ----------
+    pf = os.path.join(OUT, "s2f_results.json")
+    f2 = json.load(open(pf)) if os.path.exists(pf) else {}
+    FL = {"A": "A 一般定向", "B": "B 康達往上", "C": "C 低混合同軸", "D": "D 氣流倍增"}
+    CL = [("vc00", "無側風"), ("vc15", "側風 0.15"), ("vc30", "側風 0.30")]
+    n_done = len(f2)
+    rows = []
+    for k in "ABCD":
+        cells = "".join(f'<td class="num">{pct(f2[f"{k}_{c}"]["mean"]) if f"{k}_{c}" in f2 else "計算中"}</td>' for c, _ in CL)
+        rows.append(f'<tr><th scope="row">{FL[k]}</th>{cells}</tr>')
+    face_table = ('<div class="table-wrap"><table><thead><tr><th scope="col">出風口</th>'
+                  + "".join(f'<th scope="col">{l}</th>' for _, l in CL) + '</tr></thead><tbody>' + "".join(rows) + '</tbody></table></div>')
+    if n_done == 0:
+        face_one = "臉改到扶手斜上方的四種出風口比較，正在計算中。"
+    else:
+        best = max(f2, key=lambda n: f2[n]["mean"])
+        face_one = (f"臉在扶手斜上方時（已完成 {n_done}/12 組），目前口鼻乾淨空氣最高的是 "
+                    f"{FL[best[0]]}（{dict(CL)[best[2:]]}）：{pct(f2[best]['mean'])}。")
+    face_points = f"""
+<p><b>為什麼重算：</b>人扶著內側扶手下樓時，臉在扶手的<b>斜上方</b>，不是正前方。這組把口鼻放在出風口往樓梯側 28 cm、往上 35 cm（距離約 45 cm、仰角約 51°）；A、C、D 出風口改成朝向口鼻，B 改用藏在底面、往上轉的康達出風口。每公尺送風量都是 5 L/s，網格 1.5 mm。{tag("sim")}</p>
+{face_table}
+<p class="muted">已完成 {n_done}/12 組，其餘計算中；每完成一批就會更新。</p>"""
+
     # ---------- S6：守住扶手旁 50 cm ----------
     s6 = json.load(open(os.path.join(OUT, "s6_results.json")))
     z = s6["cases"]
@@ -294,4 +317,5 @@ def build_findings(ctx):
                 source_design=source_design, filter_points=filter_points, filter_design=filter_design,
                 exhaust_one=exhaust_one, door_m3min=door, rail_m3min=hot["Q_m3min"], exhaust_points=exhaust_points,
                 exhaust_design=exhaust_design, limits_points=limits_points, next_points=next_points,
-                s6_one=s6_one, s6_points=s6_points, s6_design=s6_design)
+                s6_one=s6_one, s6_points=s6_points, s6_design=s6_design,
+                face_one=face_one, face_points=face_points)

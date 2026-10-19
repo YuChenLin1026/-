@@ -336,23 +336,30 @@ PAGE = f"""<title>扶手送風模擬報告</title>
 </section>
 
 <section id="nozzle">
-  <h2><span class="no">04</span>四種出風口比一比</h2>
-  {oneliner(FIND["nozzle_one"])}
-  {render("render_nozzles.webp", "四種扶手側面出風口形式比較", "四種出風口的造型構想（設計渲染圖）。<b>圖中各欄下方的文字是設計時的預期</b>，電腦模擬的實際結果不同：B 康達的氣流沒有沿曲面轉彎；D 氣流倍增的送風範圍雖廣，但臉前的乾淨空氣只有約兩成；C 低混合同軸在無側風時最好。請以下方的模擬結果為準。")}
-  {fig("s2_saf_bars.png", "四種出風口在三種側風下的乾淨空氣比例", "每條橫條代表 100% 的吸入空氣，彩色部分是來自出風口的乾淨空氣。黑色短線是最差 10% 的時刻（氣流晃開的瞬間）。")}
-  <div class="points prose">{FIND["nozzle_points"]}</div>
-  {fig("s2_head_vc00_fields.png", "無側風時的平均乾淨空氣分布", "無側風時，平均下乾淨空氣分布在哪裡。顏色越深，代表出風口的空氣越多；灰色細線是平均氣流方向。")}
-  {fig("s2_head_vc15_fields.png", "側風 0.15 m/s 時的平均乾淨空氣分布", "加上由下往上 0.15 m/s 的側風（大約是人慢慢走過帶起的風），送出的空氣被吹到扶手上方，到不了臉前。")}
-  {video("s2_head_vc15.mp4", "動畫（側風 0.15 m/s）：平均圖看不到的晃動與渦旋。每格 0.08 秒。")}
-  <h3>康達曲面：這次沒有成功</h3>
-  {fig("s2_coanda_lesson.png", "康達第一版與修正版的模擬比較", "兩種曲面半徑（無側風）：氣流都沒有沿曲面轉向臉部，而是直接往下衝。")}
-  <div class="points prose">{FIND["coanda_points"]}</div>
-  {design_box(FIND["nozzle_design"])}
-  {details("展開更多圖：側風 0.30 m/s、沒有人時的氣流、完整數字表",
-           fig("s2_head_vc30_fields.png", "側風 0.30 m/s", "側風 0.30 m/s 時的平均分布。") +
+  <h2><span class="no">04</span>四種出風口比一比（臉在扶手斜上方）</h2>
+  {oneliner(FIND["face_one"])}
+  {render("render_nozzles.webp", "四種扶手側面出風口形式比較", "四種出風口的造型構想（設計渲染圖）。圖中文字是設計構想，實際結果以下方模擬為準。")}
+  {fig("s2f_saf_bars.png", "臉在斜上方時四種出風口的乾淨空氣比例", "每條橫條代表 100% 的吸入空氣，彩色部分是來自出風口的乾淨空氣。黑色短線是最差 10% 的時刻。")}
+  <div class="points prose">{FIND["face_points"]}</div>
+  {fig("s2f_vc00_fields.png", "臉在斜上方、無側風", "無側風：紅圈是口鼻位置，顏色越深代表出風口的空氣越多。")}
+  {fig("s2f_vc15_fields.png", "臉在斜上方、側風 0.15 m/s", "側風 0.15 m/s（由下往上）。")}
+  {video("s2f_vc15.mp4", "動畫（臉在斜上方、側風 0.15 m/s）。每格 0.08 秒。")}
+  {fig("s2f_vc30_fields.png", "臉在斜上方、側風 0.30 m/s", "側風 0.30 m/s。")}
+  {details("展開早期設定：臉在出風口正前方 35 cm（舊版 S2）",
+           '<p class="prose">早期把臉放在出風口正前方、同一高度（蹲低的姿勢）。這組結果保留作為對照：低混合同軸在無側風時 91%，但只要有 0.15 m/s 側風，四種都是 0%。</p>' +
+           fig("s2_saf_bars.png", "早期設定的乾淨空氣比例", "早期設定（臉在正前方 35 cm）。") +
+           fig("s2_head_vc00_fields.png", "早期設定、無側風", "早期設定、無側風。") +
+           fig("s2_head_vc15_fields.png", "早期設定、側風 0.15", "早期設定、側風 0.15 m/s：送出的空氣被吹到扶手上方。") +
+           video("s2_head_vc15.mp4", "早期設定動畫（側風 0.15 m/s）。") +
+           f'<div class="points prose">{FIND["nozzle_points"]}</div>' +
+           "<h4>康達曲面往下轉：沒有成功</h4>" +
+           fig("s2_coanda_lesson.png", "康達往下轉的兩個版本", "早期康達出風口在扶手下方往下吹、再沿曲面轉向前方：兩種半徑都沒有轉彎。") +
+           f'<div class="points prose">{FIND["coanda_points"]}</div>' +
+           fig("s2_head_vc30_fields.png", "早期設定、側風 0.30", "早期設定、側風 0.30 m/s。") +
            fig("s2_free_fields.png", "自由噴流", "沒有人、沒有側風時，每種出風口本身的氣流能走多遠。") +
            fig("s2_decay.png", "乾淨空氣隨距離衰減", "沒有人、沒有側風時，各距離最乾淨的位置。") +
            video("s2_free.mp4", "動畫：沒有人、沒有側風。") + saf_table())}
+  {design_box(FIND["nozzle_design"])}
 </section>
 
 <section id="zone">

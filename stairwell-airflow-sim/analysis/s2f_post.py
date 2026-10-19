@@ -40,6 +40,8 @@ def load(name):
 
 
 def field_panel(loaded, cond, lbl):
+    if not any(f"{nz}_{cond}" in loaded for nz in NZ):
+        return
     fig, axs = plt.subplots(1, 4, figsize=(15, 5.4), sharey=True)
     im = None
     for ax, nz in zip(axs, NZ):
@@ -72,6 +74,8 @@ def field_panel(loaded, cond, lbl):
 
 
 def bars(allres):
+    if not allres:
+        return
     fig, axs = plt.subplots(1, 3, figsize=(12.5, 3.6), sharey=True)
     for ax, (c, lbl) in zip(axs, CONDS):
         for k, nz in enumerate(NZ):
