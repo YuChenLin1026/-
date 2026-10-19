@@ -30,6 +30,7 @@ Q = 5e-3
 RAIL_R = 0.025
 NU, D_MOL, U_LAT_MAX, TAU_MIN = 1.5e-5, 2.0e-5, 0.1, 0.504
 T_TOTAL, T_WARM = 10.0, 3.0
+T_TOTAL0, T_WARM0 = 24.0, 8.0         # 無側風：氣流慢、要更久才穩定，平均後 16 秒
 NX, NY = int(round(LX / DX)), int(round(LY / DX))
 FLUID, SOLID, INLET = 0, 1, 2
 
@@ -160,7 +161,8 @@ def build(name, nz, vc, q=Q):
     u_ref = max(float(np.abs(ux).max()), float(np.abs(uy).max()), 2.5 * vc)
     vel_scale = u_ref / U_LAT_MAX
     dt = DX / vel_scale
-    cfg = dict(nx=NX, ny=NY, steps=int(round(T_TOTAL / dt)), warmup=int(round(T_WARM / dt)),
+    t_total, t_warm = (T_TOTAL0, T_WARM0) if vc == 0 else (T_TOTAL, T_WARM)
+    cfg = dict(nx=NX, ny=NY, steps=int(round(t_total / dt)), warmup=int(round(t_warm / dt)),
                tau0=max(0.5 + 3 * NU * dt / DX ** 2, TAU_MIN), cs=0.17, dlat=D_MOL * dt / DX ** 2, sct=0.7,
                vc=vc / vel_scale, sponge=25, probe_every=max(1, int(round(0.01 / dt))),
                frame_every=max(1, int(round(0.08 / dt))) if vc == 0.15 and nz != "W" else 0)
@@ -175,8 +177,8 @@ def build(name, nz, vc, q=Q):
         f.write((uy / vel_scale).astype(np.float32).tobytes())
         f.write(probe.astype(np.uint8).tobytes())
     meta = dict(name=name, nozzle=nz, vc_ms=vc, dx=DX, dt=dt, vel_scale=vel_scale, x0=X0, y0=Y0,
-                mouth=MOUTH, head_c=hc.tolist(), head_r=HEAD_R, aim_deg=AIM, q=q, t_total=T_TOTAL,
-                t_warm=T_WARM, **info, **cfg)
+                mouth=MOUTH, head_c=hc.tolist(), head_r=HEAD_R, aim_deg=AIM, q=q, t_total=t_total,
+                t_warm=t_warm, **info, **cfg)
     json.dump(meta, open(os.path.join(dd, "meta.json"), "w"), indent=1)
     np.save(os.path.join(dd, "type.npy"), t)
     return meta
