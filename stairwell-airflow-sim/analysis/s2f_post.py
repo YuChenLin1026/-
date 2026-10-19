@@ -48,8 +48,13 @@ def field_panel(loaded, cond, lbl):
         ax.grid(False)
         ax.set_title(LABEL[nz], loc="left", fontsize=10)
         r = loaded.get(f"{nz}_{cond}")
+        any_m = next(v["meta"] for k, v in loaded.items() if k.endswith(cond))
         if r is None:
             ax.text(0.5, 0.5, "（計算中）", transform=ax.transAxes, ha="center", color=MUTED)
+            ax.set_xlim(0, any_m["nx"] * any_m["dx"] * 100)
+            ax.set_ylim(5, any_m["ny"] * any_m["dx"] * 100 - 5)
+            ax.set_aspect("equal")
+            ax.set_xlabel("cm")
             continue
         m = r["meta"]
         ext = [0, m["nx"] * m["dx"] * 100, 0, m["ny"] * m["dx"] * 100]
