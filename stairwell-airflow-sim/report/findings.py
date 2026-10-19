@@ -10,6 +10,7 @@ def build_findings(ctx):
     s1, s2, s3, s4 = ctx["s1"], ctx["s2"], ctx["s3"], ctx["s4"]
     saf, pct, tag, L = ctx["saf"], ctx["pct"], ctx["tag"], ctx["NZ_LABEL"]
     s5 = json.load(open(os.path.join(OUT, "s5_results.json")))
+    z6 = json.load(open(os.path.join(OUT, "s6_results.json")))["cases"]
     NZ = ["plain", "coanda", "coax", "amp"]
 
     # ---------- 數字 ----------
@@ -49,8 +50,8 @@ def build_findings(ctx):
              text=f"<b>平時：</b>頂樓一台主機經扶手導風腔送風，不必另拉管、不必每層裝增壓機。有人才送風時，同時 3 層也只要約 {en['P_3floors_W']:.0f} W。"),
         dict(big=pct(coax0),
              text=f"<b>火災（無側風）：</b>低混合率出風口在臉前 35 cm 送到 {pct(coax0)} 的乾淨空氣，CO 只剩約一成，可撐的時間理論上可多約 10 倍。"),
-        dict(big=pct(worst_wind),
-             text="<b>但只要有 0.15 m/s 的側風</b>，四種出風口都送不到臉前。下一步要讓扶手周圍 40–60 cm 守得住。"),
+        dict(big=pct(z6['W_q20_vc15']['upper50']),
+             text="<b>有側風時：</b>窄的出風口都被吹散；改用寬 80 mm 的「空氣牆」、每公尺 20 L/s，扶手上方（站姿的臉）有這麼大的範圍乾淨空氣過半。"),
         dict(big="0%", text="吸樓梯間的空氣過濾後再送，口鼻的 CO <b>一點都不會減少</b>。氣源一定要先確認乾淨。"),
     ]
 
@@ -68,7 +69,12 @@ def build_findings(ctx):
         card("coax", "低混合率同軸噴嘴", "無風時最好", "ok", "準，但怕風。"),
         card("plain", "一般定向噴嘴", "效果有限", "mid"),
         card("amp", "氣流倍增式（Dyson 式）", "火災不適用", "bad", "借來的是周圍空氣；平時用來散開新鮮空氣可以。"),
-        card("coanda", "康達曲面導流", "這次失敗", "bad", "氣流沒有沿曲面轉彎。"),
+        dict(name="寬的「空氣牆」出風口", verdict="目前最好", cls="ok",
+             why=f"寬 80 mm、慢速送風，被上升氣流帶到扶手上方：側風 0.15 m/s、每公尺 20 L/s 時，扶手上方 {pct(z6['W_q20_vc15']['upper50'])} 的範圍乾淨空氣過半。",
+             where="第 05 章"),
+        dict(name="康達曲面導流", verdict="往上才成功", cls="mid",
+             why=f"往下轉時氣流不轉彎；改成藏在底面、往上轉後成功貼著扶手上升，但只守住扶手正上方一道窄柱（{pct(z6['Ku_q20_vc15']['upper50'])}）。",
+             where="第 04、05 章"),
         dict(name="氣源", verdict="要確認乾淨", cls="mid",
              why="進氣口要有 CO／煙霧感測，量到污染就關閉。濾網擋不住 CO。", where="第 05 章"),
         dict(name="初濾＋HEPA", verdict="只擋煙粒", cls="mid", why="平時淨化 PM2.5 很好；火災煙粒擋下 99.9% 以上，但 CO 擋下 0%。", where="第 06 章"),
@@ -145,7 +151,7 @@ def build_findings(ctx):
         "火災時的主角是<b>偵測＋燈光＋觸覺</b>：平時就在用的感測器和燈光，火災時直接變成逃生工具。",
         "送風只當<b>輔助</b>：進氣口量到乾淨、消防系統允許才送；任何故障都預設關閉。",
         "提案用語：「延長可逃生時間」「輔助」，<b>不要寫「保證可以呼吸」「無毒」</b>。",
-        "下一階段的設計目標：扶手周圍 40–60 cm 內乾淨空氣比例 ≥ 50%（可逃生時間至少多一倍），而且要在有側風時守得住。",
+        "設計目標：扶手周圍 40–60 cm 內乾淨空氣比例 ≥ 50%（可逃生時間至少多一倍），而且要在有側風時守得住。第 05 章顯示：寬的空氣牆是目前唯一接近的做法。",
     ]
 
     # ---------- 第 04 章 出風口 ----------
@@ -228,16 +234,58 @@ def build_findings(ctx):
 </ul>
 <p>所以這次的結果適合用來<b>比較方案、排除不可行的做法、訂出下一步的設計目標</b>，不適合當成真實火場的預測數字。</p>"""
     next_points = """
+<p><b>這次已經完成的：</b>「守住扶手旁 50 cm」的模擬（第 05 章）、扶手斷面尺寸圖（第 02 章）、臉在斜上方的出風口比較（第 04 章）。</p>
 <p><b>建議的下一步：</b></p>
 <ol>
-<li><b>「守住扶手旁 40–60 cm」的模擬：</b>把量測從臉前一個點改成扶手周圍 40–60 cm 的整個區域，測送風量每公尺 5／10／20／40 L/s、低混合／一般／「空氣牆」三種出風口、側風 0／0.15／0.30 m/s，找出「要多少風量才守得住」。約 24–36 組，建議用有顯示卡的電腦執行。</li>
-<li><b>可切換吹法的出風口：</b>平時寬角度借風、火災時收窄成低混合，作為工業設計重點。</li>
-<li><b>桌上型實驗（上圖）：</b>3D 列印出風口，箱內放 CO₂、出風口送乾淨空氣、量頭模型口鼻的 CO₂，用和電腦相同的方法算乾淨空氣比例，再用小風扇加側風。</li>
-<li><b>扶手斷面打樣：</b>握把＋細頸＋150×60 mm 導風腔，確認握持感與法規（扶手尺寸、下方障礙物）。</li>
-<li><b>3D、含溫度的電腦模擬：</b>確認熱煙層、冷空氣下沉、人走動時的結果。</li>
+<li><b>空氣牆出風口打樣：</b>依第 05 章，做寬約 80 mm、內有整流層的出風口，並調整導風腔斷面（例如 120×90 mm）或做平台轉角的外凸出風罩。</li>
+<li><b>可切換吹法的出風口：</b>平時小風量、寬角度借風；火災時切成慢速平直的空氣牆。</li>
+<li><b>桌上型實驗（上圖）：</b>3D 列印空氣牆、康達往上、低混合三種出風口，箱內放 CO₂、出風口送乾淨空氣、量頭模型口鼻的 CO₂，用和電腦相同的方法算乾淨空氣比例；用小風扇由下往上加側風。</li>
+<li><b>3D、含溫度的電腦模擬：</b>確認熱煙層、冷空氣下沉、人走動、出風口長度有限（三維）時，空氣牆還撐不撐得住。建議用有顯示卡的電腦執行。</li>
+<li><b>網格收斂檢查：</b>把格子切細一倍重算關鍵算例，確認排名不變。</li>
+<li><b>扶手斷面打樣：</b>確認握持感與法規（扶手高度、握把尺寸、下方障礙物）。</li>
 <li><b>找消防設備師確認：</b>與火警系統、加壓送風的介接，以及逃生頭罩的法規。</li>
 <li><b>完成以上之前，不做任何真實煙霧或火場測試。</b></li>
 </ol>"""
+
+    # ---------- S6：守住扶手旁 50 cm ----------
+    s6 = json.load(open(os.path.join(OUT, "s6_results.json")))
+    z = s6["cases"]
+    capm = {r["q"]: r for r in s6["capacity"]}
+
+    def zu(n, k="upper50"):
+        return z[n][k] if n in z else None
+
+    s6_one = (f"寬 80 mm 的「空氣牆」慢慢送風，樓梯間的上升氣流會把它往上帶，在扶手上方撐出一層乾淨空氣："
+              f"側風 0.15 m/s、每公尺 20 L/s 時，扶手上方 {pct(zu('W_q20_vc15'))} 的範圍乾淨空氣超過一半。")
+    s6_points = f"""
+<p><b>為什麼要做這組：</b>第 04 章只量臉前一個點。但臉的位置因人、因姿勢而異，所以這裡改量扶手出風口前方<b>半徑 50 cm 的整個半圓</b>，並分開看「扶手上方」（站著時臉的位置）和「扶手水平前方」（彎腰時）。網格 2.5 mm、不放人頭、側風由下往上。{tag("sim")}</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">出風口（側風 0.15 m/s）</th><th scope="col">每公尺 10 L/s</th><th scope="col">20 L/s</th><th scope="col">40 L/s</th></tr></thead><tbody>
+<tr><th scope="row">W 空氣牆（寬 80 mm）</th><td class="num">{pct(zu('W_q10_vc15'))}</td><td class="num"><b>{pct(zu('W_q20_vc15'))}</b></td><td class="num"><b>{pct(zu('W_q40_vc15'))}</b></td></tr>
+<tr><th scope="row">C 低混合（寬 35 mm）</th><td class="num">{pct(zu('C_q10_vc15'))}</td><td class="num">{pct(zu('C_q20_vc15'))}</td><td class="num">{pct(zu('C_q40_vc15'))}</td></tr>
+<tr><th scope="row">康達往上（藏在底面）</th><td class="num">{pct(zu('Ku_q10_vc15'))}</td><td class="num">{pct(zu('Ku_q20_vc15'))}</td><td class="num">—</td></tr>
+<tr><th scope="row">低混合斜上 45°</th><td class="num">{pct(zu('Cu_q10_vc15'))}</td><td class="num">{pct(zu('Cu_q20_vc15'))}</td><td class="num">—</td></tr>
+</tbody></table></div>
+<p class="muted">表中數字＝扶手上方（站姿的臉）乾淨空氣 ≥ 50% 的面積比例。側風 0.30 m/s 時，W 空氣牆每公尺 40 L/s 仍有 {pct(zu('W_q40_vc30'))}；向下傾 30° 的版本 {pct(zu('Wd_q40_vc30'))}，跟水平差不多。</p>
+<ul>
+<li><b>寬比快重要：</b>窄的出風口（C）只送出一條細細的乾淨空氣帶，加大風量反而混得更厲害，上方範圍一直在 10% 以下。寬 80 mm 的空氣牆送出一整片，被上升氣流往上帶，形成一層乾淨空氣。{tag("sim")}</li>
+<li><b>順著上升氣流，不要對抗：</b>樓梯間的氣流本來就往上，送風往上走是順勢。往前吹的空氣牆在側風下自然彎成往上，反而保護了扶手上方。{tag("sim")}</li>
+<li><b>康達往上這次真的轉彎了：</b>藏在導風腔底面的出風縫，風貼著扶手正面往上走（往下轉時做不到，往上轉有上升氣流幫忙，出風縫風速也比較高）。但它只守住扶手正上方約 10 cm 寬的一道柱子，範圍比空氣牆小（{pct(zu('Ku_q20_vc15'))}）。{tag("sim")}</li>
+<li><b>斜上 45° 的窄出風口沒有幫助：</b>方向對了，但窄，一樣撐不開（{pct(zu('Cu_q20_vc15'))}）。{tag("sim")}</li>
+</ul>
+<p><b>代價是風量：</b>每層出風段長度不同，需要的風量也不同。以頂樓主機、150×60 mm 導風腔、不裝增壓機來算：{tag("sim")}</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">每公尺送風量</th><th scope="col">出風段 1.2 m（上下各 0.6）</th><th scope="col">1000 Pa 時可同時供應</th><th scope="col">出風段只留平台轉角 0.6 m</th></tr></thead><tbody>
+<tr><td class="num">10 L/s</td><td class="num">每層 12 L/s</td><td class="num">{capm[10]['floors_1000Pa']} 層</td><td class="num">{capm[5]['floors_1000Pa']} 層</td></tr>
+<tr><td class="num">20 L/s</td><td class="num">每層 24 L/s</td><td class="num">{capm[20]['floors_1000Pa']} 層</td><td class="num">{capm[10]['floors_1000Pa']} 層</td></tr>
+<tr><td class="num">40 L/s</td><td class="num">每層 48 L/s</td><td class="num">{capm[40]['floors_1000Pa']} 層</td><td class="num">{capm[20]['floors_1000Pa']} 層</td></tr>
+</tbody></table></div>
+<p class="muted">網格 2.5 mm、二維、等溫、不含人頭與呼吸；大風量算例的分子黏度以下限 tau0 = 0.504 略為放大以維持穩定。</p>"""
+    s6_design = [
+        "火災模式的出風口改成<b>寬 80 mm 左右的「空氣牆」</b>，慢速、整流、平直吹出，讓上升氣流把它帶到扶手上方。",
+        "空氣牆出口高 80 mm，比導風腔側面（60 mm）高：導風腔要調整斷面（例如 120×90 mm），或在平台轉角做一段外凸的出風罩。",
+        "每公尺 20 L/s、出風段只留平台轉角 0.6 m 時，頂樓主機可同時撐住約 6 層；每公尺 40 L/s 則約 2 層。火災時把風集中在偵測到需要的平台。",
+        "平時模式用小風量與借風散開；火災模式切換成空氣牆。<b>「可切換吹法的出風口」</b>就是寬窄、快慢的切換。",
+        "康達往上可以當作「把出風口藏起來」的造型選項，但範圍較窄，適合搭配空氣牆而不是取代它。",
+    ]
 
     return dict(takeaways=takeaways, cards=cards, vent_one=vent_one, vent_points=vent_points, vent_modes=vent_modes,
                 vent_design=vent_design, round_points=round_points, fire_one=fire_one, fire_points=fire_points,
@@ -245,4 +293,5 @@ def build_findings(ctx):
                 coanda_points=coanda_points, saf_example=saf_example, source_points=source_points,
                 source_design=source_design, filter_points=filter_points, filter_design=filter_design,
                 exhaust_one=exhaust_one, door_m3min=door, rail_m3min=hot["Q_m3min"], exhaust_points=exhaust_points,
-                exhaust_design=exhaust_design, limits_points=limits_points, next_points=next_points)
+                exhaust_design=exhaust_design, limits_points=limits_points, next_points=next_points,
+                s6_one=s6_one, s6_points=s6_points, s6_design=s6_design)

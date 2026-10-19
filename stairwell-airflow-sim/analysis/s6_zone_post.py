@@ -85,31 +85,33 @@ def main():
     for r in cap:
         print(f"q={r['q']} L/s/m → 每層 {r['per_floor_Ls']:.0f} L/s；500 Pa 可同時 {r['floors_500Pa']} 層，1000 Pa {r['floors_1000Pa']} 層")
 
-    # ---- 圖 1：達標面積 vs 送風量 ----
-    fig, axs = plt.subplots(1, 2, figsize=(12, 4.3), sharey=True)
+    # ---- 圖 1：扶手上方（站姿臉）乾淨 ≥50% 的面積 vs 送風量 ----
+    KIND_LABEL.update({"Ku": "康達往上（藏在底面）", "Cu": "低混合斜上 45°"})
+    KIND_COLOR.update({"Ku": SERIES[4], "Cu": SERIES[6]})
+    fig, axs = plt.subplots(1, 2, figsize=(12, 4.4), sharey=True)
     for ax, vc in zip(axs, (0.15, 0.30)):
-        for kind in ("C", "W"):
+        for kind in ("W", "C"):
+            pts = [(q, allres.get(f"{kind}_q{q:02d}_vc{int(vc*100):02d}")) for q in QS]
+            pts = [(q, r) for q, r in pts if r]
+            ax.plot([q for q, _ in pts], [r["upper50"] * 100 for _, r in pts], "o-", color=KIND_COLOR[kind], label=KIND_LABEL[kind])
+            for q, r in pts:
+                ax.annotate(f"{r['upper50']*100:.0f}%", (q, r["upper50"] * 100), xytext=(0, 7), textcoords="offset points",
+                            ha="center", fontsize=8.5, color=TEXT2)
+        extra = ("Ku", "Cu") if vc == 0.15 else ("Wd",)
+        for kind in extra:
             pts = [(q, allres.get(f"{kind}_q{q:02d}_vc{int(vc*100):02d}")) for q in QS]
             pts = [(q, r) for q, r in pts if r]
             if pts:
-                ax.plot([q for q, _ in pts], [r["frac50"] * 100 for _, r in pts], "o-", color=KIND_COLOR[kind], label=KIND_LABEL[kind])
-                for q, r in pts:
-                    ax.annotate(f"{r['frac50']*100:.0f}%", (q, r["frac50"] * 100), xytext=(0, 7), textcoords="offset points",
-                                ha="center", fontsize=8.5, color=TEXT2)
-        if vc == 0.30:
-            pts = [(q, allres.get(f"Wd_q{q:02d}_vc30")) for q in (20, 40)]
-            pts = [(q, r) for q, r in pts if r]
-            if pts:
-                ax.plot([q for q, _ in pts], [r["frac50"] * 100 for _, r in pts], "s--", color=KIND_COLOR["Wd"], label=KIND_LABEL["Wd"])
+                ax.plot([q for q, _ in pts], [r["upper50"] * 100 for _, r in pts], "s--", color=KIND_COLOR[kind], label=KIND_LABEL[kind])
         ax.set_xscale("log")
         ax.set_xticks(QS, [str(q) for q in QS])
         ax.minorticks_off()
         ax.set_xlabel("每公尺出風口的送風量（L/s）")
         ax.set_title(f"側風 {vc:.2f} m/s", loc="left", fontsize=11)
-        ax.set_ylim(0, 105)
-    axs[0].set_ylabel("50 cm 範圍內乾淨空氣 ≥ 50% 的面積（%）")
-    axs[1].legend(fontsize=9, loc="upper left")
-    fig.suptitle("風量加大，扶手旁「守得住」的範圍跟著變大", x=0.01, ha="left", fontsize=12)
+        ax.set_ylim(0, 70)
+        ax.legend(fontsize=8.5, loc="upper left")
+    axs[0].set_ylabel("扶手上方（站姿的臉）乾淨 ≥ 50% 的面積（%）")
+    fig.suptitle("寬的「空氣牆」加上樓梯間的上升氣流，能在扶手上方撐出一層乾淨空氣", x=0.01, ha="left", fontsize=12)
     fig.tight_layout()
     save(fig, "s6_frac.png")
 
@@ -139,11 +141,11 @@ def main():
             ax.set_xlabel("cm")
         np.atleast_1d(axs)[0].set_ylabel("cm（側風由下往上）")
         if im is not None:
-            fig.colorbar(im, ax=axs, shrink=0.8, pad=0.02).set_label("乾淨空氣比例（黑線＝50%）")
+            fig.colorbar(im, ax=axs, shrink=0.8, pad=0.02).set_label("乾淨空氣比例（細線＝50%）")
         fig.suptitle(title, x=0.01, ha="left", fontsize=12)
         save(fig, fname)
 
-    panel([("C_q20_vc15", "C 低混合、20 L/s/m"), ("C_q40_vc15", "C 低混合、40 L/s/m"),
+    panel([("C_q20_vc15", "C 低混合（窄）、20 L/s/m"), ("Ku_q20_vc15", "康達往上、20 L/s/m"),
            ("W_q20_vc15", "W 空氣牆、20 L/s/m"), ("W_q40_vc15", "W 空氣牆、40 L/s/m")],
           "側風 0.15 m/s：紅色虛線是扶手前方 50 cm 的範圍", "s6_fields_vc15.png")
     panel([("C_q40_vc30", "C 低混合、40 L/s/m"), ("W_q40_vc30", "W 空氣牆、40 L/s/m"),
