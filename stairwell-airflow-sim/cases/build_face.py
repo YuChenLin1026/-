@@ -8,7 +8,8 @@ build_face.py — S2 改版：臉在扶手「斜上方」。
   B 康達往上（Ku）：出風縫藏在導風腔底面，經下緣圓角 R30 轉向上（不另外對準口鼻，這就是它的設計）。
   C 低混合同軸：中央 15 mm＋兩側 7.5 mm 伴流，朝向口鼻。
   D 氣流倍增：開口 40 mm、內壁兩道 4.5 mm 縫、背面開放，朝向口鼻。
-每公尺出風口送風量都是 5 L/s（與舊 S2 相同）；網格 1.5 mm。
+  W 空氣牆（第 05 章的最佳設計）：寬 80 mm、整流段 60 mm、水平往樓梯側吹，送風量 20 或 40 L/s/m。
+A–D 每公尺出風口送風量都是 5 L/s（與舊 S2 相同）；網格 1.5 mm。
 """
 import json
 import os
@@ -132,15 +133,21 @@ def nozzle_B(X, Y, t, ux, uy):
     return dict(U_exit=U)
 
 
+def nozzle_W(X, Y, t, ux, uy, q):
+    W = 80e-3
+    outlet_channels(X, Y, t, ux, uy, W / 2, 60e-3, [(-W / 2, W / 2, q / W)], 0.0)
+    return dict(U_exit=q / W)
+
+
 NOZZLES = dict(A=nozzle_A, B=nozzle_B, C=nozzle_C, D=nozzle_D)
 
 
-def build(name, nz, vc):
+def build(name, nz, vc, q=Q):
     X, Y = grid()
     t = np.zeros((NY, NX), np.uint8)
     ux = np.zeros((NY, NX), np.float32)
     uy = np.zeros((NY, NX), np.float32)
-    info = NOZZLES[nz](X, Y, t, ux, uy)
+    info = nozzle_W(X, Y, t, ux, uy, q) if nz == "W" else NOZZLES[nz](X, Y, t, ux, uy)
     # 頭：口鼻在 MOUTH，頭中心再沿出風口→口鼻方向往外 HEAD_R + 1.5 cm
     d = np.array([MOUTH[0] - X0, MOUTH[1] - Y0])
     d /= np.linalg.norm(d)
@@ -156,7 +163,7 @@ def build(name, nz, vc):
     cfg = dict(nx=NX, ny=NY, steps=int(round(T_TOTAL / dt)), warmup=int(round(T_WARM / dt)),
                tau0=max(0.5 + 3 * NU * dt / DX ** 2, TAU_MIN), cs=0.17, dlat=D_MOL * dt / DX ** 2, sct=0.7,
                vc=vc / vel_scale, sponge=25, probe_every=max(1, int(round(0.01 / dt))),
-               frame_every=max(1, int(round(0.08 / dt))) if vc == 0.15 else 0)
+               frame_every=max(1, int(round(0.08 / dt))) if vc == 0.15 and nz != "W" else 0)
     dd = os.path.join(ROOT, "runs_face", name)
     os.makedirs(os.path.join(dd, "frames"), exist_ok=True)
     with open(os.path.join(dd, "case.cfg"), "w") as f:
@@ -168,19 +175,20 @@ def build(name, nz, vc):
         f.write((uy / vel_scale).astype(np.float32).tobytes())
         f.write(probe.astype(np.uint8).tobytes())
     meta = dict(name=name, nozzle=nz, vc_ms=vc, dx=DX, dt=dt, vel_scale=vel_scale, x0=X0, y0=Y0,
-                mouth=MOUTH, head_c=hc.tolist(), head_r=HEAD_R, aim_deg=AIM, q=Q, t_total=T_TOTAL,
+                mouth=MOUTH, head_c=hc.tolist(), head_r=HEAD_R, aim_deg=AIM, q=q, t_total=T_TOTAL,
                 t_warm=T_WARM, **info, **cfg)
     json.dump(meta, open(os.path.join(dd, "meta.json"), "w"), indent=1)
     np.save(os.path.join(dd, "type.npy"), t)
     return meta
 
 
-CASES = [(f"{nz}_vc{int(vc*100):02d}", nz, vc) for vc in (0.0, 0.15, 0.30) for nz in "ABCD"]
+CASES = [(f"{nz}_vc{int(vc*100):02d}", nz, vc, Q) for vc in (0.0, 0.15, 0.30) for nz in "ABCD"]
+CASES += [(f"W{qq}_vc{int(vc*100):02d}", "W", vc, qq * 1e-3) for qq in (20, 40) for vc in (0.0, 0.15, 0.30)]
 
 if __name__ == "__main__":
     sel = sys.argv[1:]
-    for name, nz, vc in CASES:
+    for name, nz, vc, q in CASES:
         if sel and name not in sel:
             continue
-        m = build(name, nz, vc)
+        m = build(name, nz, vc, q)
         print(f"{name:8s} steps={m['steps']:6d} tau0={m['tau0']:.4f} U={m['U_exit']:.2f} aim={m['aim_deg']:.0f}°")

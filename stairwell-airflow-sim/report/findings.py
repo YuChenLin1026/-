@@ -250,11 +250,12 @@ def build_findings(ctx):
     # ---------- S2 改版：臉在斜上方 ----------
     pf = os.path.join(OUT, "s2f_results.json")
     f2 = json.load(open(pf)) if os.path.exists(pf) else {}
-    FL = {"A": "A 一般定向", "B": "B 康達往上", "C": "C 低混合同軸", "D": "D 氣流倍增"}
+    FL = {"A": "A 一般定向", "B": "B 康達往上", "C": "C 低混合同軸", "D": "D 氣流倍增",
+          "W20": "W 空氣牆 20 L/s/m", "W40": "W 空氣牆 40 L/s/m"}
     CL = [("vc00", "無側風"), ("vc15", "側風 0.15"), ("vc30", "側風 0.30")]
     n_done = len(f2)
     rows = []
-    for k in "ABCD":
+    for k in FL:
         cells = "".join(f'<td class="num">{pct(f2[f"{k}_{c}"]["mean"]) if f"{k}_{c}" in f2 else "計算中"}</td>' for c, _ in CL)
         rows.append(f'<tr><th scope="row">{FL[k]}</th>{cells}</tr>')
     face_table = ('<div class="table-wrap"><table><thead><tr><th scope="col">出風口</th>'
@@ -263,9 +264,10 @@ def build_findings(ctx):
         face_one = "臉改到扶手斜上方的四種出風口比較，正在計算中。"
     else:
         best = max(f2, key=lambda n: f2[n]["mean"])
-        face_one = (f"臉在扶手斜上方時（已完成 {n_done}/12 組），目前口鼻乾淨空氣最高的是 "
-                    f"{FL[best[0]]}（{dict(CL)[best[2:]]}）：{pct(f2[best]['mean'])}。")
-    windy = [v["mean"] for k, v in f2.items() if not k.endswith("vc00")]
+        bk, bc = best.split("_")
+        face_one = (f"臉在扶手斜上方時（已完成 {n_done}/18 組），目前口鼻乾淨空氣最高的是 "
+                    f"{FL[bk]}（{dict(CL)[bc]}）：{pct(f2[best]['mean'])}。")
+    windy = [v["mean"] for k, v in f2.items() if not k.endswith("vc00") and not k.startswith("W")]
     face_interim = ""
     if windy and max(windy) < 0.05:
         face_interim = (f'<p><b>目前看到的現象（{len(windy)} 組有側風的結果）：</b>有側風時，出風口吹出的乾淨空氣一離開扶手，'
@@ -276,7 +278,8 @@ def build_findings(ctx):
 <p><b>為什麼重算：</b>人扶著內側扶手下樓時，臉在扶手的<b>斜上方</b>，不是正前方。這組把口鼻放在出風口往樓梯側 28 cm、往上 35 cm（距離約 45 cm、仰角約 51°）；A、C、D 出風口改成朝向口鼻，B 改用藏在底面、往上轉的康達出風口。每公尺送風量都是 5 L/s，網格 1.5 mm。{tag("sim")}</p>
 {face_table}
 {face_interim}
-<p class="muted">已完成 {n_done}/12 組，其餘計算中；每完成一批就會更新。</p>"""
+<p><b>加算空氣牆：</b>先算完的幾組顯示，每公尺 5 L/s 的出風口在有側風時送不到斜上方的臉。所以把第 05 章表現最好的空氣牆（寬 80 mm、每公尺 20 或 40 L/s、水平往樓梯側吹）也放進同一個「臉在斜上方＋有頭」的測試，共 6 組，表格最後兩列。{tag("sim")}</p>
+<p class="muted">已完成 {n_done}/18 組，其餘計算中；每完成一批就會更新。</p>"""
 
     # ---------- S6：守住扶手旁 50 cm ----------
     s6 = json.load(open(os.path.join(OUT, "s6_results.json")))

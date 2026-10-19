@@ -207,12 +207,15 @@ def progress_html():
     rdir = os.path.join(ROOT, "runs_face")
     if not os.path.isdir(rdir):
         return ""
-    order = ["B_vc00", "B_vc15", "B_vc30", "A_vc30", "C_vc30", "D_vc30", "A_vc00", "A_vc15", "D_vc00", "D_vc15", "C_vc15", "C_vc00"]
-    label = {"A": "A 一般", "B": "B 康達往上", "C": "C 低混合", "D": "D 倍增"}
+    order = ["B_vc00", "B_vc15", "B_vc30", "A_vc30", "C_vc30", "D_vc30", "A_vc00", "A_vc15", "D_vc00", "D_vc15", "C_vc15", "C_vc00",
+             "W40_vc15", "W20_vc15", "W40_vc30", "W20_vc30", "W40_vc00", "W20_vc00"]
+    label = {"A": "A 一般", "B": "B 康達往上", "C": "C 低混合", "D": "D 倍增", "W20": "W 空氣牆 20", "W40": "W 空氣牆 40"}
     cond = {"vc00": "無側風", "vc15": "側風 0.15", "vc30": "側風 0.30"}
     durations = {}
-    runlog = os.path.join(rdir, "run.log")
-    if os.path.exists(runlog):
+    for log in ("run.log", "run2.log"):
+        runlog = os.path.join(rdir, log)
+        if not os.path.exists(runlog):
+            continue
         for line in open(runlog):
             m = _re.match(r"\S+ (\S+) rc=\d+ (\d+)s", line)
             if m:
@@ -258,7 +261,7 @@ def progress_html():
         txt = {"done": "完成", "run": f"{cur/tot*100:.0f}%", "wait": "排隊中"}[st]
         chips.append(f'<span class="chip chip-{st}"><b>{label[nz]}</b>・{cond[c]}　{txt}</span>')
     if n_done == len(items):
-        head = f"臉在斜上方的出風口重算：12 組全部完成（台灣時間 {now_tw:%H:%M} 更新）"
+        head = f"臉在斜上方的出風口重算：{len(items)} 組全部完成（台灣時間 {now_tw:%H:%M} 更新）"
     else:
         head = (f"臉在斜上方的出風口重算：已完成 {n_done}/{len(items)} 組，整體約 {frac*100:.0f}%，"
                 f"預計台灣時間 <b>{eta_tw:%H:%M}</b> 前後完成")
@@ -417,6 +420,7 @@ PAGE = f"""<title>扶手送風模擬報告</title>
   {fig("s2f_vc15_fields.png", "臉在斜上方、側風 0.15 m/s", "側風 0.15 m/s（由下往上）。")}
   {video("s2f_vc15.mp4", "動畫（臉在斜上方、側風 0.15 m/s）。每格 0.08 秒。")}
   {fig("s2f_vc30_fields.png", "臉在斜上方、側風 0.30 m/s", "側風 0.30 m/s。")}
+  {fig("s2f_wall_fields.png", "空氣牆放進臉在斜上方的測試", "第 05 章的空氣牆（寬 80 mm、水平往樓梯側吹）放進同樣的頭部與口鼻位置。上排每公尺 20 L/s，下排 40 L/s；左到右是無側風、側風 0.15、側風 0.30。")}
   {details("展開早期設定：臉在出風口正前方 35 cm（舊版 S2）",
            '<p class="prose">早期把臉放在出風口正前方、同一高度（蹲低的姿勢）。這組結果保留作為對照：低混合同軸在無側風時 91%，但只要有 0.15 m/s 側風，四種都是 0%。</p>' +
            fig("s2_saf_bars.png", "早期設定的乾淨空氣比例", "早期設定（臉在正前方 35 cm）。") +
