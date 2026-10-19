@@ -5,9 +5,9 @@
  *   - 流場：D2Q9 regularized BGK + Smagorinsky 次網格模型（Hou et al. 1996 形式）
  *   - 固體：halfway bounce-back
  *   - 噴嘴入口：平衡態速度入口（velocity prescribed, density local）
- *   - 開放邊界：平衡態 ghost（rho=1，速度取邊界格點前一步速度）+ 吸收層（sponge）
+ *   - 開放邊界：平衡態 ghost（rho=1，速度取邊界格點前一步速度）+ 吸收層（黏度提高並往遠場平衡態鬆弛）
  *   - 側風：bottom 邊界以 u=(0,Vc) 進氣
- *   - 示蹤劑 c：有限體積 MUSCL(minmod) 對流 + 擴散（分子 + 渦黏/Sc_t）
+ *   - 示蹤劑 c：有限體積 MUSCL(minmod)，對流形式 u·∇c + 擴散（分子 + 渦黏/Sc_t）
  *     c = 1 代表「供氣」，c = 0 代表環境（可能受污染）空氣。
  *
  * 輸入：<dir>/case.cfg（key value）、<dir>/geom.bin
@@ -189,10 +189,15 @@ int main(int argc, char **argv) {
         double q = sqrt(pxx * pxx + pyy * pyy + 2 * pxy * pxy);
         double tau = 0.5 * (tau0 + sqrt(tau0 * tau0 + 18.0 * sqrt(2.0) * C.cs * C.cs * q / r));
         double om = 1.0 - 1.0 / tau;
+        /* absorbing layer: relax toward the far-field state (rho=1, u=(0,vc)) so that
+           vortices and pressure waves leave the domain instead of reflecting */
+        double sig = 0.08 * (spg[n] - 1.0) / 20.0;
         for (int i = 0; i < 9; i++) {
           double qi = pxx * (ex[i] * ex[i] - 1.0 / 3) + 2 * pxy * ex[i] * ey[i] +
                       pyy * (ey[i] * ey[i] - 1.0 / 3);
-          f1[i * N + n] = fe[i] + om * 4.5 * w[i] * qi;
+          double fpost = fe[i] + om * 4.5 * w[i] * qi;
+          if (sig > 0) fpost += sig * (feq(i, 1.0, 0.0, C.vc) - fpost);
+          f1[i * N + n] = fpost;
         }
         rho[n] = r; ux[n] = vx; uy[n] = vy;
         nut[n] = (tau - tau0) / 3.0;
@@ -244,7 +249,9 @@ int main(int argc, char **argv) {
             else cf = cnb;
           }
           double dif = C.dlat + 0.5 * (nut[n] + dnb) / C.sct;
-          div += uf * cf - dif * (cnb - c[n]);
+          /* advective form u·∇c: subtract c·(∇·u) because the weakly compressible
+             LBM velocity is not exactly divergence-free */
+          div += uf * (cf - c[n]) - dif * (cnb - c[n]);
         }
         double v = c[n] - div;
         cn[n] = v < 0 ? 0 : (v > 1 ? 1 : v);

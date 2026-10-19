@@ -166,7 +166,7 @@ def build_case(name, nozzle, head=True, vc=0.0, frames=False, t_total=T_TOTAL, t
     steps = int(round(t_total / dt))
     warm = int(round(t_warm / dt))
     cfg = dict(nx=NX, ny=NY, steps=steps, warmup=warm, tau0=0.5 + 3 * nu_lat,
-               cs=0.15, dlat=d_lat, sct=0.7, vc=vc / vel_scale, sponge=25,
+               cs=0.17, dlat=d_lat, sct=0.7, vc=vc / vel_scale, sponge=25,
                probe_every=max(1, int(round(0.01 / dt))),
                frame_every=max(1, int(round(0.08 / dt))) if frames else 0)
     d = os.path.join(ROOT, "runs", name)
@@ -199,6 +199,6 @@ if __name__ == "__main__":
     for name, nz, head, vc, fr in ALL_CASES:
         if sel and name not in sel and nz not in sel:
             continue
-        tt, tw = (10.0, 4.0) if nz == "coax" else (8.0, 3.0)
+        tt, tw = (16.0, 4.0) if nz == "coax" else (10.0, 3.0)
         d, m = build_case(name, nz, head, vc, fr, t_total=tt, t_warm=tw)
         print(f"{name:20s} steps={m['steps']:7d} tau0={m['tau0']:.5f} U={m['U_exit']:.3f} m/s dt={m['dt']:.2e}")
