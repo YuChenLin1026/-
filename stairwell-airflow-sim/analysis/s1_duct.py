@@ -147,7 +147,7 @@ def main():
         ax.annotate(f"風機 {fname.split('（')[0]}", (Qs[m][-1] * 1000, 0), xytext=(-4, 8),
                     textcoords="offset points", ha="right", fontsize=9, color=TEXT2)
     for (lbl, filt), col in zip(FILTERS.items(), SERIES[:3]):
-        ax.plot(Qs * 1000, [system_dp(q, 0.034, filt, dp_eq) for q in Qs], color=col, label=f"系統阻力：{lbl}")
+        ax.plot(Qs * 1000, [system_dp(q, 0.034, filt, dp_eq) for q in Qs], color=col, label=f"阻力：{lbl}")
     ax.axvline(Q_TOTAL * 1000, color=CRIT, lw=1.2, ls="-.")
     ax.annotate(f"需求 {Q_TOTAL*1000:.0f} L/s\n(2 分支 × 0.6 m × 5 L/s/m)", (Q_TOTAL * 1000, 1650),
                 xytext=(6, 0), textcoords="offset points", fontsize=9, color=CRIT)
@@ -155,7 +155,7 @@ def main():
     ax.set_ylim(0, 1900)
     ax.set_xlabel("主機總風量 Q（L/s）")
     ax.set_ylabel("靜壓（Pa）")
-    ax.set_title("S1｜風機曲線與系統阻力（扶手風道內徑 34 mm、每層一台主機）", loc="left", fontsize=12)
+    ax.set_title("風機推得動嗎？黑線（風機）和彩色線（阻力）的交點就是實際風量", loc="left", fontsize=12)
     ax.legend(loc="upper right", fontsize=9)
     save(fig, "s1_fan_system.png")
 
@@ -176,11 +176,11 @@ def main():
     for qb, col in zip([2e-3, 3e-3, 5e-3], SERIES[:3]):
         ax.plot(Dg * 1000, [branch_dp(qb, d, 0) for d in Dg], color=col, label=f"分支風量 {qb*1000:.0f} L/s")
     ax.set_xlabel("扶手風道內徑（mm）")
-    ax.set_ylabel("一個分支的風道壓損（Pa）")
+    ax.set_ylabel("風被擋掉的力氣（壓損，Pa）")
     ax.set_yscale("log")
     ax.set_yticks([1, 3, 10, 30, 100, 300, 1000], ["1", "3", "10", "30", "100", "300", "1000"])
     ax.minorticks_off()
-    ax.set_title("S1｜風道壓損對內徑非常敏感（3.5 m 分支，不含濾材與均流板）", loc="left", fontsize=12)
+    ax.set_title("扶手管子細一點，風的阻力就大很多（3.5 m 一段）", loc="left", fontsize=12)
     ax.legend(fontsize=9)
     save(fig, "s1_diameter.png")
 
@@ -200,14 +200,14 @@ def main():
     axs[0].set_xscale("log")
     axs[0].set_xticks([1, 2, 5, 10, 20, 50, 100], ["1", "2", "5", "10", "20", "50", "100"])
     axs[0].minorticks_off()
-    axs[0].set_xlabel("出風口均流板設計壓降（Pa）")
-    axs[0].set_ylabel("出風均勻度 最小/最大（%）")
-    axs[0].set_title("出風口需要「刻意加阻力」才會均勻", loc="left", fontsize=11)
+    axs[0].set_xlabel("均流層的阻力（Pa）")
+    axs[0].set_ylabel("最小出風 ÷ 最大出風（%）")
+    axs[0].set_title("出風口要刻意加一點阻力，才會每段都出風", loc="left", fontsize=11)
     axs[0].legend(fontsize=9)
     for p, col in zip([2, 30], [SERIES[1], SERIES[2]]):
         qs = manifold_uniformity(0.034, Q_BRANCH, p)
         x = (np.arange(len(qs)) + 0.5) / len(qs) * L_OUT * 100
-        axs[1].plot(x, qs / qs.mean() * 100, color=col, label=f"均流板 {p} Pa")
+        axs[1].plot(x, qs / qs.mean() * 100, color=col, label=f"均流層 {p} Pa")
     axs[1].set_xlabel("沿出風段位置（cm，0 = 進風端）")
     axs[1].set_ylabel("各孔流量／平均（%）")
     axs[1].set_title("內徑 34 mm、分支 3 L/s", loc="left", fontsize=11)

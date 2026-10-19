@@ -1,0 +1,258 @@
+"""報告用的圖解（inline SVG，顏色全部走 CSS 變數，深淺色主題自動切換）。"""
+import math
+
+ARROW_DEFS = """
+<defs>
+  <marker id="{id}a" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="g-accent-fill"/></marker>
+  <marker id="{id}m" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="g-muted-fill"/></marker>
+  <marker id="{id}c" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="g-crit-fill"/></marker>
+</defs>"""
+
+
+def defs(i):
+    return ARROW_DEFS.format(id=i)
+
+
+def saf_explainer():
+    """乾淨空氣比例（SAF）是什麼。"""
+    return f"""
+<svg class="graphic" viewBox="0 0 760 290" role="img" aria-label="出風口送出的乾淨空氣一路上把周圍空氣拉進來混合，吸到口鼻時只剩一部分是乾淨空氣">
+{defs("s")}
+  <circle cx="70" cy="140" r="28" class="g-solid"/>
+  <rect x="94" y="135" width="22" height="10" class="g-solid"/>
+  <text x="70" y="196" text-anchor="middle" class="g-t">扶手出風口</text>
+  <path d="M116,137 C220,128 330,105 430,92 L430,188 C330,175 220,152 116,143 Z" class="g-plume"/>
+  <path d="M116,140 C200,139 260,138 300,140" class="g-core"/>
+  <text x="122" y="116" class="g-s">剛出口：100% 乾淨</text>
+  <g class="g-entrain">
+    <path d="M262,36 C270,72 282,98 296,118" marker-end="url(#sm)"/>
+    <path d="M370,30 C374,62 382,84 394,104" marker-end="url(#sm)"/>
+    <path d="M262,252 C270,212 282,186 296,162" marker-end="url(#sm)"/>
+    <path d="M370,262 C374,222 382,200 394,180" marker-end="url(#sm)"/>
+  </g>
+  <text x="330" y="22" text-anchor="middle" class="g-t">周圍空氣一路被拉進來混合</text>
+  <circle cx="520" cy="140" r="64" class="g-head"/>
+  <rect x="440" y="128" width="16" height="24" class="g-probe"/>
+  <text x="520" y="146" text-anchor="middle" class="g-s">頭</text>
+  <text x="448" y="228" text-anchor="middle" class="g-s">口鼻</text>
+  <line x1="448" y1="156" x2="448" y2="214" class="g-leader"/>
+  <rect x="630" y="50" width="54" height="180" rx="4" class="g-amb"/>
+  <rect x="630" y="158" width="54" height="72" rx="4" class="g-clean"/>
+  <text x="657" y="200" text-anchor="middle" class="g-on">40%</text>
+  <text x="657" y="110" text-anchor="middle" class="g-t">60%</text>
+  <text x="692" y="198" class="g-s">出風口</text>
+  <text x="692" y="214" class="g-s">的空氣</text>
+  <text x="692" y="106" class="g-s">周圍</text>
+  <text x="692" y="122" class="g-s">空氣</text>
+  <text x="657" y="38" text-anchor="middle" class="g-t">吸進去的空氣</text>
+  <text x="657" y="256" text-anchor="middle" class="g-b">乾淨空氣比例 40%</text>
+  <text x="657" y="274" text-anchor="middle" class="g-s">（示意數字）</text>
+</svg>"""
+
+
+def source_compare(saf_example):
+    """兩種氣源：取樓梯間空氣過濾 vs 獨立乾淨氣源。"""
+    pct_left = round((1 - saf_example) * 100)
+
+    def dots(x, y, n_smoke, n_co):
+        out = []
+        for k in range(n_smoke):
+            out.append(f'<circle cx="{x + (k % 4) * 13}" cy="{y + (k // 4) * 13}" r="4.2" class="g-smoke"/>')
+        for k in range(n_co):
+            out.append(f'<circle cx="{x + (k % 4) * 13}" cy="{y + 30 + (k // 4) * 13}" r="4.2" class="g-co"/>')
+        return "".join(out)
+
+    return f"""
+<svg class="graphic" viewBox="0 0 800 330" role="img" aria-label="取樓梯間空氣經濾網後，煙粒被擋下但一氧化碳全部穿過；獨立乾淨氣源才真的降低一氧化碳">
+{defs("q")}
+  <text x="20" y="28" class="g-b">A　吸樓梯間的空氣，過濾後送出</text>
+  <rect x="20" y="44" width="150" height="96" rx="8" class="g-box"/>
+  <text x="95" y="64" text-anchor="middle" class="g-t">樓梯間空氣</text>
+  {dots(48, 78, 8, 4)}
+  <line x1="172" y1="92" x2="222" y2="92" class="g-arrow" marker-end="url(#qm)"/>
+  <rect x="226" y="44" width="110" height="96" rx="8" class="g-filter"/>
+  <text x="281" y="64" text-anchor="middle" class="g-t">濾網</text>
+  <text x="281" y="86" text-anchor="middle" class="g-s">擋下煙粒</text>
+  <text x="281" y="104" text-anchor="middle" class="g-s">CO 穿過去</text>
+  <line x1="338" y1="92" x2="388" y2="92" class="g-arrow" marker-end="url(#qm)"/>
+  <rect x="392" y="44" width="150" height="96" rx="8" class="g-box"/>
+  <text x="467" y="64" text-anchor="middle" class="g-t">送出的空氣</text>
+  {"".join(f'<circle cx="{448 + k * 13}" cy="98" r="4.2" class="g-co"/>' for k in range(4))}
+  <text x="467" y="124" text-anchor="middle" class="g-s">煙粒沒了，CO 還在</text>
+  <line x1="544" y1="92" x2="594" y2="92" class="g-arrow" marker-end="url(#qm)"/>
+  <circle cx="640" cy="92" r="40" class="g-head"/>
+  <text x="640" y="98" text-anchor="middle" class="g-t">口鼻</text>
+  <text x="690" y="84" class="g-crit-t">CO 100%</text>
+  <text x="690" y="102" class="g-s">一點都沒少</text>
+
+  <text x="20" y="196" class="g-b">B　獨立乾淨氣源（室外進氣、壓縮空氣）</text>
+  <rect x="20" y="212" width="150" height="96" rx="8" class="g-box g-box-ok"/>
+  <text x="95" y="232" text-anchor="middle" class="g-t">乾淨空氣</text>
+  <text x="95" y="262" text-anchor="middle" class="g-s">沒有煙粒、沒有 CO</text>
+  <line x1="172" y1="260" x2="388" y2="260" class="g-arrow-ok" marker-end="url(#qa)"/>
+  <text x="280" y="250" text-anchor="middle" class="g-s">經扶手出風口送出</text>
+  <rect x="392" y="212" width="150" height="96" rx="8" class="g-box"/>
+  <text x="467" y="232" text-anchor="middle" class="g-t">到口鼻時</text>
+  <text x="467" y="258" text-anchor="middle" class="g-s">混進一些周圍空氣</text>
+  <text x="467" y="278" text-anchor="middle" class="g-s">（多少由出風口決定）</text>
+  <line x1="544" y1="260" x2="594" y2="260" class="g-arrow-ok" marker-end="url(#qa)"/>
+  <circle cx="640" cy="260" r="40" class="g-head"/>
+  <text x="640" y="266" text-anchor="middle" class="g-t">口鼻</text>
+  <text x="690" y="252" class="g-ok-t">CO {pct_left}%</text>
+  <text x="690" y="270" class="g-s">降低的比例</text>
+  <text x="690" y="286" class="g-s">＝乾淨空氣比例</text>
+  <circle cx="30" cy="322" r="4.2" class="g-smoke"/><text x="40" y="326" class="g-s">煙粒</text>
+  <circle cx="90" cy="322" r="4.2" class="g-co"/><text x="100" y="326" class="g-s">一氧化碳（CO）分子</text>
+</svg>"""
+
+
+def size_ruler(d50):
+    """粒徑尺：火災煙粒、PM2.5、氣旋切割粒徑、頭髮。"""
+    x0, w = 70, 620
+
+    def X(d):
+        return x0 + (math.log10(d) + 2) / 4.0 * w   # 0.01 µm – 100 µm
+    ticks = "".join(
+        f'<line x1="{X(v):.1f}" y1="150" x2="{X(v):.1f}" y2="158" class="g-leader"/>'
+        f'<text x="{X(v):.1f}" y="176" text-anchor="middle" class="g-s">{lbl}</text>'
+        for v, lbl in [(0.01, "0.01"), (0.1, "0.1"), (1, "1"), (10, "10"), (100, "100 µm")])
+    return f"""
+<svg class="graphic" viewBox="0 0 760 230" role="img" aria-label="火災煙粒大多在 0.05 到 1 微米之間，比氣旋能抓的大小還小很多">
+  <rect x="{X(0.05):.1f}" y="70" width="{X(1)-X(0.05):.1f}" height="70" rx="6" class="g-smokeband"/>
+  <text x="{(X(0.05)+X(1))/2:.1f}" y="98" text-anchor="middle" class="g-t">火災煙粒大多在這裡</text>
+  <text x="{(X(0.05)+X(1))/2:.1f}" y="118" text-anchor="middle" class="g-s">約 0.05–1 µm</text>
+  <line x1="{x0}" y1="150" x2="{x0+w}" y2="150" class="g-axis"/>
+  {ticks}
+  <line x1="{X(d50):.1f}" y1="40" x2="{X(d50):.1f}" y2="150" class="g-crit-line"/>
+  <text x="{X(d50)+6:.1f}" y="52" class="g-crit-t">氣旋：{d50:.1f} µm</text>
+  <text x="{X(d50)+6:.1f}" y="68" class="g-s">比這小的大多抓不到</text>
+  <line x1="{X(2.5):.1f}" y1="150" x2="{X(2.5):.1f}" y2="196" class="g-leader"/>
+  <text x="{X(2.5):.1f}" y="212" text-anchor="middle" class="g-s">PM2.5 的 2.5 µm</text>
+  <line x1="{X(70):.1f}" y1="150" x2="{X(70):.1f}" y2="196" class="g-leader"/>
+  <text x="{X(70):.1f}" y="212" text-anchor="middle" class="g-s">頭髮粗細 約 70 µm</text>
+  <rect x="{x0}" y="18" width="{X(0.3)-x0-8:.1f}" height="24" rx="4" class="g-okband"/>
+  <text x="{x0+8}" y="35" class="g-s">HEPA：整段都抓得到（≥ 99.95%）</text>
+</svg>"""
+
+
+def uniformity(u_low, u_high, dp_low, dp_high):
+    """出風均勻度：沒有均流層 vs 有均流層。"""
+    def row(y, lens, label, sub):
+        arrows = []
+        for k, L in enumerate(lens):
+            x = 150 + k * 62
+            arrows.append(f'<line x1="{x}" y1="{y}" x2="{x}" y2="{y - L:.0f}" class="g-arrow-ok" marker-end="url(#ua)"/>')
+        return (f'<rect x="120" y="{y}" width="540" height="14" rx="7" class="g-solid"/>'
+                + "".join(arrows)
+                + f'<text x="20" y="{y - 30}" class="g-t">{label}</text><text x="20" y="{y - 12}" class="g-s">{sub}</text>')
+    n = 9
+    low = [14 + (66 - 14) * (k / (n - 1)) ** 1.6 for k in range(n)]
+    high = [40 + 3 * (k / (n - 1)) for k in range(n)]
+    return f"""
+<svg class="graphic" viewBox="0 0 760 250" role="img" aria-label="沒有均流層時空氣大多從出風段末端衝出，加上均流層後每一段出風量接近">
+{defs("u")}
+  {row(110, low, "沒有均流層", f"最少只有最多的 {u_low*100:.0f}%")}
+  {row(220, high, "加一層均流層", f"約 {dp_high:.0f} Pa，均勻度 {u_high*100:.0f}%")}
+  <text x="120" y="134" class="g-s">← 風從主機這端進來</text>
+  <text x="660" y="134" text-anchor="end" class="g-s">出風段末端 →</text>
+  <text x="690" y="70" class="g-s">空氣擠到</text>
+  <text x="690" y="86" class="g-s">末端衝出</text>
+</svg>"""
+
+
+def exhaust_scale(door_m3min, rail_m3min):
+    """一扇門 vs 一根扶手的排風量。"""
+    n = round(door_m3min / rail_m3min)
+    dots = []
+    cols = 25
+    for k in range(n):
+        x = 330 + (k % cols) * 15
+        y = 60 + (k // cols) * 15
+        dots.append(f'<circle cx="{x}" cy="{y}" r="4.5" class="g-raildot"/>')
+    rows = math.ceil(n / cols)
+    return f"""
+<svg class="graphic" viewBox="0 0 760 {max(240, 80 + rows * 15 + 40)}" role="img" aria-label="一扇敞開的門的風量相當於約 {n} 根扶手同時全力排煙">
+  <rect x="40" y="40" width="90" height="180" rx="3" class="g-door"/>
+  <text x="85" y="134" text-anchor="middle" class="g-t">門</text>
+  <text x="85" y="238" text-anchor="middle" class="g-s">0.9 × 2.0 m</text>
+  <text x="150" y="110" class="g-b">≈ {door_m3min:.0f} m³/min</text>
+  <text x="150" y="130" class="g-s">（風速 1 m/s 時）</text>
+  <text x="330" y="36" class="g-t">＝ 約 {n} 根扶手同時全力排煙</text>
+  {"".join(dots)}
+  <text x="330" y="{60 + rows * 15 + 14}" class="g-s">每個點＝一根整棟 70 m 的扶手風道，風機開到 3000 Pa（約 {rail_m3min:.2f} m³/min）</text>
+</svg>"""
+
+
+def stair_layout():
+    """樓梯側視：主機與出風口位置。"""
+    return f"""
+<svg class="graphic" viewBox="0 0 760 320" role="img" aria-label="每層平台一台主機，出風口集中在平台上下各 0.6 公尺">
+{defs("l")}
+  <path d="M40,290 L120,290 L120,270 L160,270 L160,250 L200,250 L200,230 L240,230 L240,210 L280,210 L280,190 L320,190 L320,170 L420,170" class="g-stair"/>
+  <path d="M420,170 L460,170 L460,150 L500,150 L500,130 L540,130 L540,110 L580,110 L580,90 L620,90 L620,70 L720,70" class="g-stair"/>
+  <path d="M60,250 L330,130 L430,130 L720,30" class="g-rail"/>
+  <path d="M262,160 L330,130 L430,130 L470,116" class="g-outlet"/>
+  <rect x="352" y="134" width="58" height="36" rx="4" class="g-host"/>
+  <text x="381" y="157" text-anchor="middle" class="g-on">主機</text>
+  <line x1="381" y1="172" x2="381" y2="232" class="g-leader"/>
+  <text x="381" y="250" text-anchor="middle" class="g-t">每層平台一台（約 20 W）</text>
+  <text x="381" y="268" text-anchor="middle" class="g-s">風機、控制、預留空氣模組</text>
+  <line x1="290" y1="140" x2="230" y2="80" class="g-leader"/>
+  <text x="150" y="66" class="g-ok-t">出風口集中在平台附近</text>
+  <text x="150" y="84" class="g-s">往上、往下各約 0.6 m</text>
+  <line x1="600" y1="56" x2="640" y2="20" class="g-leader"/>
+  <text x="560" y="16" class="g-s">其餘扶手只做導引（光、觸覺）</text>
+  <text x="40" y="314" class="g-s">示意圖，比例不精確</text>
+</svg>"""
+
+
+def coanda_lesson():
+    """康達曲面：半徑太小噴流分離 vs 半徑夠大。"""
+    return f"""
+<svg class="graphic" viewBox="0 0 760 250" role="img" aria-label="曲面半徑只有出風縫 2.5 倍時氣流直接往下衝，不會沿曲面轉彎">
+{defs("k")}
+  <text x="40" y="26" class="g-b">第一版：R 15 mm（縫寬的 2.5 倍）</text>
+  <path d="M110,60 L110,110 A30,30 0 0 0 140,140 L140,60 Z" class="g-solid"/>
+  <rect x="92" y="60" width="4" height="50" class="g-solid"/>
+  <line x1="103" y1="64" x2="103" y2="210" class="g-crit-arrow" marker-end="url(#kc)"/>
+  <path d="M106,118 C120,138 140,145 220,145" class="g-dash"/>
+  <text x="150" y="190" class="g-crit-t">氣流直接往下衝</text>
+  <text x="150" y="208" class="g-s">沒有轉彎，臉收不到</text>
+  <text x="228" y="149" class="g-s">（預期的路徑）</text>
+  <text x="420" y="26" class="g-b">修正版：R 45 mm（縫寬的 7.5 倍）</text>
+  <path d="M470,50 L470,100 A80,80 0 0 0 550,180 L550,50 Z" class="g-solid"/>
+  <rect x="452" y="50" width="4" height="50" class="g-solid"/>
+  <path d="M463,54 L463,104 A88,88 0 0 0 551,190 L700,190" class="g-ok-arrow" marker-end="url(#ka)"/>
+  <text x="740" y="226" text-anchor="end" class="g-s">曲面夠緩，氣流才有機會貼著轉彎</text>
+</svg>"""
+
+
+def test_rig():
+    """建議的桌上型示蹤氣體實驗。"""
+    return f"""
+<svg class="graphic" viewBox="0 0 760 300" role="img" aria-label="桌上型實驗：箱內釋放 CO2，出風口送乾淨空氣，在假人口鼻處量測 CO2">
+{defs("t")}
+  <rect x="150" y="40" width="460" height="220" rx="10" class="g-box"/>
+  <text x="380" y="30" text-anchor="middle" class="g-t">透明壓克力箱</text>
+  <rect x="40" y="200" width="60" height="50" rx="6" class="g-box"/>
+  <text x="70" y="270" text-anchor="middle" class="g-s">CO₂ 鋼瓶</text>
+  <line x1="100" y1="222" x2="170" y2="222" class="g-arrow" marker-end="url(#tm)"/>
+  <text x="180" y="226" class="g-s">釋放 CO₂ 當作「煙」</text>
+  <circle cx="220" cy="140" r="20" class="g-solid"/>
+  <rect x="238" y="135" width="16" height="10" class="g-solid"/>
+  <text x="220" y="185" text-anchor="middle" class="g-s">3D 列印出風口</text>
+  <text x="220" y="201" text-anchor="middle" class="g-s">A／B／C／D</text>
+  <line x1="60" y1="140" x2="198" y2="140" class="g-arrow-ok" marker-end="url(#ta)"/>
+  <text x="40" y="128" class="g-s">乾淨空氣</text>
+  <path d="M256,140 C320,136 380,134 430,136" class="g-core"/>
+  <circle cx="490" cy="140" r="52" class="g-head"/>
+  <text x="490" y="146" text-anchor="middle" class="g-s">頭模型</text>
+  <rect x="640" y="110" width="90" height="60" rx="6" class="g-box"/>
+  <text x="685" y="136" text-anchor="middle" class="g-t">CO₂ 感測器</text>
+  <text x="685" y="156" text-anchor="middle" class="g-s">口鼻取樣</text>
+  <path d="M440,146 L440,240 L685,240 L685,172" class="g-tube"/>
+  <rect x="555" y="196" width="50" height="22" rx="4" class="g-box"/>
+  <text x="580" y="212" text-anchor="middle" class="g-s">小風扇</text>
+  <line x1="568" y1="192" x2="568" y2="140" class="g-arrow" marker-end="url(#tm)"/>
+  <text x="576" y="168" class="g-s">側風</text>
+</svg>"""

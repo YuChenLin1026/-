@@ -4,58 +4,74 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Noto+Sans+TC:wght@400;500;700;900&display=swap">
 <style>
-/* Layout: 單欄技術報告，正文 70ch，圖表可放寬到 1040px；結論表在最前，方法章節獨立 */
+/* Layout: 單欄圖解報告；每章＝一句話結論 → 圖解 → 數字 → 對設計的意思 → 可展開的技術細節 */
 :root {
-  --bg: #f6f7f5; --surface: #ffffff; --fg: #141816; --fg2: #49504c; --muted: #747c77; --line: #dce1dd;
-  --accent: #0d7f4f; --accent-soft: #e2f2e9; --warn: #9a5b00; --warn-soft: #fbefdc; --crit: #b42f2b; --crit-soft: #fbe6e5;
+  --bg: #f6f7f5; --surface: #ffffff; --surface2: #eef1ee; --fg: #141816; --fg2: #49504c; --muted: #747c77; --line: #d9dfda;
+  --accent: #0d7f4f; --accent-soft: #dcefe4; --on-accent: #ffffff; --warn: #9a5b00; --warn-soft: #fbefdc;
+  --crit: #b42f2b; --crit-soft: #fbe6e5;
   --show-light: block; --show-dark: none;
   --f-body: "IBM Plex Sans", "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif;
   --f-display: "Noto Sans TC", "IBM Plex Sans", "PingFang TC", sans-serif;
   --f-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", monospace;
 }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
-  --bg: #0f1311; --surface: #161b18; --fg: #ebefec; --fg2: #b4bdb7; --muted: #87918b; --line: #29312c;
-  --accent: #45cf90; --accent-soft: #13291e; --warn: #e6a743; --warn-soft: #2b2112; --crit: #f0716c; --crit-soft: #2e1716;
-  --show-light: none; --show-dark: block; color-scheme: dark; } }
+  --bg: #0f1311; --surface: #161b18; --surface2: #1c2320; --fg: #ebefec; --fg2: #b4bdb7; --muted: #87918b; --line: #2b342f;
+  --accent: #45cf90; --accent-soft: #143024; --on-accent: #08130d; --warn: #e6a743; --warn-soft: #2b2112;
+  --crit: #f0716c; --crit-soft: #331817; --show-light: none; --show-dark: block; color-scheme: dark; } }
 :root[data-theme="dark"] {
-  --bg: #0f1311; --surface: #161b18; --fg: #ebefec; --fg2: #b4bdb7; --muted: #87918b; --line: #29312c;
-  --accent: #45cf90; --accent-soft: #13291e; --warn: #e6a743; --warn-soft: #2b2112; --crit: #f0716c; --crit-soft: #2e1716;
-  --show-light: none; --show-dark: block; color-scheme: dark; }
+  --bg: #0f1311; --surface: #161b18; --surface2: #1c2320; --fg: #ebefec; --fg2: #b4bdb7; --muted: #87918b; --line: #2b342f;
+  --accent: #45cf90; --accent-soft: #143024; --on-accent: #08130d; --warn: #e6a743; --warn-soft: #2b2112;
+  --crit: #f0716c; --crit-soft: #331817; --show-light: none; --show-dark: block; color-scheme: dark; }
 * { box-sizing: border-box; }
 body { background: var(--bg); color: var(--fg); font-family: var(--f-body); font-size: 16px; line-height: 1.75;
   padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 0 64px; }
-.wrap { max-width: 1040px; margin: 0 auto; }
-.prose { max-width: 70ch; }
-header.top { padding-block: 48px 28px; border-bottom: 1px solid var(--line); display: grid; gap: 14px; }
+.wrap { max-width: 1000px; margin: 0 auto; }
+.prose { max-width: 68ch; }
+header.top { padding-block: 44px 26px; border-bottom: 1px solid var(--line); display: grid; gap: 14px; }
 .eyebrow { font-size: 13px; letter-spacing: .08em; color: var(--accent); font-weight: 600; }
 h1 { font-family: var(--f-display); font-weight: 900; font-size: clamp(30px, 5vw, 46px); line-height: 1.2; margin: 0; text-wrap: balance; }
+.question { font-size: clamp(18px, 2.4vw, 21px); line-height: 1.6; margin: 0; max-width: 40ch; text-wrap: balance; }
 .meta { color: var(--fg2); font-size: 14px; display: flex; flex-wrap: wrap; gap: 6px 22px; }
 .meta b { color: var(--fg); font-weight: 500; }
-nav.toc { display: flex; flex-wrap: wrap; gap: 8px; padding-block: 18px; border-bottom: 1px solid var(--line); }
-nav.toc a { color: var(--fg2); text-decoration: none; font-size: 14px; padding: 4px 10px; border: 1px solid var(--line); border-radius: 999px; }
+nav.toc { display: flex; flex-wrap: wrap; gap: 8px; padding-block: 16px; border-bottom: 1px solid var(--line); }
+nav.toc a { color: var(--fg2); text-decoration: none; font-size: 14px; padding: 4px 11px; border: 1px solid var(--line); border-radius: 999px; }
 nav.toc a:hover, nav.toc a:focus-visible { color: var(--accent); border-color: var(--accent); outline: none; }
-section { padding-block: 40px 8px; display: grid; gap: 18px; }
+section { padding-block: 44px 6px; display: grid; gap: 20px; }
 h2 { font-family: var(--f-display); font-weight: 700; font-size: clamp(22px, 3.2vw, 28px); margin: 0; line-height: 1.35; text-wrap: balance; }
 h2 .no { font-family: var(--f-mono); font-weight: 500; color: var(--accent); margin-right: 10px; font-size: .8em; }
-h3 { font-size: 18px; margin: 10px 0 0; font-weight: 700; }
+h3 { font-size: 17px; margin: 0; font-weight: 700; line-height: 1.4; }
+h4 { font-size: 16px; margin: 8px 0 0; }
+h5 { font-size: 15px; margin: 0; }
 p { margin: 0; }
-.lead { font-size: 17px; color: var(--fg); }
+.oneliner { font-family: var(--f-display); font-size: clamp(19px, 2.6vw, 23px); font-weight: 700; line-height: 1.55; max-width: 34ch; text-wrap: balance; }
 .muted { color: var(--muted); }
-.banner { background: var(--warn-soft); color: var(--fg); border: 1px solid var(--warn); border-radius: 8px; padding: 10px 14px; font-size: 14px; }
+.banner { background: var(--warn-soft); border: 1px solid var(--warn); border-radius: 8px; padding: 10px 14px; font-size: 14px; }
+.takes { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+.take { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 18px; display: grid; gap: 8px; align-content: start; }
+.take .big { font-family: var(--f-mono); font-size: clamp(32px, 5vw, 42px); font-weight: 500; line-height: 1.1; color: var(--accent); font-variant-numeric: tabular-nums; }
+.take p { font-size: 15px; }
+.tcards { display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 12px; }
+.tcard { border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; background: var(--surface); display: grid; gap: 8px; align-content: start; }
+.tcard-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+.tcard p { font-size: 14.5px; color: var(--fg2); }
+.tsrc { font-size: 12px; color: var(--muted); }
+.gloss { border: 1px solid var(--line); border-radius: 10px; background: var(--surface2); padding: 14px 18px; display: grid; gap: 8px; }
+.gloss dl { display: grid; grid-template-columns: max-content 1fr; gap: 6px 16px; margin: 0; font-size: 14.5px; }
+.gloss dt { font-weight: 600; }
+.gloss dd { margin: 0; color: var(--fg2); min-width: 0; }
 .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
 table { border-collapse: collapse; width: 100%; font-size: 14.5px; }
 th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
-thead th { font-size: 13px; color: var(--fg2); font-weight: 600; background: var(--bg); white-space: nowrap; }
+thead th { font-size: 13px; color: var(--fg2); font-weight: 600; background: var(--surface2); white-space: nowrap; }
 tbody tr:last-child th, tbody tr:last-child td { border-bottom: 0; }
 tbody th { font-weight: 600; white-space: nowrap; }
 td.num { font-family: var(--f-mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
-td.src { font-family: var(--f-mono); font-size: 13px; color: var(--muted); white-space: nowrap; }
 .sub { display: block; font-size: 12px; color: var(--muted); }
-.pill { display: inline-block; font-size: 13px; font-weight: 600; padding: 1px 9px; border-radius: 999px; white-space: nowrap; border: 1px solid; }
+.pill { display: inline-block; font-size: 13px; font-weight: 600; padding: 1px 10px; border-radius: 999px; white-space: nowrap; border: 1px solid; }
 .pill.ok { color: var(--accent); background: var(--accent-soft); border-color: var(--accent); }
 .pill.mid { color: var(--warn); background: var(--warn-soft); border-color: var(--warn); }
 .pill.bad { color: var(--crit); background: var(--crit-soft); border-color: var(--crit); }
-.tag { display: inline-block; font-size: 12px; padding: 0 7px; border-radius: 4px; border: 1px solid var(--line); color: var(--fg2); white-space: nowrap; margin-left: 4px; vertical-align: 1px; }
+.tag { display: inline-block; font-size: 12px; padding: 0 7px; border-radius: 4px; border: 1px solid var(--line); color: var(--fg2); white-space: nowrap; margin-left: 4px; vertical-align: 1px; line-height: 1.6; }
 .tag-sim { border-color: var(--accent); color: var(--accent); }
 .tag-tbd { border-color: var(--warn); color: var(--warn); }
 .fig { margin: 0; display: grid; gap: 8px; }
@@ -65,241 +81,489 @@ td.src { font-family: var(--f-mono); font-size: 13px; color: var(--muted); white
 .fig .img-any { display: block; }
 figcaption { font-size: 13.5px; color: var(--fg2); max-width: 80ch; }
 .pending-box { border: 1px dashed var(--line); border-radius: 8px; padding: 40px 16px; text-align: center; color: var(--muted); }
-.method { border: 1px solid var(--line); border-radius: 10px; background: var(--surface); padding: 18px 20px; display: grid; gap: 12px; }
-.method dl { display: grid; grid-template-columns: 7.5em 1fr; gap: 8px 16px; margin: 0; }
-.method dt { color: var(--muted); font-size: 14px; }
-.method dd { margin: 0; min-width: 0; }
-.formula { font-family: var(--f-mono); background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 10px 14px; overflow-x: auto; font-size: 14px; }
-.diagram { width: 100%; height: auto; max-width: 100%; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; }
-.d-domain { fill: none; stroke: var(--fg2); stroke-width: 1.2; }
-.d-sponge { fill: none; stroke: var(--line); stroke-width: 1.2; stroke-dasharray: 5 4; }
-.d-solid { fill: var(--muted); }
-.d-head { fill: var(--line); stroke: var(--muted); stroke-width: 1; }
-.d-probe { fill: none; stroke: var(--crit); stroke-width: 2; }
-.d-axis { stroke: var(--accent); stroke-width: 2; }
-.d-accent-fill { fill: var(--accent); }
-.d-muted-fill { fill: var(--muted); }
-.d-leader, .d-dim { stroke: var(--fg2); stroke-width: 1; }
-.d-cross line { stroke: var(--muted); stroke-width: 1.6; }
-.d-label { fill: var(--fg); font-size: 14px; font-family: var(--f-body); }
-.d-small { fill: var(--fg2); font-size: 12px; font-family: var(--f-body); }
-.cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+.design { border: 1px solid var(--accent); border-radius: 10px; background: var(--accent-soft); padding: 14px 18px; display: grid; gap: 6px; }
+.design h4 { margin: 0; font-size: 14px; letter-spacing: .06em; color: var(--accent); }
+.points { display: grid; gap: 8px; }
+ul, ol { margin: 0; padding-left: 1.3em; display: grid; gap: 6px; }
+details.more { border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+details.more > summary { cursor: pointer; padding: 12px 16px; font-weight: 600; font-size: 15px; color: var(--fg2); }
+details.more > summary:hover, details.more > summary:focus-visible { color: var(--accent); outline: none; }
+details.more[open] > summary { border-bottom: 1px solid var(--line); }
+.more-body { padding: 16px; display: grid; gap: 16px; min-width: 0; }
+.cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
 .cols > * { min-width: 0; }
-.card { border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; background: var(--surface); display: grid; gap: 6px; }
-.card h4 { margin: 0; font-size: 15px; }
-ul, ol { margin: 0; padding-left: 1.3em; display: grid; gap: 4px; }
-code { font-family: var(--f-mono); font-size: .9em; background: var(--bg); border: 1px solid var(--line); border-radius: 4px; padding: 0 4px; overflow-wrap: anywhere; }
-footer { margin-top: 48px; padding-top: 20px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; }
-@media (max-width: 560px) { .method dl { grid-template-columns: 1fr; gap: 2px; } .method dd { margin-bottom: 8px; } tbody th { white-space: normal; } }
-@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+.card { border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; background: var(--surface2); display: grid; gap: 6px; align-content: start; }
+.card p { font-size: 14.5px; color: var(--fg2); }
+code { font-family: var(--f-mono); font-size: .9em; background: var(--surface2); border: 1px solid var(--line); border-radius: 4px; padding: 0 4px; overflow-wrap: anywhere; }
+.formula { font-family: var(--f-mono); background: var(--surface2); border: 1px solid var(--line); border-radius: 6px; padding: 10px 14px; overflow-x: auto; font-size: 14px; }
+/* 圖解 SVG：顏色全部取自主題變數 */
+.graphic { width: 100%; max-width: 100%; height: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; font-family: var(--f-body); }
+.g-t { fill: var(--fg); font-size: 14px; }
+.g-s { fill: var(--fg2); font-size: 12px; }
+.g-b { fill: var(--fg); font-size: 15px; font-weight: 700; }
+.g-on { fill: var(--on-accent); font-size: 14px; font-weight: 700; }
+.g-ok-t { fill: var(--accent); font-size: 15px; font-weight: 700; }
+.g-crit-t { fill: var(--crit); font-size: 15px; font-weight: 700; }
+.g-solid { fill: var(--muted); }
+.g-head { fill: var(--surface2); stroke: var(--muted); stroke-width: 1.2; }
+.g-probe { fill: none; stroke: var(--crit); stroke-width: 2; }
+.g-plume { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 1; stroke-dasharray: 3 3; }
+.g-core { fill: none; stroke: var(--accent); stroke-width: 5; stroke-linecap: round; }
+.g-entrain path { fill: none; stroke: var(--muted); stroke-width: 1.6; }
+.g-amb { fill: var(--line); }
+.g-clean { fill: var(--accent); }
+.g-leader { stroke: var(--fg2); stroke-width: 1; fill: none; }
+.g-box { fill: var(--surface2); stroke: var(--line); stroke-width: 1.2; }
+.g-box-ok { stroke: var(--accent); }
+.g-filter { fill: var(--warn-soft); stroke: var(--warn); stroke-width: 1.2; }
+.g-arrow { stroke: var(--muted); stroke-width: 2; fill: none; }
+.g-arrow-ok { stroke: var(--accent); stroke-width: 2.4; fill: none; }
+.g-smoke { fill: var(--fg2); }
+.g-co { fill: none; stroke: var(--crit); stroke-width: 1.8; }
+.g-smokeband { fill: var(--line); }
+.g-okband { fill: var(--accent-soft); }
+.g-axis { stroke: var(--fg2); stroke-width: 1.4; }
+.g-crit-line { stroke: var(--crit); stroke-width: 2; stroke-dasharray: 5 4; }
+.g-door { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 1.5; }
+.g-raildot { fill: var(--crit); }
+.g-stair { fill: none; stroke: var(--fg2); stroke-width: 2; }
+.g-rail { fill: none; stroke: var(--muted); stroke-width: 5; stroke-linecap: round; }
+.g-outlet { fill: none; stroke: var(--accent); stroke-width: 7; stroke-linecap: round; }
+.g-host { fill: var(--accent); }
+.g-dash { fill: none; stroke: var(--muted); stroke-width: 1.4; stroke-dasharray: 4 4; }
+.g-crit-arrow { stroke: var(--crit); stroke-width: 2.6; fill: none; }
+.g-ok-arrow { stroke: var(--accent); stroke-width: 2.6; fill: none; }
+.g-tube { fill: none; stroke: var(--warn); stroke-width: 2; stroke-dasharray: 6 3; }
+.g-domain { fill: none; stroke: var(--fg2); stroke-width: 1.2; }
+.g-sponge { fill: none; stroke: var(--line); stroke-width: 1.2; stroke-dasharray: 5 4; }
+.g-cross line { stroke: var(--muted); stroke-width: 1.6; }
+.g-accent-fill { fill: var(--accent); }
+.g-muted-fill { fill: var(--muted); }
+.g-crit-fill { fill: var(--crit); }
+footer { margin-top: 48px; padding-top: 20px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; display: grid; gap: 6px; }
+@media (max-width: 560px) { .gloss dl { grid-template-columns: 1fr; gap: 0; } .gloss dd { margin-bottom: 8px; } tbody th { white-space: normal; } }
+
 </style>
 
 <div class="wrap">
 <header class="top">
   <div class="eyebrow">樓梯逃生導引扶手系統｜第二階段送風研究</div>
   <h1>扶手送風模擬報告</h1>
+  <p class="question">扶手送風，到底能不能讓低姿勢逃生的人吸到比較乾淨的空氣？用電腦模擬一項一項檢查。</p>
   <div class="meta"><span>日期 <b>2026-10-19</b></span><span>專案 <b>長庚大學工業設計學系 林煜宸</b></span><span>模擬與撰寫 <b>Claude（AI）</b></span></div>
-  <p class="prose lead">這份報告用電腦模擬檢查第二階段送風的每一項技術：風機與扶手風道夠不夠力、四種出風口能把多少乾淨空氣送到低姿勢逃生者的口鼻、濾材和氣旋能處理什麼，以及扶手能不能當排煙管。每個數字都附上「怎麼算出來的」與限制。</p>
-  <p class="banner">CFD 仍在背景計算，標示「計算中」的項目會在完成後更新。</p>
+  <p class="banner">出風口的電腦模擬（CFD）還在計算，標示「計算中」的地方完成後會更新。</p>
 </header>
 <nav class="toc" aria-label="章節">
-  <a href="#summary">結論</a><a href="#method">量測方法</a><a href="#nozzle">噴嘴 CFD</a><a href="#source">氣源</a>
-  <a href="#filter">濾材與氣旋</a><a href="#duct">風道與風機</a><a href="#exhaust">排煙容量</a><a href="#limits">限制與下一步</a>
+  <a href="#summary">一頁看懂</a><a href="#method">怎麼測的</a><a href="#nozzle">四種出風口</a><a href="#source">空氣從哪來</a>
+  <a href="#filter">濾網擋什麼</a><a href="#duct">風機與管子</a><a href="#exhaust">能不能排煙</a><a href="#next">下一步</a>
 </nav>
 
 <section id="summary">
-  <h2><span class="no">01</span>結論先看</h2>
-  <p class="prose">下表對應技術確認表中「送風（第二階段研究）」的每一列。標記說明：<span class="tag tag-sim">模擬結果</span><span class="tag tag-inf">工程推論</span><span class="tag tag-asm">假設值</span><span class="tag tag-std">外部標準定義</span><span class="tag tag-tbd">尚待驗證</span>。所有結果都是研究用的電腦模型，<b>不代表已驗證的火場呼吸防護能力</b>。</p>
-  <div class="table-wrap"><table>
-    <thead><tr><th scope="col">技術</th><th scope="col">判定</th><th scope="col">模擬依據</th><th scope="col">來源</th></tr></thead>
-    <tbody><tr><th scope="row">緊湊型 BLDC 離心風機</th><td><span class="pill ok">可行</span></td><td>每層一台、中型鼓風機量級即可；濾材堵塞時仍有 10.6 L/s（需求 6 L/s），耗電約 19 W。</td><td class="src">S1</td></tr><tr><th scope="row">低混合率同軸噴嘴</th><td><span class="pill mid">計算中</span></td><td>口鼻區供氣比例：計算中。</td><td class="src">S2</td></tr><tr><th scope="row">康達曲面導流</th><td><span class="pill mid">計算中</span></td><td>口鼻區供氣比例：計算中。</td><td class="src">S2</td></tr><tr><th scope="row">一般定向噴嘴</th><td><span class="pill mid">計算中</span></td><td>口鼻區供氣比例：計算中。</td><td class="src">S2</td></tr><tr><th scope="row">氣流倍增式噴嘴</th><td><span class="pill mid">計算中</span></td><td>口鼻區供氣比例：計算中。</td><td class="src">S2</td></tr><tr><th scope="row">初濾＋HEPA</th><td><span class="pill mid">只管微粒</span></td><td>火災煙微粒去除 99.9% 以上；CO 去除 0%。</td><td class="src">S3</td></tr><tr><th scope="row">活性碳、觸媒</th><td><span class="pill mid">需實測</span></td><td>電腦模擬無法證明效果；活性碳對 CO 幾乎無效，觸媒受濕度與壽命影響，必須做實驗。</td><td class="src">S3</td></tr><tr><th scope="row">氣源</th><td><span class="pill ok">必須獨立</span></td><td>同一個噴嘴改用樓梯間空氣過濾後送出，口鼻區 CO 仍是環境的 100%；只有獨立乾淨氣源才有降低效果。</td><td class="src">S2＋S3</td></tr><tr><th scope="row">氣旋分離</th><td><span class="pill bad">不採用</span></td><td>火災煙微粒多在 1 µm 以下；D=100 mm 氣旋 d50≈2.9 µm，只抓到約 3% 質量，壓損約 856 Pa。</td><td class="src">S3</td></tr><tr><th scope="row">扶手當排煙管</th><td><span class="pill bad">不採用</span></td><td>整棟一根扶手 70 m，風機給到 3000 Pa 也只排得出約 0.71 m³/min，約一扇敞開的門的 0.7%。</td><td class="src">S4</td></tr><tr><th scope="row">吸樓梯間空氣、過濾後送去呼吸</th><td><span class="pill bad">不採用</span></td><td>CO 與缺氧都無法用濾材解決；模擬顯示口鼻區 CO 完全沒有降低。</td><td class="src">S2＋S3</td></tr></tbody></table></div>
-  <div class="prose"><p class="muted">CFD 計算中，完成後填入判讀。</p></div>
+  <h2><span class="no">00</span>一頁看懂</h2>
+  <div class="takes"><div class="take"><div class="big">0%</div><p>吸樓梯間的空氣、用濾網過濾再送出，口鼻的 CO <b>一點都不會減少</b>。CO 是氣體，濾網擋不住。</p></div><div class="take"><div class="big">24%</div><p>出風口的電腦模擬計算中。</p></div><div class="take"><div class="big">≈ 153</div><p>一扇敞開的門的風量，相當於約 153 根扶手同時全力排煙。扶手當排煙管<b>不可行</b>。</p></div></div>
+  <h3>每項技術的判定</h3>
+  <div class="tcards"><article class="tcard"><div class="tcard-top"><h3>緊湊型離心風機</h3><span class="pill ok">可行</span></div><p>每層一台中型鼓風機就夠：濾網堵塞時還有 10.6 L/s（需要 6 L/s），耗電約 19 W。</p><span class="tsrc">第 05 章</span></article><article class="tcard"><div class="tcard-top"><h3>低混合率同軸噴嘴</h3><span class="pill mid">計算中</span></div><p>電腦模擬還在計算。</p><span class="tsrc">第 02 章</span></article><article class="tcard"><div class="tcard-top"><h3>康達曲面導流</h3><span class="pill mid">計算中</span></div><p>電腦模擬還在計算。</p><span class="tsrc">第 02 章</span></article><article class="tcard"><div class="tcard-top"><h3>一般定向噴嘴</h3><span class="pill mid">計算中</span></div><p>電腦模擬還在計算。</p><span class="tsrc">第 02 章</span></article><article class="tcard"><div class="tcard-top"><h3>氣流倍增式噴嘴</h3><span class="pill mid">計算中</span></div><p>電腦模擬還在計算。</p><span class="tsrc">第 02 章</span></article><article class="tcard"><div class="tcard-top"><h3>初濾＋HEPA</h3><span class="pill mid">只擋煙粒</span></div><p>火災煙粒擋下 99.9% 以上；CO 擋下 0%。</p><span class="tsrc">第 04 章</span></article><article class="tcard"><div class="tcard-top"><h3>活性碳、觸媒</h3><span class="pill mid">要做實驗</span></div><p>電腦算不出來。活性碳幾乎擋不住 CO；觸媒有機會，但怕濕氣、有壽命，必須實測。</p><span class="tsrc">第 04 章</span></article><article class="tcard"><div class="tcard-top"><h3>氣源</h3><span class="pill ok">必須獨立</span></div><p>吸樓梯間空氣過濾後送出，CO 一點都沒少。只有獨立乾淨氣源，出風口才有意義。</p><span class="tsrc">第 03 章</span></article><article class="tcard"><div class="tcard-top"><h3>氣旋分離</h3><span class="pill bad">不採用</span></div><p>火災煙粒太小，氣旋只抓到約 3%（重量），還要 856 Pa 的推力。</p><span class="tsrc">第 04 章</span></article><article class="tcard"><div class="tcard-top"><h3>扶手當排煙管</h3><span class="pill bad">不採用</span></div><p>風機開到 3000 Pa，整根扶手也只排得出約 0.71 m³/min，是一扇門的 0.7%。</p><span class="tsrc">第 06 章</span></article><article class="tcard"><div class="tcard-top"><h3>吸樓梯間空氣過濾後送去呼吸</h3><span class="pill bad">不採用</span></div><p>CO、缺氧、高溫，濾網都處理不了。</p><span class="tsrc">第 03 章</span></article></div>
+  <div class="gloss">
+    <h3>名詞小抄</h3>
+    <dl>
+      <dt>乾淨空氣比例</dt><dd>吸進去的空氣裡，有幾成是出風口送出來的。報告裡最重要的數字（英文 SAF）。</dd>
+      <dt>側風</dt><dd>樓梯間本來就有的氣流，例如熱煙往上升、人走過帶動的風。</dd>
+      <dt>壓損</dt><dd>風在管子、濾網裡被擋掉的力氣，單位 Pa。越大，風機要越用力。</dd>
+      <dt>均流層</dt><dd>出風口內的一層多孔板或網子，讓每一段出風口出一樣多的風。</dd>
+      <dt>CO</dt><dd>一氧化碳，火災中最主要的致命氣體之一。是氣體分子，濾網擋不住。</dd>
+      <dt>µm（微米）</dt><dd>千分之一毫米。頭髮大約 70 µm，火災煙粒大多不到 1 µm。</dd>
+    </dl>
+  </div>
+  <p class="prose muted">標記：<span class="tag tag-sim">模擬結果</span>電腦算出來的　<span class="tag tag-inf">工程推論</span>依原理推論　<span class="tag tag-asm">假設值</span>先假設的數字　<span class="tag tag-std">外部標準</span>引用標準定義　<span class="tag tag-tbd">尚待驗證</span>要再查證或實驗。所有結果都是研究用的電腦模型，<b>不代表已驗證的火場呼吸防護能力</b>。</p>
 </section>
 
 <section id="method">
-  <h2><span class="no">02</span>量測方法：每個數字怎麼來的</h2>
-  <p class="prose">四組模擬各自回答一個問題。下面先說明共通的量測指標，再逐組列出模型、條件、量測位置、怎麼確認模型可信，以及它量不到的東西。</p>
+  <h2><span class="no">01</span>怎麼測的</h2>
+  <p class="oneliner">在電腦裡做一個扶手和人頭的剖面，把出風口送出的空氣「染色」，看它有幾成能跑到臉前。</p>
+  <figure class="fig">
+<svg class="graphic" viewBox="0 0 760 290" role="img" aria-label="出風口送出的乾淨空氣一路上把周圍空氣拉進來混合，吸到口鼻時只剩一部分是乾淨空氣">
 
-  <div class="method">
-    <h3>核心指標：供氣比例 SAF（Supply Air Fraction）</h3>
-    <p class="prose">模擬裡把出風口送出的空氣「染色」：出風口空氣濃度設為 1，周圍空氣設為 0，讓這個無害的示蹤劑隨氣流移動、混合。口鼻位置量到的時間平均濃度，就是吸進去的空氣裡有多少比例來自出風口。</p>
-    <div class="formula">SAF = 口鼻區示蹤劑濃度的時間平均（0～1）<br>例：SAF 60% → 吸入空氣 60% 來自出風口、40% 是周圍空氣</div>
-    <p class="prose">把 SAF 和氣源一起看，就能算出口鼻區的污染濃度：</p>
-    <div class="formula">C口鼻 = SAF × C供氣 + (1 − SAF) × C環境</div>
-    <p class="prose">實驗室測試可以用同一個定義：在環境中釋放示蹤氣體（例如 CO₂），出風口送乾淨空氣，於假人口鼻處量測，<code>SAF = (C環境 − C口鼻) ÷ (C環境 − C供氣)</code>。模擬和實驗用同一把尺，之後才能互相對照。</p>
+<defs>
+  <marker id="sa" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="g-accent-fill"/></marker>
+  <marker id="sm" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="g-muted-fill"/></marker>
+  <marker id="sc" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="g-crit-fill"/></marker>
+</defs>
+  <circle cx="70" cy="140" r="28" class="g-solid"/>
+  <rect x="94" y="135" width="22" height="10" class="g-solid"/>
+  <text x="70" y="196" text-anchor="middle" class="g-t">扶手出風口</text>
+  <path d="M116,137 C220,128 330,105 430,92 L430,188 C330,175 220,152 116,143 Z" class="g-plume"/>
+  <path d="M116,140 C200,139 260,138 300,140" class="g-core"/>
+  <text x="122" y="116" class="g-s">剛出口：100% 乾淨</text>
+  <g class="g-entrain">
+    <path d="M262,36 C270,72 282,98 296,118" marker-end="url(#sm)"/>
+    <path d="M370,30 C374,62 382,84 394,104" marker-end="url(#sm)"/>
+    <path d="M262,252 C270,212 282,186 296,162" marker-end="url(#sm)"/>
+    <path d="M370,262 C374,222 382,200 394,180" marker-end="url(#sm)"/>
+  </g>
+  <text x="330" y="22" text-anchor="middle" class="g-t">周圍空氣一路被拉進來混合</text>
+  <circle cx="520" cy="140" r="64" class="g-head"/>
+  <rect x="440" y="128" width="16" height="24" class="g-probe"/>
+  <text x="520" y="146" text-anchor="middle" class="g-s">頭</text>
+  <text x="448" y="228" text-anchor="middle" class="g-s">口鼻</text>
+  <line x1="448" y1="156" x2="448" y2="214" class="g-leader"/>
+  <rect x="630" y="50" width="54" height="180" rx="4" class="g-amb"/>
+  <rect x="630" y="158" width="54" height="72" rx="4" class="g-clean"/>
+  <text x="657" y="200" text-anchor="middle" class="g-on">40%</text>
+  <text x="657" y="110" text-anchor="middle" class="g-t">60%</text>
+  <text x="692" y="198" class="g-s">出風口</text>
+  <text x="692" y="214" class="g-s">的空氣</text>
+  <text x="692" y="106" class="g-s">周圍</text>
+  <text x="692" y="122" class="g-s">空氣</text>
+  <text x="657" y="38" text-anchor="middle" class="g-t">吸進去的空氣</text>
+  <text x="657" y="256" text-anchor="middle" class="g-b">乾淨空氣比例 40%</text>
+  <text x="657" y="274" text-anchor="middle" class="g-s">（示意數字）</text>
+</svg><figcaption>乾淨空氣從出風口出來後，一路把周圍空氣拉進來混合。到口鼻時剩下的比例，就是「乾淨空氣比例」。</figcaption></figure>
+  <div class="points prose">
+    <p>為什麼不能只看出風口？因為出風口的空氣再乾淨，走到臉前時也已經混進周圍的空氣。所以這份報告<b>只看口鼻位置</b>量到的比例。</p>
+    <p>有了這個比例，口鼻吸到的污染就能直接算：</p>
   </div>
-
-  <h3>S2 噴嘴 CFD：模型設定</h3>
-  <p class="prose">模擬的是垂直於扶手長軸的一個斷面（2D）。扶手上的連續出風縫在斷面上就是一道平面噴流，這也是選擇 2D 的理由。逃生者以低姿勢靠近扶手，臉部在出風口前 35 cm。</p>
-  
-<svg class="diagram" viewBox="0 0 760 500" role="img" aria-label="CFD 斷面設定示意：扶手與噴嘴在左，頭部在右 35 公分處，口鼻量測區在臉前">
+  <div class="formula">口鼻的污染 ＝ 乾淨空氣比例 × 送出空氣的污染 ＋（1 − 乾淨空氣比例）× 周圍的污染</div>
+  <figure class="fig">
+<svg class="graphic" viewBox="0 0 760 500" role="img" aria-label="電腦模型的剖面：左邊是扶手和出風口，右邊 35 公分處是頭，口鼻前方有量測框">
   <defs>
-    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-      <path d="M0,0 L10,5 L0,10 z" class="d-accent-fill"/></marker>
-    <marker id="ah2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-      <path d="M0,0 L10,5 L0,10 z" class="d-muted-fill"/></marker>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="g-accent-fill"/></marker>
+    <marker id="ah2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="g-muted-fill"/></marker>
   </defs>
-  <rect x="60" y="40" width="640" height="400" class="d-domain"/>
-  <rect x="85" y="65" width="590" height="350" class="d-sponge"/>
-  <text x="90" y="82" class="d-small">吸收層 2.5 cm（開放邊界，讓出流與捲吸自然進出）</text>
-  <circle cx="98" cy="240" r="25" class="d-solid"/>
-  <rect x="115" y="236" width="25" height="8" class="d-solid"/>
-  <text x="70" y="290" class="d-label">扶手 Ø50 mm</text>
-  <text x="70" y="306" class="d-label">＋ 噴嘴（四種）</text>
-  <line x1="142" y1="240" x2="402" y2="240" class="d-axis" marker-end="url(#ah)"/>
-  <text x="200" y="230" class="d-label">噴流主軸（每公尺出風口 5 L/s）</text>
-  <circle cx="490" cy="240" r="80" class="d-head"/>
-  <text x="490" y="236" text-anchor="middle" class="d-label">頭部</text>
-  <text x="490" y="254" text-anchor="middle" class="d-small">以直徑 16 cm 圓柱近似</text>
-  <rect x="385" y="228" width="20" height="24" class="d-probe"/>
-  <line x1="395" y1="226" x2="395" y2="180" class="d-leader"/>
-  <text x="395" y="172" text-anchor="middle" class="d-label">口鼻量測區</text>
-  <text x="395" y="156" text-anchor="middle" class="d-small">臉前 0.5–2.5 cm、上下 ±1.2 cm</text>
-  <line x1="140" y1="120" x2="410" y2="120" class="d-dim"/>
-  <line x1="140" y1="112" x2="140" y2="128" class="d-dim"/><line x1="410" y1="112" x2="410" y2="128" class="d-dim"/>
-  <text x="275" y="112" text-anchor="middle" class="d-label">35 cm（低姿勢：臉靠近扶手）</text>
-  <g class="d-cross">
+  <rect x="60" y="40" width="640" height="400" class="g-domain"/>
+  <rect x="85" y="65" width="590" height="350" class="g-sponge"/>
+  <text x="90" y="82" class="g-s">邊緣 2.5 cm 是「吸收層」：讓氣流自然離開，不會反彈回來</text>
+  <circle cx="98" cy="240" r="25" class="g-solid"/>
+  <rect x="115" y="236" width="25" height="8" class="g-solid"/>
+  <text x="70" y="290" class="g-t">扶手 Ø50 mm</text>
+  <text x="70" y="306" class="g-t">＋出風口（4 種）</text>
+  <line x1="142" y1="240" x2="402" y2="240" class="g-arrow-ok" marker-end="url(#ah)"/>
+  <text x="190" y="230" class="g-t">送風：每公尺出風口 5 L/s</text>
+  <circle cx="490" cy="240" r="80" class="g-head"/>
+  <text x="490" y="236" text-anchor="middle" class="g-t">頭</text>
+  <text x="490" y="254" text-anchor="middle" class="g-s">直徑 16 cm</text>
+  <rect x="385" y="228" width="20" height="24" class="g-probe"/>
+  <line x1="395" y1="226" x2="395" y2="180" class="g-leader"/>
+  <text x="395" y="172" text-anchor="middle" class="g-t">口鼻量測框</text>
+  <text x="395" y="156" text-anchor="middle" class="g-s">臉前 0.5–2.5 cm</text>
+  <line x1="140" y1="120" x2="410" y2="120" class="g-leader"/>
+  <line x1="140" y1="112" x2="140" y2="128" class="g-leader"/><line x1="410" y1="112" x2="410" y2="128" class="g-leader"/>
+  <text x="275" y="110" text-anchor="middle" class="g-t">35 cm（低姿勢，臉靠近扶手）</text>
+  <g class="g-cross">
     <line x1="230" y1="470" x2="230" y2="420" marker-end="url(#ah2)"/>
     <line x1="380" y1="470" x2="380" y2="420" marker-end="url(#ah2)"/>
     <line x1="530" y1="470" x2="530" y2="420" marker-end="url(#ah2)"/>
   </g>
-  <text x="560" y="462" class="d-label">側風 0／0.15／0.30 m/s</text>
-  <text x="560" y="478" class="d-small">（樓梯間上升氣流、人體擾動的簡化）</text>
-  <text x="60" y="30" class="d-small">計算域 64 × 40 cm，網格 1 mm（64 萬→ 25.6 萬格）</text>
-</svg>
-
-  <figure class="fig wide"><img class="img-light" src="assets/s2_geometry.png" alt="四種噴嘴的斷面幾何" loading="lazy"><img class="img-dark" src="assets/s2_geometry_dark.png" alt="四種噴嘴的斷面幾何" loading="lazy"><figcaption>四種噴嘴的斷面。為了公平比較，四組每公尺出風口的供氣量都是 5 L/s，只有出口形狀與速度分布不同。</figcaption></figure>
-  <div class="table-wrap"><table><thead><tr><th scope="col">項目</th><th scope="col">設定</th><th scope="col">性質</th></tr></thead><tbody><tr><th scope="row">網格</th><td>1 mm 正方格，640 × 400 = 25.6 萬格</td><td><span class="tag tag-asm">假設值</span></td></tr><tr><th scope="row">流場方法</th><td>D2Q9 格子波茲曼法（LBM），正則化碰撞＋Smagorinsky 大渦模擬（Cs = 0.15）</td><td><span class="tag tag-inf">工程推論</span></td></tr><tr><th scope="row">示蹤劑</th><td>有限體積 MUSCL（minmod 限制器）對流＋擴散；分子擴散 2×10⁻⁵ m²/s，紊流擴散＝渦黏度/0.7</td><td><span class="tag tag-inf">工程推論</span></td></tr><tr><th scope="row">空氣</th><td>20 °C，動黏度 1.5×10⁻⁵ m²/s，等溫、不含浮力</td><td><span class="tag tag-asm">假設值</span></td></tr><tr><th scope="row">供氣量</th><td>每公尺出風口 5 L/s（四種噴嘴相同，公平比較）</td><td><span class="tag tag-asm">假設值</span></td></tr><tr><th scope="row">模擬時間</th><td>8 秒（同軸組 10 秒），前 3 秒（同軸組 4 秒）為暖機不列入平均</td><td><span class="tag tag-asm">假設值</span></td></tr><tr><th scope="row">時間步長</th><td>依各組最高速度換算，格子速度上限 0.1（控制壓縮性誤差）</td><td><span class="tag tag-inf">工程推論</span></td></tr><tr><th scope="row">邊界</th><td>四周開放（平衡態外插）＋吸收層；側風由下邊界以均勻速度送入</td><td><span class="tag tag-inf">工程推論</span></td></tr><tr><th scope="row">固體</th><td>半格反彈（halfway bounce-back），扶手、噴嘴壁、頭部</td><td><span class="tag tag-inf">工程推論</span></td></tr><tr><th scope="row">取樣</th><td>口鼻區方框每 0.01 秒記錄一次平均濃度</td><td><span class="tag tag-asm">假設值</span></td></tr></tbody></table></div>
-
-  <div class="method">
-    <h3>S2 怎麼確認模型可信</h3>
-    <dl>
-      <dt>求解器驗證</dt><dd>用同一支程式算平行板管流，跟解析解（拋物線速度分布）比對：L2 相對誤差 2.3%，通道內流量與入口差 2.4%。<span class="tag tag-sim">模擬結果</span></dd>
-      <dt>質量守恆</dt><dd>出口下游 3 cm 斷面的示蹤劑通量 ∫c·u dy 除以設定供氣量，16 個算例落在 計算中（1.00 為完全守恆）。<span class="tag tag-sim">模擬結果</span></dd>
-      <dt>時間收斂</dt><dd>呼吸區 SAF 的平均時段切成前後兩半各算一次，相差最多 計算中。差距越小，代表模擬時間夠長、平均值穩定。<span class="tag tag-sim">模擬結果</span></dd>
-      <dt>Bug 紀錄</dt><dd>第一次執行發現噴口入口密度逐步流失、噴流送不出去。已改成由下游鄰格外插密度的速度入口，全部重新計算；報告中的數字都來自修正後的版本。</dd>
-    </dl>
+  <text x="560" y="462" class="g-t">側風：0／0.15／0.30 m/s</text>
+  <text x="560" y="478" class="g-s">代表樓梯間的上升氣流、人走動的擾動</text>
+  <text x="60" y="30" class="g-s">模型範圍 64 × 40 cm 的剖面，切成 1 mm 小格（共 25.6 萬格）</text>
+</svg><figcaption>電腦模型：扶手剖面在左，逃生者低姿勢時臉在出風口前 35 cm。紅框是量測口鼻的位置。</figcaption></figure>
+  <figure class="fig"><img class="img-light" src="assets/s2_geometry.png" alt="四種出風口的剖面" loading="lazy"><img class="img-dark" src="assets/s2_geometry_dark.png" alt="四種出風口的剖面" loading="lazy"><figcaption>四種出風口。為了公平，每一種每公尺都送出一樣多的風（5 L/s），只有形狀不同。</figcaption></figure>
+  <div class="points prose">
+    <p><b>電腦裡做了這些事：</b></p>
+    <ul>
+      <li>把 64 × 40 cm 的剖面切成 25.6 萬個 1 mm 小格，逐格計算空氣怎麼流動。</li>
+      <li>出風口的空氣濃度設成 100%，周圍空氣設成 0%，讓這個「顏色」跟著氣流跑。</li>
+      <li>每 0.01 秒記錄一次口鼻框裡的濃度，算 10 秒（慢的同軸組算 16 秒），前 3–4 秒不算，取後面的平均。</li>
+      <li>4 種出風口 × 4 種情況（沒有人、有人無側風、側風 0.15、側風 0.30）＝ 16 組。</li>
+    </ul>
+    <p>實體實驗可以用一模一樣的方法量：在箱子裡放 CO₂ 當作「煙」，出風口送乾淨空氣，在頭模型口鼻處量 CO₂。電腦和實驗用同一把尺，之後才能互相對照（見第 07 章）。</p>
   </div>
-  <figure class="fig"><img class="img-light" src="assets/val_poiseuille.png" alt="平行板管流驗證" loading="lazy"><img class="img-dark" src="assets/val_poiseuille_dark.png" alt="平行板管流驗證" loading="lazy"><figcaption>求解器驗證：平行板間的速度分布（點）與解析解（虛線）。</figcaption></figure>
-  <p class="muted">CFD 計算中，完成後自動填入。</p>
-
-  <div class="cols">
-    <div class="card"><h4>S1 風道與風機（一維管網）</h4>
-      <p>沿程損失用 Darcy–Weisbach 公式（層流 64/Re、紊流 Haaland 式），局部損失用 K·½ρV²，濾材壓損與風量成正比。風機用三條假設曲線，與系統阻力曲線求交點得到工作點。出風均勻度把 0.6 m 出風段切成 24 孔，從末端往上游逐孔計算壓力與流量。</p></div>
-    <div class="card"><h4>S3 濾材與氣旋（分級效率）</h4>
-      <p>煙粒徑用對數常態分布（有焰 CMD 0.10 µm、悶燒 0.30 µm，σg 1.9）<span class="tag tag-asm">假設值</span>。氣旋用 Lapple 模型，HEPA 用 EN 1822 H13 的最易穿透粒徑效率 99.95% 當全粒徑下限 <span class="tag tag-std">外部標準定義</span>。各元件穿透率相乘後對粒徑分布積分。CO 不被機械濾材捕集。</p></div>
-    <div class="card"><h4>S4 排煙容量（管流極限）</h4>
-      <p>整棟 10 層共用一根 70 m 扶手風道，含 40 個彎頭、60 個接頭。分別以 20 °C 空氣和 200 °C 熱煙的物性計算，給定風機總壓 100–3000 Pa，用二分法求最大風量，與一扇敞開的門（0.9 × 2.0 m、1 m/s）的風量比較 <span class="tag tag-asm">假設值</span>。</p></div>
-  </div>
+  <details class="more"><summary>展開技術細節：模型設定、驗證方法、修正紀錄</summary><div class="more-body"><h4>電腦模型的設定</h4><div class="table-wrap"><table><thead><tr><th scope="col">項目</th><th scope="col">設定</th><th scope="col">性質</th></tr></thead><tbody><tr><th scope="row">網格</th><td>1 mm 正方格，640 × 400 ＝ 25.6 萬格</td><td><span class="tag tag-asm">假設值</span></td></tr><tr><th scope="row">流場方法</th><td>D2Q9 格子波茲曼法（LBM），正則化碰撞＋Smagorinsky 大渦模擬（Cs = 0.17）</td><td><span class="tag tag-inf">工程推論</span></td></tr><tr><th scope="row">示蹤劑</th><td>有限體積 MUSCL（minmod 限制器），對流形式 u·∇c＋擴散；分子擴散 2×10⁻⁵ m²/s，紊流擴散＝渦黏度/0.7</td><td><span class="tag tag-inf">工程推論</span></td></tr><tr><th scope="row">空氣</th><td>20 °C，動黏度 1.5×10⁻⁵ m²/s，等溫、不含浮力</td><td><span class="tag tag-asm">假設值</span></td></tr><tr><th scope="row">送風量</th><td>每公尺出風口 5 L/s（四種出風口相同，公平比較）</td><td><span class="tag tag-asm">假設值</span></td></tr><tr><th scope="row">模擬時間</th><td>10 秒（同軸組 16 秒，因為氣流慢），前 3 秒（同軸組 4 秒）為暖機不列入平均</td><td><span class="tag tag-asm">假設值</span></td></tr><tr><th scope="row">時間步長</th><td>依各組最高速度換算，格子速度上限 0.1（控制壓縮性誤差）</td><td><span class="tag tag-inf">工程推論</span></td></tr><tr><th scope="row">邊界</th><td>四周開放＋ 2.5 cm 吸收層（提高黏度並往遠場狀態鬆弛，避免渦旋與壓力波反射）；側風由下邊界均勻送入</td><td><span class="tag tag-inf">工程推論</span></td></tr><tr><th scope="row">固體</th><td>半格反彈（halfway bounce-back）：扶手、噴嘴壁、頭部</td><td><span class="tag tag-inf">工程推論</span></td></tr><tr><th scope="row">取樣</th><td>口鼻區方框每 0.01 秒記錄一次平均濃度</td><td><span class="tag tag-asm">假設值</span></td></tr></tbody></table></div><h4>怎麼確認模型算得對</h4>
+<ul>
+<li><b>先考一題有標準答案的：</b>用同一支程式算「兩片平板之間的氣流」，這題有數學解答。結果速度分布和解析解差 0.4%，流量差 0.5%。<span class="tag tag-sim">模擬結果</span></li>
+<li><b>空氣有沒有憑空消失：</b>出風口外 1 mm 量到的送風量，除以設定的送風量，16 組落在 0.81–0.96（1.00 代表完全吻合）。<span class="tag tag-sim">模擬結果</span></li>
+<li><b>算得夠不夠久：</b>把平均時段切成前後兩半各算一次，差距最多 5.5 個百分點。差距小代表數字已經穩定。<span class="tag tag-sim">模擬結果</span></li>
+</ul><figure class="fig"><img class="img-light" src="assets/val_poiseuille.png" alt="平板間氣流的驗證" loading="lazy"><img class="img-dark" src="assets/val_poiseuille_dark.png" alt="平板間氣流的驗證" loading="lazy"><figcaption>考題：兩片平板之間的速度分布。點＝本程式，虛線＝數學解答。</figcaption></figure><div class="table-wrap"><table><thead><tr><th scope="col">算例</th><th scope="col">出口通量 ÷ 設定送風量</th><th scope="col">口鼻乾淨空氣比例：前半段 / 後半段</th></tr></thead><tbody><tr><th scope="row">amp_head_vc30</th><td class="num">0.81</td><td class="num">0.0% / 0.0%</td></tr><tr><th scope="row">plain_head_vc00</th><td class="num">0.96</td><td class="num">21.3% / 26.8%</td></tr></tbody></table></div><h4>計算途中發現並修正的問題</h4>
+<p>每次修正後都全部重新計算，報告裡的數字都來自最後的版本。</p>
+<ol>
+<li>出風口的設定會讓空氣慢慢「漏掉」，風送不出去 → 改寫出風口的計算方式。</li>
+<li>氣流倍增式原本 2 mm 的細縫只有 2 小格，計算爆掉 → 細縫改成 3 mm（總送風量不變）。</li>
+<li>出風口通道內的「染色」濃度會自己慢慢變淡 → 改用不會漂移的寫法，通道內維持 100%。</li>
+<li>模型邊緣會把渦旋反彈回來，康達組計算爆掉 → 邊緣加上吸收層。修正後考題誤差從 2.3% 降到 0.45%。</li>
+<li>康達第一版曲面太彎，氣流不轉彎（這是物理結果，不是程式錯誤）→ 保留結果當設計教訓，另做修正版比較。</li>
+</ol>
+<h4>其他三組模擬怎麼算</h4>
+<div class="cols">
+<div class="card"><h5>風機與扶手管子</h5><p>用管路公式計算風在扶手管子裡被擋掉多少力氣（直管摩擦＋彎頭、接頭、濾網），和風機的能力曲線找交點，就是實際風量。出風均勻度把 0.6 m 出風段切成 24 個小孔逐一計算。</p></div>
+<div class="card"><h5>濾網與氣旋</h5><p>假設火災煙粒的大小分布（有焰燃燒、悶燒兩種）<span class="tag tag-asm">假設值</span>，乘上氣旋、初濾、HEPA 各自「每種大小抓得到幾成」，加總得到總共擋下多少。HEPA 用 EN 1822 H13 的定義 <span class="tag tag-std">外部標準</span>。</p></div>
+<div class="card"><h5>扶手排煙容量</h5><p>假設整棟 10 層共用一根 70 m 的扶手管子（40 個彎、60 個接頭），用 20 °C 空氣和 200 °C 熱煙分別計算，風機推力從 100 加到 3000 Pa，看最多能排多少，再和一扇敞開的門比較 <span class="tag tag-asm">假設值</span>。</p></div>
+</div></div></details>
 </section>
 
 <section id="nozzle">
-  <h2><span class="no">03</span>噴嘴 CFD：誰能把乾淨空氣送到口鼻</h2>
-  <div class="prose"><p class="muted">CFD 計算中，完成後填入判讀。</p></div>
-  <figure class="fig pending"><div class="pending-box">計算中：口鼻區供氣比例長條圖</div><figcaption>長條＝口鼻區 SAF 的時間平均；黑色短線＝最差 10% 時刻（第 10 百分位），代表氣流擺動時最不利的情況。</figcaption></figure>
-  <div class="table-wrap"><table><thead><tr><th scope="col">噴嘴</th><th scope="col">無側風</th><th scope="col">側風 0.15 m/s</th><th scope="col">側風 0.30 m/s</th><th scope="col">30 cm 處總風量÷供氣量</th></tr></thead><tbody><tr><th scope="row">A 一般定向噴嘴</th><td class="num muted">計算中</td><td class="num muted">計算中</td><td class="num muted">計算中</td><td class="num">—</td></tr><tr><th scope="row">B 康達曲面導流</th><td class="num muted">計算中</td><td class="num muted">計算中</td><td class="num muted">計算中</td><td class="num">—</td></tr><tr><th scope="row">C 低混合率同軸噴嘴</th><td class="num muted">計算中</td><td class="num muted">計算中</td><td class="num muted">計算中</td><td class="num">—</td></tr><tr><th scope="row">D 氣流倍增式</th><td class="num muted">計算中</td><td class="num muted">計算中</td><td class="num muted">計算中</td><td class="num">—</td></tr></tbody></table></div>
-  <figure class="fig pending"><div class="pending-box">計算中：無側風時的平均供氣比例場</div><figcaption>無側風、臉在 35 cm：顏色越深代表出風口空氣比例越高；紅框是口鼻量測區；灰線是平均流線。</figcaption></figure>
-  <figure class="fig pending"><div class="pending-box">計算中：側風 0.15 m/s 時的平均供氣比例場</div><figcaption>加入由下往上 0.15 m/s 的側風後，噴流被吹彎的程度。</figcaption></figure>
-  <figure class="fig pending"><div class="pending-box">計算中：側風 0.30 m/s 時的平均供氣比例場</div><figcaption>側風 0.30 m/s。</figcaption></figure>
-  <figure class="fig pending"><div class="pending-box">動畫計算中</div><figcaption>瞬時動畫（側風 0.15 m/s）：平均值看不到的擺動與渦旋。每格 0.08 秒。</figcaption></figure>
-  <figure class="fig pending"><div class="pending-box">計算中：自由噴流的平均供氣比例場</div><figcaption>自由噴流（沒有人、沒有側風）：用來看每種噴嘴本身的「乾淨空氣核心」能延伸多遠。</figcaption></figure>
-  <figure class="fig pending"><div class="pending-box">計算中：自由噴流 SAF 隨距離衰減</div><figcaption>自由噴流各斷面的最高 SAF。氣流倍增式在 30 cm 處的總風量是供氣量的數倍，但多出來的都是被捲進來的周圍空氣。</figcaption></figure>
-  <figure class="fig pending"><div class="pending-box">動畫計算中</div><figcaption>自由噴流瞬時動畫。</figcaption></figure>
+  <h2><span class="no">02</span>四種出風口比一比</h2>
+  <p class="oneliner">出風口的電腦模擬還在計算。</p>
+  <figure class="fig"><img class="img-any" src="assets/s2_saf_bars.png" alt="四種出風口在三種側風下的乾淨空氣比例" loading="lazy"><figcaption>每條橫條代表 100% 的吸入空氣，彩色部分是來自出風口的乾淨空氣。黑色短線是最差 10% 的時刻（氣流晃開的瞬間）。</figcaption></figure>
+  <div class="points prose"><p>目前結果（臉在 35 cm 處吸到的乾淨空氣比例）：</p><ul><li><b>A 一般定向噴嘴</b>：計算中</li><li><b>B 康達曲面導流</b>：計算中</li><li><b>C 低混合率同軸噴嘴</b>：計算中</li><li><b>D 氣流倍增式</b>：計算中</li></ul></div>
+  <figure class="fig"><img class="img-any" src="assets/s2_head_vc00_fields.png" alt="無側風時的平均乾淨空氣分布" loading="lazy"><figcaption>無側風時，平均下乾淨空氣分布在哪裡。顏色越深，代表出風口的空氣越多；灰色細線是平均氣流方向。</figcaption></figure>
+  <figure class="fig"><img class="img-any" src="assets/s2_head_vc15_fields.png" alt="側風 0.15 m/s 時的平均乾淨空氣分布" loading="lazy"><figcaption>加上由下往上 0.15 m/s 的側風（大約是人慢慢走過帶起的風），送出的空氣被吹彎。</figcaption></figure>
+  <figure class="fig"><div class="pending-box">動畫計算中</div><figcaption>動畫（側風 0.15 m/s）：平均圖看不到的晃動與渦旋。每格 0.08 秒。</figcaption></figure>
+  <h3>康達曲面的教訓</h3>
+  <figure class="fig">
+<svg class="graphic" viewBox="0 0 760 250" role="img" aria-label="曲面半徑只有出風縫 2.5 倍時氣流直接往下衝，不會沿曲面轉彎">
+
+<defs>
+  <marker id="ka" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="g-accent-fill"/></marker>
+  <marker id="km" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="g-muted-fill"/></marker>
+  <marker id="kc" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="g-crit-fill"/></marker>
+</defs>
+  <text x="40" y="26" class="g-b">第一版：R 15 mm（縫寬的 2.5 倍）</text>
+  <path d="M110,60 L110,110 A30,30 0 0 0 140,140 L140,60 Z" class="g-solid"/>
+  <rect x="92" y="60" width="4" height="50" class="g-solid"/>
+  <line x1="103" y1="64" x2="103" y2="210" class="g-crit-arrow" marker-end="url(#kc)"/>
+  <path d="M106,118 C120,138 140,145 220,145" class="g-dash"/>
+  <text x="150" y="190" class="g-crit-t">氣流直接往下衝</text>
+  <text x="150" y="208" class="g-s">沒有轉彎，臉收不到</text>
+  <text x="228" y="149" class="g-s">（預期的路徑）</text>
+  <text x="420" y="26" class="g-b">修正版：R 45 mm（縫寬的 7.5 倍）</text>
+  <path d="M470,50 L470,100 A80,80 0 0 0 550,180 L550,50 Z" class="g-solid"/>
+  <rect x="452" y="50" width="4" height="50" class="g-solid"/>
+  <path d="M463,54 L463,104 A88,88 0 0 0 551,190 L700,190" class="g-ok-arrow" marker-end="url(#ka)"/>
+  <text x="740" y="226" text-anchor="end" class="g-s">曲面夠緩，氣流才有機會貼著轉彎</text>
+</svg><figcaption>示意圖：曲面半徑和出風縫寬度的比例，決定氣流會不會沿曲面轉彎。</figcaption></figure>
+  <figure class="fig"><div class="pending-box">計算中：康達第一版與修正版的模擬比較</div><figcaption>實際模擬：第一版 R15 和修正版 R45（無側風）。</figcaption></figure>
+  <div class="points prose"><p>計算中。</p></div>
+  <aside class="design"><h4>對設計的意思</h4><ul><li>結果完成後補上。</li></ul></aside>
+  <details class="more"><summary>展開更多圖：側風 0.30 m/s、沒有人時的氣流、完整數字表</summary><div class="more-body"><figure class="fig"><img class="img-any" src="assets/s2_head_vc30_fields.png" alt="側風 0.30 m/s" loading="lazy"><figcaption>側風 0.30 m/s 時的平均分布。</figcaption></figure><figure class="fig"><div class="pending-box">計算中：自由噴流</div><figcaption>沒有人、沒有側風時，每種出風口本身的氣流能走多遠。</figcaption></figure><figure class="fig"><img class="img-any" src="assets/s2_decay.png" alt="乾淨空氣隨距離衰減" loading="lazy"><figcaption>沒有人、沒有側風時，各距離最乾淨的位置。</figcaption></figure><figure class="fig"><div class="pending-box">動畫計算中</div><figcaption>動畫：沒有人、沒有側風。</figcaption></figure><div class="table-wrap"><table><thead><tr><th scope="col">出風口</th><th scope="col">無側風</th><th scope="col">側風 0.15 m/s</th><th scope="col">側風 0.30 m/s</th><th scope="col">30 cm 處總風量 ÷ 送出風量</th></tr></thead><tbody><tr><th scope="row">A 一般定向噴嘴</th><td class="num">24%<span class="sub">最差 18%</span></td><td class="num muted">計算中</td><td class="num muted">計算中</td><td class="num">—</td></tr><tr><th scope="row">B 康達曲面導流</th><td class="num muted">計算中</td><td class="num muted">計算中</td><td class="num muted">計算中</td><td class="num">—</td></tr><tr><th scope="row">C 低混合率同軸噴嘴</th><td class="num muted">計算中</td><td class="num muted">計算中</td><td class="num muted">計算中</td><td class="num">—</td></tr><tr><th scope="row">D 氣流倍增式</th><td class="num muted">計算中</td><td class="num muted">計算中</td><td class="num">0%<span class="sub">最差 0%</span></td><td class="num">—</td></tr></tbody></table></div></div></details>
 </section>
 
 <section id="source">
-  <h2><span class="no">04</span>氣源：決定成敗的不是噴嘴</h2>
-  <div class="prose">
-<p>口鼻區的污染濃度可以用一條混合公式算：<code>C口鼻 = SAF × C供氣 + (1 − SAF) × C環境</code>。噴嘴決定 SAF，氣源決定 C供氣。兩種氣源的結果完全不同：</p>
+  <h2><span class="no">03</span>空氣從哪裡來，比出風口更重要</h2>
+  <p class="oneliner">吸樓梯間的空氣過濾後再送出，口鼻的 CO 一點都不會少。只有獨立的乾淨氣源才有用。</p>
+  <figure class="fig">
+<svg class="graphic" viewBox="0 0 800 330" role="img" aria-label="取樓梯間空氣經濾網後，煙粒被擋下但一氧化碳全部穿過；獨立乾淨氣源才真的降低一氧化碳">
+
+<defs>
+  <marker id="qa" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="g-accent-fill"/></marker>
+  <marker id="qm" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="g-muted-fill"/></marker>
+  <marker id="qc" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="g-crit-fill"/></marker>
+</defs>
+  <text x="20" y="28" class="g-b">A　吸樓梯間的空氣，過濾後送出</text>
+  <rect x="20" y="44" width="150" height="96" rx="8" class="g-box"/>
+  <text x="95" y="64" text-anchor="middle" class="g-t">樓梯間空氣</text>
+  <circle cx="48" cy="78" r="4.2" class="g-smoke"/><circle cx="61" cy="78" r="4.2" class="g-smoke"/><circle cx="74" cy="78" r="4.2" class="g-smoke"/><circle cx="87" cy="78" r="4.2" class="g-smoke"/><circle cx="48" cy="91" r="4.2" class="g-smoke"/><circle cx="61" cy="91" r="4.2" class="g-smoke"/><circle cx="74" cy="91" r="4.2" class="g-smoke"/><circle cx="87" cy="91" r="4.2" class="g-smoke"/><circle cx="48" cy="108" r="4.2" class="g-co"/><circle cx="61" cy="108" r="4.2" class="g-co"/><circle cx="74" cy="108" r="4.2" class="g-co"/><circle cx="87" cy="108" r="4.2" class="g-co"/>
+  <line x1="172" y1="92" x2="222" y2="92" class="g-arrow" marker-end="url(#qm)"/>
+  <rect x="226" y="44" width="110" height="96" rx="8" class="g-filter"/>
+  <text x="281" y="64" text-anchor="middle" class="g-t">濾網</text>
+  <text x="281" y="86" text-anchor="middle" class="g-s">擋下煙粒</text>
+  <text x="281" y="104" text-anchor="middle" class="g-s">CO 穿過去</text>
+  <line x1="338" y1="92" x2="388" y2="92" class="g-arrow" marker-end="url(#qm)"/>
+  <rect x="392" y="44" width="150" height="96" rx="8" class="g-box"/>
+  <text x="467" y="64" text-anchor="middle" class="g-t">送出的空氣</text>
+  <circle cx="448" cy="98" r="4.2" class="g-co"/><circle cx="461" cy="98" r="4.2" class="g-co"/><circle cx="474" cy="98" r="4.2" class="g-co"/><circle cx="487" cy="98" r="4.2" class="g-co"/>
+  <text x="467" y="124" text-anchor="middle" class="g-s">煙粒沒了，CO 還在</text>
+  <line x1="544" y1="92" x2="594" y2="92" class="g-arrow" marker-end="url(#qm)"/>
+  <circle cx="640" cy="92" r="40" class="g-head"/>
+  <text x="640" y="98" text-anchor="middle" class="g-t">口鼻</text>
+  <text x="690" y="84" class="g-crit-t">CO 100%</text>
+  <text x="690" y="102" class="g-s">一點都沒少</text>
+
+  <text x="20" y="196" class="g-b">B　獨立乾淨氣源（室外進氣、壓縮空氣）</text>
+  <rect x="20" y="212" width="150" height="96" rx="8" class="g-box g-box-ok"/>
+  <text x="95" y="232" text-anchor="middle" class="g-t">乾淨空氣</text>
+  <text x="95" y="262" text-anchor="middle" class="g-s">沒有煙粒、沒有 CO</text>
+  <line x1="172" y1="260" x2="388" y2="260" class="g-arrow-ok" marker-end="url(#qa)"/>
+  <text x="280" y="250" text-anchor="middle" class="g-s">經扶手出風口送出</text>
+  <rect x="392" y="212" width="150" height="96" rx="8" class="g-box"/>
+  <text x="467" y="232" text-anchor="middle" class="g-t">到口鼻時</text>
+  <text x="467" y="258" text-anchor="middle" class="g-s">混進一些周圍空氣</text>
+  <text x="467" y="278" text-anchor="middle" class="g-s">（多少由出風口決定）</text>
+  <line x1="544" y1="260" x2="594" y2="260" class="g-arrow-ok" marker-end="url(#qa)"/>
+  <circle cx="640" cy="260" r="40" class="g-head"/>
+  <text x="640" y="266" text-anchor="middle" class="g-t">口鼻</text>
+  <text x="690" y="252" class="g-ok-t">CO 70%</text>
+  <text x="690" y="270" class="g-s">降低的比例</text>
+  <text x="690" y="286" class="g-s">＝乾淨空氣比例</text>
+  <circle cx="30" cy="322" r="4.2" class="g-smoke"/><text x="40" y="326" class="g-s">煙粒</text>
+  <circle cx="90" cy="322" r="4.2" class="g-co"/><text x="100" y="326" class="g-s">一氧化碳（CO）分子</text>
+</svg><figcaption>濾網只擋得住煙粒，擋不住 CO。送出去的空氣如果本來就含 CO，再好的出風口也沒用。</figcaption></figure>
+  <figure class="fig"><img class="img-any" src="assets/s2_exposure.png" alt="兩種氣源下口鼻的 CO" loading="lazy"><figcaption>口鼻 CO ÷ 周圍 CO。紅：吸樓梯間空氣＋濾網；藍：獨立乾淨氣源。用側風 0.15 m/s 的乾淨空氣比例代入公式計算。</figcaption></figure>
+  <div class="points prose">
+<p><b>為什麼？</b>出風口只決定「吸到的空氣有幾成來自出風口」，但送出去的空氣本身乾不乾淨，是氣源決定的。</p>
 <ul>
-<li><b>取樓梯間空氣、過濾後送出：</b>CO 會穿過濾材，C供氣 = C環境，代入公式後 C口鼻 = C環境。<b>不管噴嘴多好，CO 都完全沒有降低</b>；缺氧與高溫也一樣。<span class="tag tag-sim">模擬結果</span></li>
-<li><b>獨立乾淨氣源：</b>C供氣 ≈ 0，C口鼻 = (1 − SAF) × C環境，<b>降低的比例就等於 SAF</b>。噴嘴的差異只有在這個前提下才有意義。<span class="tag tag-sim">模擬結果</span></li>
+<li><b>吸樓梯間的空氣：</b>濾網只擋得住煙粒。CO 照樣穿過去，送出的空氣 CO 和周圍一樣多，所以不管出風口設計多好，口鼻的 CO 都一樣。缺氧和高溫也一樣，濾網補不了氧氣、也降不了溫。<span class="tag tag-sim">模擬結果</span></li>
+<li><b>獨立乾淨氣源：</b>送出的空氣沒有 CO，口鼻的 CO 就降低「乾淨空氣比例」那麼多。例如比例 30%，CO 就剩 70%。<span class="tag tag-sim">模擬結果</span></li>
 </ul>
-<p>獨立氣源的可能來源和問題：</p>
+<p><b>乾淨氣源從哪來？</b></p>
 <ul>
-<li><b>室外進氣：</b>進氣口可能被火災煙污染，位置要遠離開口和排煙口，並在進氣端監測 CO，污染時自動關閉。<span class="tag tag-tbd">尚待驗證</span></li>
-<li><b>壓縮空氣鋼瓶：</b>來源乾淨，但容量、殘壓、調壓器、鋼瓶認證與定期檢驗都需要專業評估；之前討論過的「約一小時」只是理想氣體粗算。<span class="tag tag-tbd">尚待驗證</span></li>
-<li><b>另一條路：</b>如果目標真的是「讓人在濃煙中呼吸」，在轉角主機內存放經認證的逃生頭罩（例如 EN 403 類），比開放式送風更直接，也已經有認證標準可依循。台灣的適用法規與產品認證需要另外查證。<span class="tag tag-inf">工程推論</span><span class="tag tag-tbd">尚待驗證</span></li>
-</ul>
-</div>
-  <figure class="fig pending"><div class="pending-box">計算中：不同氣源下口鼻區 CO 相對環境濃度</div><figcaption>口鼻區 CO ÷ 環境 CO。紅：取樓梯間空氣經濾材後送出（CO 穿透 100%）；藍：獨立乾淨氣源（CO=0）。側風 0.15 m/s 的 SAF 代入上面的混合公式。</figcaption></figure>
+<li><b>室外進氣：</b>進氣口本身可能被火災煙污染，要遠離窗戶、開口和排煙口，進氣端也要裝 CO 感測，污染時自動關閉。<span class="tag tag-tbd">尚待驗證</span></li>
+<li><b>壓縮空氣鋼瓶：</b>空氣乾淨，但鋼瓶容量、壓力調節、認證與定期檢驗都要專業評估。之前討論的「約一小時」只是粗算。<span class="tag tag-tbd">尚待驗證</span></li>
+<li><b>換一個思路：</b>如果目標真的是「在濃煙中呼吸」，在轉角主機裡放經過認證的逃生頭罩（例如符合 EN 403 的產品），比開放式送風更直接，也已經有標準可以依循。台灣的法規和產品認證要另外查證。<span class="tag tag-inf">工程推論</span><span class="tag tag-tbd">尚待驗證</span></li>
+</ul></div>
+  <aside class="design"><h4>對設計的意思</h4><ul><li>主機的進氣口<b>不能</b>從樓梯間吸氣後直接送給人；這條路已經被模擬排除。</li><li>如果保留送風，提案要先回答「乾淨空氣從哪裡來」，這比出風口造型更重要。</li><li>可以把「逃生頭罩收納」當成轉角主機的功能選項，跟送風方案並列比較。</li></ul></aside>
 </section>
 
 <section id="filter">
-  <h2><span class="no">05</span>濾材與氣旋</h2>
-  <div class="prose">
-<p>火災煙的微粒大多小於 1 µm。這個尺寸對各種處理方式的差異非常大：</p>
+  <h2><span class="no">04</span>濾網能擋什麼</h2>
+  <p class="oneliner">HEPA 擋得住煙粒，擋不住 CO。氣旋連煙粒都抓不到，不採用。</p>
+  <figure class="fig">
+<svg class="graphic" viewBox="0 0 760 230" role="img" aria-label="火災煙粒大多在 0.05 到 1 微米之間，比氣旋能抓的大小還小很多">
+  <rect x="178.3" y="70" width="201.7" height="70" rx="6" class="g-smokeband"/>
+  <text x="279.2" y="98" text-anchor="middle" class="g-t">火災煙粒大多在這裡</text>
+  <text x="279.2" y="118" text-anchor="middle" class="g-s">約 0.05–1 µm</text>
+  <line x1="70" y1="150" x2="690" y2="150" class="g-axis"/>
+  <line x1="70.0" y1="150" x2="70.0" y2="158" class="g-leader"/><text x="70.0" y="176" text-anchor="middle" class="g-s">0.01</text><line x1="225.0" y1="150" x2="225.0" y2="158" class="g-leader"/><text x="225.0" y="176" text-anchor="middle" class="g-s">0.1</text><line x1="380.0" y1="150" x2="380.0" y2="158" class="g-leader"/><text x="380.0" y="176" text-anchor="middle" class="g-s">1</text><line x1="535.0" y1="150" x2="535.0" y2="158" class="g-leader"/><text x="535.0" y="176" text-anchor="middle" class="g-s">10</text><line x1="690.0" y1="150" x2="690.0" y2="158" class="g-leader"/><text x="690.0" y="176" text-anchor="middle" class="g-s">100 µm</text>
+  <line x1="450.6" y1="40" x2="450.6" y2="150" class="g-crit-line"/>
+  <text x="456.6" y="52" class="g-crit-t">氣旋：2.9 µm</text>
+  <text x="456.6" y="68" class="g-s">比這小的大多抓不到</text>
+  <line x1="441.7" y1="150" x2="441.7" y2="196" class="g-leader"/>
+  <text x="441.7" y="212" text-anchor="middle" class="g-s">PM2.5 的 2.5 µm</text>
+  <line x1="666.0" y1="150" x2="666.0" y2="196" class="g-leader"/>
+  <text x="666.0" y="212" text-anchor="middle" class="g-s">頭髮粗細 約 70 µm</text>
+  <rect x="70" y="18" width="221.0" height="24" rx="4" class="g-okband"/>
+  <text x="78" y="35" class="g-s">HEPA：整段都抓得到（≥ 99.95%）</text>
+</svg><figcaption>火災煙粒比氣旋能抓的大小小了好幾倍；HEPA 則整段都抓得到。</figcaption></figure>
+  <figure class="fig"><img class="img-light" src="assets/s3_filtration.png" alt="各種過濾方式能抓到的粒子大小" loading="lazy"><img class="img-dark" src="assets/s3_filtration_dark.png" alt="各種過濾方式能抓到的粒子大小" loading="lazy"><figcaption>曲線：每種方式對各種大小的粒子抓得到幾成。灰色山形：兩種火災煙的粒子大小分布（假設值）。</figcaption></figure>
+  <div class="table-wrap"><table><thead><tr><th scope="col">煙的種類</th><th scope="col">處理方式</th><th scope="col">煙粒擋下多少（重量）</th><th scope="col">CO 擋下多少</th></tr></thead><tbody><tr><td>有焰燃燒煙</td><td>氣旋（D=100 mm）</td><td class="num">2.9%</td><td class="num">0%</td></tr><tr><td>有焰燃燒煙</td><td>初濾</td><td class="num">11.2%</td><td class="num">0%</td></tr><tr><td>有焰燃燒煙</td><td>初濾 + HEPA H13</td><td class="num">100.0%</td><td class="num">0%</td></tr><tr><td>悶燒煙</td><td>氣旋（D=100 mm）</td><td class="num">17.1%</td><td class="num">0%</td></tr><tr><td>悶燒煙</td><td>初濾</td><td class="num">33.2%</td><td class="num">0%</td></tr><tr><td>悶燒煙</td><td>初濾 + HEPA H13</td><td class="num">100.0%</td><td class="num">0%</td></tr></tbody></table></div>
+  <div class="points prose">
 <ul>
-<li><b>HEPA 抓得到微粒。</b>初濾＋HEPA H13 對兩種假設煙的微粒去除率都在 99.9% 以上。<span class="tag tag-sim">模擬結果</span><span class="tag tag-std">外部標準定義</span></li>
-<li><b>氣旋幾乎抓不到。</b>D = 100 mm 的氣旋在 60 m³/h 時，入口風速 13 m/s、切割粒徑 d50 ≈ 2.9 µm、壓損約 856 Pa。對有焰燃燒煙只去除約 3% 質量，悶燒煙約 17%。做小一點（D = 60 mm）可以把 d50 降到 1.3 µm，但壓損暴增到約 6.6 kPa。結論：氣旋不採用。<span class="tag tag-sim">模擬結果</span></li>
-<li><b>CO 穿過所有機械濾材。</b>CO 是氣體分子，HEPA 對它沒有作用。活性碳靠物理吸附，對沸點極低的 CO 幾乎無效。<span class="tag tag-inf">工程推論</span></li>
-<li><b>觸媒有可能處理 CO，但不能靠模擬下結論。</b>霍加拉（Hopcalite）類觸媒能在常溫把 CO 氧化成 CO₂，經認證的過濾式逃生頭罩（例如 EN 403 類產品）就用這類材料。但它怕濕氣、有使用壽命、反應會放熱，而且頭罩是密閉、只供一個人呼吸的低流量裝置，跟開放式送風完全不同。本報告不計入任何觸媒效益。<span class="tag tag-tbd">尚待驗證</span></li>
-<li><b>濾材補不了氧氣。</b>火場的缺氧和高溫，任何濾材都處理不了。</li>
-</ul>
-<p class="muted">煙的粒徑分布、有效密度與初濾效率曲線都是假設值，需要引用文獻或實測修正；不過「氣旋抓不到次微米煙粒」這個結論對參數不敏感。</p>
-</div>
-  <figure class="fig wide"><img class="img-light" src="assets/s3_filtration.png" alt="分級效率與煙粒徑分布" loading="lazy"><img class="img-dark" src="assets/s3_filtration_dark.png" alt="分級效率與煙粒徑分布" loading="lazy"><figcaption>曲線＝各元件的捕集效率；灰色區塊＝兩種火災煙的質量粒徑分布（假設值）。</figcaption></figure>
-  <div class="table-wrap"><table><thead><tr><th scope="col">煙的種類</th><th scope="col">處理方式</th><th scope="col">微粒去除（質量）</th><th scope="col">微粒去除（數量）</th><th scope="col">CO 去除</th></tr></thead><tbody><tr><td>有焰燃燒煙（CMD 0.10 µm）</td><td>氣旋（D=100 mm）</td><td class="num">2.9%</td><td class="num">0.3%</td><td class="num">0%</td></tr><tr><td>有焰燃燒煙（CMD 0.10 µm）</td><td>初濾</td><td class="num">11.2%</td><td class="num">2.8%</td><td class="num">0%</td></tr><tr><td>有焰燃燒煙（CMD 0.10 µm）</td><td>初濾 + HEPA H13</td><td class="num">100.0%</td><td class="num">100.0%</td><td class="num">0%</td></tr><tr><td>悶燒煙（CMD 0.30 µm）</td><td>氣旋（D=100 mm）</td><td class="num">17.1%</td><td class="num">2.3%</td><td class="num">0%</td></tr><tr><td>悶燒煙（CMD 0.30 µm）</td><td>初濾</td><td class="num">33.2%</td><td class="num">9.7%</td><td class="num">0%</td></tr><tr><td>悶燒煙（CMD 0.30 µm）</td><td>初濾 + HEPA H13</td><td class="num">100.0%</td><td class="num">100.0%</td><td class="num">0%</td></tr></tbody></table></div>
+<li><b>HEPA 擋得住煙粒：</b>初濾＋HEPA 對兩種假設的火災煙，煙粒都擋下 99.9% 以上。<span class="tag tag-sim">模擬結果</span><span class="tag tag-std">外部標準</span></li>
+<li><b>氣旋擋不住：</b>氣旋靠旋轉把粒子甩出去，粒子越小越甩不出去。一般 10 cm 大小的氣旋，一半抓得到、一半抓不到的粒子大小約 2.9 µm，但火災煙粒大多不到 1 µm，所以有焰燃燒的煙只抓到約 3%。做小一點可以抓更小的粒子，但需要的推力會暴增到約 6.6 kPa。<span class="tag tag-sim">模擬結果</span></li>
+<li><b>CO 擋不住：</b>CO 是氣體分子，比任何濾網的孔都小很多。活性碳靠「吸附」抓氣體，但對 CO 幾乎沒用。<span class="tag tag-inf">工程推論</span></li>
+<li><b>觸媒有機會，但要實驗：</b>霍加拉（Hopcalite）類觸媒能把 CO 變成 CO₂，認證的逃生頭罩就用這類材料。不過它怕濕氣、有壽命、反應會發熱，而且頭罩是密閉、只給一個人用的小風量裝置。這份報告不算它的效果。<span class="tag tag-tbd">尚待驗證</span></li>
+</ul></div>
+  <aside class="design"><h4>對設計的意思</h4><ul><li>主機的濾網區可以保留（HEPA 處理煙粒），但宣傳上<b>不能說「淨化火場空氣」</b>。</li><li>氣旋從設計中拿掉，省下體積和風機推力。</li><li>濾網會堵塞：要有好換的濾網門，以及「濾網該換了」的提示燈（第 05 章的風機要能撐住堵塞時的阻力）。</li></ul></aside>
 </section>
 
 <section id="duct">
-  <h2><span class="no">06</span>風道與風機</h2>
-  <div class="prose">
-<p>設定每層一台主機，往上、往下各一個分支；每分支扶手風道 3.5 m，只在末段 0.6 m 開出風口。用與 CFD 相同的出風量（每公尺 5 L/s）計算，一台主機需要 <b>6 L/s（約 22 m³/h）</b>。<span class="tag tag-asm">假設值</span></p>
+  <h2><span class="no">05</span>風機與扶手管子</h2>
+  <p class="oneliner">每層一台約 19 W 的中型風機就夠，但扶手管子要夠粗，出風口裡要加一層均流層。</p>
+  <figure class="fig">
+<svg class="graphic" viewBox="0 0 760 320" role="img" aria-label="每層平台一台主機，出風口集中在平台上下各 0.6 公尺">
+
+<defs>
+  <marker id="la" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="g-accent-fill"/></marker>
+  <marker id="lm" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="g-muted-fill"/></marker>
+  <marker id="lc" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="g-crit-fill"/></marker>
+</defs>
+  <path d="M40,290 L120,290 L120,270 L160,270 L160,250 L200,250 L200,230 L240,230 L240,210 L280,210 L280,190 L320,190 L320,170 L420,170" class="g-stair"/>
+  <path d="M420,170 L460,170 L460,150 L500,150 L500,130 L540,130 L540,110 L580,110 L580,90 L620,90 L620,70 L720,70" class="g-stair"/>
+  <path d="M60,250 L330,130 L430,130 L720,30" class="g-rail"/>
+  <path d="M262,160 L330,130 L430,130 L470,116" class="g-outlet"/>
+  <rect x="352" y="134" width="58" height="36" rx="4" class="g-host"/>
+  <text x="381" y="157" text-anchor="middle" class="g-on">主機</text>
+  <line x1="381" y1="172" x2="381" y2="232" class="g-leader"/>
+  <text x="381" y="250" text-anchor="middle" class="g-t">每層平台一台（約 20 W）</text>
+  <text x="381" y="268" text-anchor="middle" class="g-s">風機、控制、預留空氣模組</text>
+  <line x1="290" y1="140" x2="230" y2="80" class="g-leader"/>
+  <text x="150" y="66" class="g-ok-t">出風口集中在平台附近</text>
+  <text x="150" y="84" class="g-s">往上、往下各約 0.6 m</text>
+  <line x1="600" y1="56" x2="640" y2="20" class="g-leader"/>
+  <text x="560" y="16" class="g-s">其餘扶手只做導引（光、觸覺）</text>
+  <text x="40" y="314" class="g-s">示意圖，比例不精確</text>
+</svg><figcaption>建議配置：每層平台一台主機，出風口集中在平台附近，其他扶手只負責導引。</figcaption></figure>
+  <figure class="fig"><img class="img-light" src="assets/s1_fan_system.png" alt="風機與阻力曲線" loading="lazy"><img class="img-dark" src="assets/s1_fan_system_dark.png" alt="風機與阻力曲線" loading="lazy"><figcaption>黑線是三種風機（假設值）的能力，彩色線是管子＋濾網的阻力。交點就是實際能送出的風量；紅色虛線是需要的 6 L/s。</figcaption></figure>
+  <figure class="fig">
+<svg class="graphic" viewBox="0 0 760 250" role="img" aria-label="沒有均流層時空氣大多從出風段末端衝出，加上均流層後每一段出風量接近">
+
+<defs>
+  <marker id="ua" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="g-accent-fill"/></marker>
+  <marker id="um" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="g-muted-fill"/></marker>
+  <marker id="uc" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="g-crit-fill"/></marker>
+</defs>
+  <rect x="120" y="110" width="540" height="14" rx="7" class="g-solid"/><line x1="150" y1="110" x2="150" y2="96" class="g-arrow-ok" marker-end="url(#ua)"/><line x1="212" y1="110" x2="212" y2="94" class="g-arrow-ok" marker-end="url(#ua)"/><line x1="274" y1="110" x2="274" y2="90" class="g-arrow-ok" marker-end="url(#ua)"/><line x1="336" y1="110" x2="336" y2="85" class="g-arrow-ok" marker-end="url(#ua)"/><line x1="398" y1="110" x2="398" y2="79" class="g-arrow-ok" marker-end="url(#ua)"/><line x1="460" y1="110" x2="460" y2="71" class="g-arrow-ok" marker-end="url(#ua)"/><line x1="522" y1="110" x2="522" y2="63" class="g-arrow-ok" marker-end="url(#ua)"/><line x1="584" y1="110" x2="584" y2="54" class="g-arrow-ok" marker-end="url(#ua)"/><line x1="646" y1="110" x2="646" y2="44" class="g-arrow-ok" marker-end="url(#ua)"/><text x="20" y="80" class="g-t">沒有均流層</text><text x="20" y="98" class="g-s">最少只有最多的 35%</text>
+  <rect x="120" y="220" width="540" height="14" rx="7" class="g-solid"/><line x1="150" y1="220" x2="150" y2="180" class="g-arrow-ok" marker-end="url(#ua)"/><line x1="212" y1="220" x2="212" y2="180" class="g-arrow-ok" marker-end="url(#ua)"/><line x1="274" y1="220" x2="274" y2="179" class="g-arrow-ok" marker-end="url(#ua)"/><line x1="336" y1="220" x2="336" y2="179" class="g-arrow-ok" marker-end="url(#ua)"/><line x1="398" y1="220" x2="398" y2="178" class="g-arrow-ok" marker-end="url(#ua)"/><line x1="460" y1="220" x2="460" y2="178" class="g-arrow-ok" marker-end="url(#ua)"/><line x1="522" y1="220" x2="522" y2="178" class="g-arrow-ok" marker-end="url(#ua)"/><line x1="584" y1="220" x2="584" y2="177" class="g-arrow-ok" marker-end="url(#ua)"/><line x1="646" y1="220" x2="646" y2="177" class="g-arrow-ok" marker-end="url(#ua)"/><text x="20" y="190" class="g-t">加一層均流層</text><text x="20" y="208" class="g-s">約 30 Pa，均勻度 94%</text>
+  <text x="120" y="134" class="g-s">← 風從主機這端進來</text>
+  <text x="660" y="134" text-anchor="end" class="g-s">出風段末端 →</text>
+  <text x="690" y="70" class="g-s">空氣擠到</text>
+  <text x="690" y="86" class="g-s">末端衝出</text>
+</svg><figcaption>出風口裡沒有均流層時，風會擠到末端才衝出來。</figcaption></figure>
+  <figure class="fig"><img class="img-light" src="assets/s1_uniformity.png" alt="均流層與出風均勻度" loading="lazy"><img class="img-dark" src="assets/s1_uniformity_dark.png" alt="均流層與出風均勻度" loading="lazy"><figcaption>左：均流層阻力越大，出風越平均。右：沒有均流層（2 Pa）和有均流層（30 Pa）時，每一段出風口的出風量。</figcaption></figure>
+  <div class="points prose">
+<p>設定：每層平台一台主機，往上、往下各送一段；只在靠近平台的 0.6 m 開出風口。照每公尺 5 L/s 計算，一台主機要送 <b>6 L/s（約 22 m³/h）</b>。<span class="tag tag-asm">假設值</span></p>
 <ul>
-<li><b>中型鼓風機量級就夠。</b>假設曲線 M 在濾材堵塞時仍有 10.6 L/s、536 Pa，耗電約 19 W（風機效率假設 30%）。小型曲線 S 在濾材全新時夠用，堵塞後降到 5.6 L/s，不夠。<span class="tag tag-sim">模擬結果</span></li>
-<li><b>扶手內徑是最敏感的尺寸。</b>內徑 34 mm 時分支管內風速 3.3 m/s、動壓 6.6 Pa；內徑從 38 mm 縮到 30 mm，風道壓損約變成 2.5–3 倍。外觀設計時要先保留風道截面，再決定扶手外形。<span class="tag tag-sim">模擬結果</span></li>
-<li><b>出風口一定要有均流層。</b>出風口本身阻力太小時，空氣會集中從出風段末端衝出：均流壓降只有 2 Pa 時，最少的孔只有最多的孔的 35%。均流層（多孔板、金屬網或蜂巢）設計壓降約 20–30 Pa，均勻度才達 90% 以上。這層同時也是低混合率噴嘴需要的整流段。<span class="tag tag-sim">模擬結果</span></li>
-<li><b>出風口要集中在需要的位置。</b>一台主機能供應的出風長度約 2 m（風機 M），不可能整條扶手都出風。比較合理的是集中在平台轉角、低姿勢停留處。<span class="tag tag-inf">工程推論</span></li>
-</ul>
-<p class="muted">三條風機曲線與濾材壓損都是假設值，選定實際風機與濾材型號後，要用型錄數據重算。</p>
-</div>
-  <figure class="fig"><img class="img-light" src="assets/s1_fan_system.png" alt="風機曲線與系統阻力" loading="lazy"><img class="img-dark" src="assets/s1_fan_system_dark.png" alt="風機曲線與系統阻力" loading="lazy"><figcaption>三條風機曲線為假設值，需換成實際型錄曲線再算一次。紅色虛線為需求風量。</figcaption></figure>
-  <div class="table-wrap"><table><thead><tr><th scope="col">風機</th><th scope="col">濾材狀態</th><th scope="col">風量 L/s</th><th scope="col">靜壓 Pa</th><th scope="col">可供出風口長度 m</th><th scope="col">耗電約 W</th><th scope="col">需求 6 L/s</th></tr></thead><tbody><tr><th scope="row">S</th><td>無濾材</td><td class="num">7.0</td><td class="num">121</td><td class="num">1.39</td><td class="num">3</td><td><span class="pill ok">足夠</span></td></tr><tr><th scope="row">M</th><td>無濾材</td><td class="num">12.6</td><td class="num">383</td><td class="num">2.53</td><td class="num">16</td><td><span class="pill ok">足夠</span></td></tr><tr><th scope="row">L</th><td>無濾材</td><td class="num">21.3</td><td class="num">1064</td><td class="num">4.26</td><td class="num">76</td><td><span class="pill ok">足夠</span></td></tr><tr><th scope="row">S</th><td>濾材全新</td><td class="num">6.2</td><td class="num">177</td><td class="num">1.24</td><td class="num">4</td><td><span class="pill ok">足夠</span></td></tr><tr><th scope="row">M</th><td>濾材全新</td><td class="num">11.5</td><td class="num">470</td><td class="num">2.30</td><td class="num">18</td><td><span class="pill ok">足夠</span></td></tr><tr><th scope="row">L</th><td>濾材全新</td><td class="num">19.7</td><td class="num">1169</td><td class="num">3.95</td><td class="num">77</td><td><span class="pill ok">足夠</span></td></tr><tr><th scope="row">S</th><td>濾材堵塞（HEPA×2、初濾×3）</td><td class="num">5.6</td><td class="num">219</td><td class="num">1.12</td><td class="num">4</td><td><span class="pill bad">不足</span></td></tr><tr><th scope="row">M</th><td>濾材堵塞（HEPA×2、初濾×3）</td><td class="num">10.6</td><td class="num">536</td><td class="num">2.12</td><td class="num">19</td><td><span class="pill ok">足夠</span></td></tr><tr><th scope="row">L</th><td>濾材堵塞（HEPA×2、初濾×3）</td><td class="num">18.4</td><td class="num">1253</td><td class="num">3.67</td><td class="num">77</td><td><span class="pill ok">足夠</span></td></tr></tbody></table></div>
-  <figure class="fig"><img class="img-light" src="assets/s1_diameter.png" alt="風道壓損對內徑的敏感度" loading="lazy"><img class="img-dark" src="assets/s1_diameter_dark.png" alt="風道壓損對內徑的敏感度" loading="lazy"><figcaption>內徑從 38 mm 縮到 30 mm，壓損約增加 2.5–3 倍。</figcaption></figure>
-  <figure class="fig wide"><img class="img-light" src="assets/s1_uniformity.png" alt="出風均勻度" loading="lazy"><img class="img-dark" src="assets/s1_uniformity_dark.png" alt="出風均勻度" loading="lazy"><figcaption>左：均流板壓降與出風均勻度；右：沒有均流板時，空氣大多從出風段末端跑出去。</figcaption></figure>
+<li><b>風機：</b>中型鼓風機（假設曲線 M）在濾網堵塞時還有 10.6 L/s；小型的（曲線 S）濾網新的時候夠用，堵塞後只剩 5.6 L/s，不夠。<span class="tag tag-sim">模擬結果</span><span class="tag tag-asm">假設值</span></li>
+<li><b>管子粗細：</b>扶手內的風道從 38 mm 縮到 30 mm，阻力大約變成 2.5–3 倍。外觀可以改，風道截面要先保住。<span class="tag tag-sim">模擬結果</span></li>
+<li><b>均流層：</b>沒有均流層時，風會擠到出風段末端，最少的地方只有最多的 35%。加一層約 20–30 Pa 阻力的均流層（多孔板、金屬網或蜂巢），每一段才會平均出風（94%）。這層同時也是低混合率噴嘴需要的整流層。<span class="tag tag-sim">模擬結果</span></li>
+<li><b>出風口不能整條都開：</b>一台主機的風只夠約 2 m 出風口，應該集中在平台轉角、會停留或低姿勢的地方。<span class="tag tag-inf">工程推論</span></li>
+</ul></div>
+  <aside class="design"><h4>對設計的意思</h4><ul><li>扶手風道內徑建議<b>不小於 34 mm</b>，在畫外型前先保留。</li><li>出風口內加一層均流層（阻力約 20–30 Pa），可以和出風格柵整合成一個零件。</li><li>每層一台主機、出風口集中在平台上下各約 0.6 m，其餘扶手只做光與觸覺導引。</li><li>風機選型要用「濾網堵塞時」的阻力來選，不是用新濾網。</li></ul></aside>
+  <details class="more"><summary>展開更多：管子粗細的影響、各風機工作點表</summary><div class="more-body"><figure class="fig"><img class="img-light" src="assets/s1_diameter.png" alt="管徑與壓損" loading="lazy"><img class="img-dark" src="assets/s1_diameter_dark.png" alt="管徑與壓損" loading="lazy"><figcaption>內徑從 38 mm 縮到 30 mm，阻力大約變成 2.5–3 倍。</figcaption></figure><div class="table-wrap"><table><thead><tr><th scope="col">風機</th><th scope="col">濾網狀態</th><th scope="col">風量 L/s</th><th scope="col">壓力 Pa</th><th scope="col">能供多長出風口 m</th><th scope="col">耗電約 W</th><th scope="col">需要 6 L/s</th></tr></thead><tbody><tr><th scope="row">S</th><td>無濾材</td><td class="num">7.0</td><td class="num">121</td><td class="num">1.39</td><td class="num">3</td><td><span class="pill ok">夠</span></td></tr><tr><th scope="row">M</th><td>無濾材</td><td class="num">12.6</td><td class="num">383</td><td class="num">2.53</td><td class="num">16</td><td><span class="pill ok">夠</span></td></tr><tr><th scope="row">L</th><td>無濾材</td><td class="num">21.3</td><td class="num">1064</td><td class="num">4.26</td><td class="num">76</td><td><span class="pill ok">夠</span></td></tr><tr><th scope="row">S</th><td>濾材全新</td><td class="num">6.2</td><td class="num">177</td><td class="num">1.24</td><td class="num">4</td><td><span class="pill ok">夠</span></td></tr><tr><th scope="row">M</th><td>濾材全新</td><td class="num">11.5</td><td class="num">470</td><td class="num">2.30</td><td class="num">18</td><td><span class="pill ok">夠</span></td></tr><tr><th scope="row">L</th><td>濾材全新</td><td class="num">19.7</td><td class="num">1169</td><td class="num">3.95</td><td class="num">77</td><td><span class="pill ok">夠</span></td></tr><tr><th scope="row">S</th><td>濾材堵塞（HEPA×2、初濾×3）</td><td class="num">5.6</td><td class="num">219</td><td class="num">1.12</td><td class="num">4</td><td><span class="pill bad">不夠</span></td></tr><tr><th scope="row">M</th><td>濾材堵塞（HEPA×2、初濾×3）</td><td class="num">10.6</td><td class="num">536</td><td class="num">2.12</td><td class="num">19</td><td><span class="pill ok">夠</span></td></tr><tr><th scope="row">L</th><td>濾材堵塞（HEPA×2、初濾×3）</td><td class="num">18.4</td><td class="num">1253</td><td class="num">3.67</td><td class="num">77</td><td><span class="pill ok">夠</span></td></tr></tbody></table></div></div></details>
 </section>
 
 <section id="exhaust">
-  <h2><span class="no">07</span>扶手當排煙管：容量差兩個數量級</h2>
-  <div class="prose">
-<p>假設整棟 10 層只用一根扶手風道排煙（總長 70 m、40 個彎頭、60 個接頭）：</p>
+  <h2><span class="no">06</span>扶手能不能拿來排煙</h2>
+  <p class="oneliner">不行。整棟一根扶手全力排煙，量也只有一扇敞開的門的 0.7%。</p>
+  <figure class="fig">
+<svg class="graphic" viewBox="0 0 760 240" role="img" aria-label="一扇敞開的門的風量相當於約 153 根扶手同時全力排煙">
+  <rect x="40" y="40" width="90" height="180" rx="3" class="g-door"/>
+  <text x="85" y="134" text-anchor="middle" class="g-t">門</text>
+  <text x="85" y="238" text-anchor="middle" class="g-s">0.9 × 2.0 m</text>
+  <text x="150" y="110" class="g-b">≈ 108 m³/min</text>
+  <text x="150" y="130" class="g-s">（風速 1 m/s 時）</text>
+  <text x="330" y="36" class="g-t">＝ 約 153 根扶手同時全力排煙</text>
+  <circle cx="330" cy="60" r="4.5" class="g-raildot"/><circle cx="345" cy="60" r="4.5" class="g-raildot"/><circle cx="360" cy="60" r="4.5" class="g-raildot"/><circle cx="375" cy="60" r="4.5" class="g-raildot"/><circle cx="390" cy="60" r="4.5" class="g-raildot"/><circle cx="405" cy="60" r="4.5" class="g-raildot"/><circle cx="420" cy="60" r="4.5" class="g-raildot"/><circle cx="435" cy="60" r="4.5" class="g-raildot"/><circle cx="450" cy="60" r="4.5" class="g-raildot"/><circle cx="465" cy="60" r="4.5" class="g-raildot"/><circle cx="480" cy="60" r="4.5" class="g-raildot"/><circle cx="495" cy="60" r="4.5" class="g-raildot"/><circle cx="510" cy="60" r="4.5" class="g-raildot"/><circle cx="525" cy="60" r="4.5" class="g-raildot"/><circle cx="540" cy="60" r="4.5" class="g-raildot"/><circle cx="555" cy="60" r="4.5" class="g-raildot"/><circle cx="570" cy="60" r="4.5" class="g-raildot"/><circle cx="585" cy="60" r="4.5" class="g-raildot"/><circle cx="600" cy="60" r="4.5" class="g-raildot"/><circle cx="615" cy="60" r="4.5" class="g-raildot"/><circle cx="630" cy="60" r="4.5" class="g-raildot"/><circle cx="645" cy="60" r="4.5" class="g-raildot"/><circle cx="660" cy="60" r="4.5" class="g-raildot"/><circle cx="675" cy="60" r="4.5" class="g-raildot"/><circle cx="690" cy="60" r="4.5" class="g-raildot"/><circle cx="330" cy="75" r="4.5" class="g-raildot"/><circle cx="345" cy="75" r="4.5" class="g-raildot"/><circle cx="360" cy="75" r="4.5" class="g-raildot"/><circle cx="375" cy="75" r="4.5" class="g-raildot"/><circle cx="390" cy="75" r="4.5" class="g-raildot"/><circle cx="405" cy="75" r="4.5" class="g-raildot"/><circle cx="420" cy="75" r="4.5" class="g-raildot"/><circle cx="435" cy="75" r="4.5" class="g-raildot"/><circle cx="450" cy="75" r="4.5" class="g-raildot"/><circle cx="465" cy="75" r="4.5" class="g-raildot"/><circle cx="480" cy="75" r="4.5" class="g-raildot"/><circle cx="495" cy="75" r="4.5" class="g-raildot"/><circle cx="510" cy="75" r="4.5" class="g-raildot"/><circle cx="525" cy="75" r="4.5" class="g-raildot"/><circle cx="540" cy="75" r="4.5" class="g-raildot"/><circle cx="555" cy="75" r="4.5" class="g-raildot"/><circle cx="570" cy="75" r="4.5" class="g-raildot"/><circle cx="585" cy="75" r="4.5" class="g-raildot"/><circle cx="600" cy="75" r="4.5" class="g-raildot"/><circle cx="615" cy="75" r="4.5" class="g-raildot"/><circle cx="630" cy="75" r="4.5" class="g-raildot"/><circle cx="645" cy="75" r="4.5" class="g-raildot"/><circle cx="660" cy="75" r="4.5" class="g-raildot"/><circle cx="675" cy="75" r="4.5" class="g-raildot"/><circle cx="690" cy="75" r="4.5" class="g-raildot"/><circle cx="330" cy="90" r="4.5" class="g-raildot"/><circle cx="345" cy="90" r="4.5" class="g-raildot"/><circle cx="360" cy="90" r="4.5" class="g-raildot"/><circle cx="375" cy="90" r="4.5" class="g-raildot"/><circle cx="390" cy="90" r="4.5" class="g-raildot"/><circle cx="405" cy="90" r="4.5" class="g-raildot"/><circle cx="420" cy="90" r="4.5" class="g-raildot"/><circle cx="435" cy="90" r="4.5" class="g-raildot"/><circle cx="450" cy="90" r="4.5" class="g-raildot"/><circle cx="465" cy="90" r="4.5" class="g-raildot"/><circle cx="480" cy="90" r="4.5" class="g-raildot"/><circle cx="495" cy="90" r="4.5" class="g-raildot"/><circle cx="510" cy="90" r="4.5" class="g-raildot"/><circle cx="525" cy="90" r="4.5" class="g-raildot"/><circle cx="540" cy="90" r="4.5" class="g-raildot"/><circle cx="555" cy="90" r="4.5" class="g-raildot"/><circle cx="570" cy="90" r="4.5" class="g-raildot"/><circle cx="585" cy="90" r="4.5" class="g-raildot"/><circle cx="600" cy="90" r="4.5" class="g-raildot"/><circle cx="615" cy="90" r="4.5" class="g-raildot"/><circle cx="630" cy="90" r="4.5" class="g-raildot"/><circle cx="645" cy="90" r="4.5" class="g-raildot"/><circle cx="660" cy="90" r="4.5" class="g-raildot"/><circle cx="675" cy="90" r="4.5" class="g-raildot"/><circle cx="690" cy="90" r="4.5" class="g-raildot"/><circle cx="330" cy="105" r="4.5" class="g-raildot"/><circle cx="345" cy="105" r="4.5" class="g-raildot"/><circle cx="360" cy="105" r="4.5" class="g-raildot"/><circle cx="375" cy="105" r="4.5" class="g-raildot"/><circle cx="390" cy="105" r="4.5" class="g-raildot"/><circle cx="405" cy="105" r="4.5" class="g-raildot"/><circle cx="420" cy="105" r="4.5" class="g-raildot"/><circle cx="435" cy="105" r="4.5" class="g-raildot"/><circle cx="450" cy="105" r="4.5" class="g-raildot"/><circle cx="465" cy="105" r="4.5" class="g-raildot"/><circle cx="480" cy="105" r="4.5" class="g-raildot"/><circle cx="495" cy="105" r="4.5" class="g-raildot"/><circle cx="510" cy="105" r="4.5" class="g-raildot"/><circle cx="525" cy="105" r="4.5" class="g-raildot"/><circle cx="540" cy="105" r="4.5" class="g-raildot"/><circle cx="555" cy="105" r="4.5" class="g-raildot"/><circle cx="570" cy="105" r="4.5" class="g-raildot"/><circle cx="585" cy="105" r="4.5" class="g-raildot"/><circle cx="600" cy="105" r="4.5" class="g-raildot"/><circle cx="615" cy="105" r="4.5" class="g-raildot"/><circle cx="630" cy="105" r="4.5" class="g-raildot"/><circle cx="645" cy="105" r="4.5" class="g-raildot"/><circle cx="660" cy="105" r="4.5" class="g-raildot"/><circle cx="675" cy="105" r="4.5" class="g-raildot"/><circle cx="690" cy="105" r="4.5" class="g-raildot"/><circle cx="330" cy="120" r="4.5" class="g-raildot"/><circle cx="345" cy="120" r="4.5" class="g-raildot"/><circle cx="360" cy="120" r="4.5" class="g-raildot"/><circle cx="375" cy="120" r="4.5" class="g-raildot"/><circle cx="390" cy="120" r="4.5" class="g-raildot"/><circle cx="405" cy="120" r="4.5" class="g-raildot"/><circle cx="420" cy="120" r="4.5" class="g-raildot"/><circle cx="435" cy="120" r="4.5" class="g-raildot"/><circle cx="450" cy="120" r="4.5" class="g-raildot"/><circle cx="465" cy="120" r="4.5" class="g-raildot"/><circle cx="480" cy="120" r="4.5" class="g-raildot"/><circle cx="495" cy="120" r="4.5" class="g-raildot"/><circle cx="510" cy="120" r="4.5" class="g-raildot"/><circle cx="525" cy="120" r="4.5" class="g-raildot"/><circle cx="540" cy="120" r="4.5" class="g-raildot"/><circle cx="555" cy="120" r="4.5" class="g-raildot"/><circle cx="570" cy="120" r="4.5" class="g-raildot"/><circle cx="585" cy="120" r="4.5" class="g-raildot"/><circle cx="600" cy="120" r="4.5" class="g-raildot"/><circle cx="615" cy="120" r="4.5" class="g-raildot"/><circle cx="630" cy="120" r="4.5" class="g-raildot"/><circle cx="645" cy="120" r="4.5" class="g-raildot"/><circle cx="660" cy="120" r="4.5" class="g-raildot"/><circle cx="675" cy="120" r="4.5" class="g-raildot"/><circle cx="690" cy="120" r="4.5" class="g-raildot"/><circle cx="330" cy="135" r="4.5" class="g-raildot"/><circle cx="345" cy="135" r="4.5" class="g-raildot"/><circle cx="360" cy="135" r="4.5" class="g-raildot"/><circle cx="375" cy="135" r="4.5" class="g-raildot"/><circle cx="390" cy="135" r="4.5" class="g-raildot"/><circle cx="405" cy="135" r="4.5" class="g-raildot"/><circle cx="420" cy="135" r="4.5" class="g-raildot"/><circle cx="435" cy="135" r="4.5" class="g-raildot"/><circle cx="450" cy="135" r="4.5" class="g-raildot"/><circle cx="465" cy="135" r="4.5" class="g-raildot"/><circle cx="480" cy="135" r="4.5" class="g-raildot"/><circle cx="495" cy="135" r="4.5" class="g-raildot"/><circle cx="510" cy="135" r="4.5" class="g-raildot"/><circle cx="525" cy="135" r="4.5" class="g-raildot"/><circle cx="540" cy="135" r="4.5" class="g-raildot"/><circle cx="555" cy="135" r="4.5" class="g-raildot"/><circle cx="570" cy="135" r="4.5" class="g-raildot"/><circle cx="585" cy="135" r="4.5" class="g-raildot"/><circle cx="600" cy="135" r="4.5" class="g-raildot"/><circle cx="615" cy="135" r="4.5" class="g-raildot"/><circle cx="630" cy="135" r="4.5" class="g-raildot"/><circle cx="645" cy="135" r="4.5" class="g-raildot"/><circle cx="660" cy="135" r="4.5" class="g-raildot"/><circle cx="675" cy="135" r="4.5" class="g-raildot"/><circle cx="690" cy="135" r="4.5" class="g-raildot"/><circle cx="330" cy="150" r="4.5" class="g-raildot"/><circle cx="345" cy="150" r="4.5" class="g-raildot"/><circle cx="360" cy="150" r="4.5" class="g-raildot"/>
+  <text x="330" y="179" class="g-s">每個點＝一根整棟 70 m 的扶手風道，風機開到 3000 Pa（約 0.71 m³/min）</text>
+</svg><figcaption>一扇敞開的門和扶手排煙量的比較。</figcaption></figure>
+  <figure class="fig"><img class="img-light" src="assets/s4_exhaust.png" alt="扶手排煙容量" loading="lazy"><img class="img-dark" src="assets/s4_exhaust_dark.png" alt="扶手排煙容量" loading="lazy"><figcaption>整棟一根扶手（70 m）在不同風機推力下最多能排多少。</figcaption></figure>
+  <div class="points prose">
 <ul>
-<li>就算風機給到 3000 Pa、內徑 38 mm，200 °C 熱煙也只能排出約 <b>0.71 m³/min</b>，管內風速已達 10 m/s。<span class="tag tag-sim">模擬結果</span></li>
-<li>一扇敞開的門（0.9 × 2.0 m）以 1 m/s 通過的風量約 108 m³/min；扶手的排煙量只有它的 <b>0.7%</b>，差了兩個數量級以上。<span class="tag tag-sim">模擬結果</span><span class="tag tag-asm">假設值</span></li>
-<li>熱煙流過金屬扶手會把握持面加熱。金屬表面溫度不高就可能在幾秒內燙傷，接觸燙傷門檻要依 ISO 13732-1 查證。扶手管路若有漏氣，煙還會直接漏進逃生動線。<span class="tag tag-inf">工程推論</span><span class="tag tag-tbd">尚待驗證</span></li>
-</ul>
-<p>結論：扶手當排煙管不採用。排煙交給建築原有、經過設計驗證的設備；扶手主機最多只提供狀態訊號。</p>
-</div>
-  <figure class="fig"><img class="img-light" src="assets/s4_exhaust.png" alt="扶手排煙容量" loading="lazy"><img class="img-dark" src="assets/s4_exhaust_dark.png" alt="扶手排煙容量" loading="lazy"><figcaption>整棟一根扶手的最大可排風量。</figcaption></figure>
+<li>假設整棟 10 層共用一根 70 m 的扶手管子。就算風機推到 3000 Pa、內徑 38 mm，200 °C 的熱煙也只排得出約 <b>0.71 m³/min</b>，管內風速已經 10 m/s。<span class="tag tag-sim">模擬結果</span></li>
+<li>一扇敞開的門（0.9 × 2.0 m）以 1 m/s 通過的風量約 108 m³/min，差了兩個數量級。<span class="tag tag-asm">假設值</span></li>
+<li>熱煙流過金屬扶手會把扶手加熱，手握上去可能燙傷（燙傷溫度門檻要依 ISO 13732-1 查證）；管子有任何漏縫，煙也會直接漏到逃生路線上。<span class="tag tag-inf">工程推論</span><span class="tag tag-tbd">尚待驗證</span></li>
+</ul></div>
+  <aside class="design"><h4>對設計的意思</h4><ul><li>提案中拿掉「扶手排煙」，排煙交給建築原有的排煙設備。</li><li>扶手主機可以接收消防系統的訊號，只負責導引與狀態顯示。</li></ul></aside>
 </section>
 
-<section id="limits">
-  <h2><span class="no">08</span>限制與下一步</h2>
-  <div class="prose">
-<h3>這次模擬量不到的東西</h3>
+<section id="next">
+  <h2><span class="no">07</span>還不知道的事，和下一步</h2>
+  <p class="oneliner">電腦模擬適合用來比較和排除方案，真正的效果要靠實驗確認。</p>
+  <div class="points prose">
+<p><b>這次電腦模擬做不到的事：</b></p>
 <ul>
-<li><b>2D 斷面：</b>模擬的是連續出風縫產生的平面噴流。圓形噴嘴是 3D 噴流，衰減比平面噴流快，送到 35 cm 處的 SAF 會更低。</li>
-<li><b>等溫、無浮力：</b>火災煙是熱的，供氣相對是冷的；冷空氣會往下沉，熱煙層會往上推。這會改變噴流路徑，必須用含浮力的 3D 模擬或實驗確認。</li>
-<li><b>沒有呼吸動作：</b>吸氣會從口鼻周圍把空氣吸進來。吸氣流量大於送風量時，會吸進更多周圍空氣。</li>
-<li><b>人是靜止的：</b>沿扶手方向行走（約 1 m/s）垂直於斷面，2D 模型無法模擬。這很可能是送風最大的干擾來源。</li>
-<li><b>解析度：</b>網格 1 mm，氣流倍增式的 2 mm 薄縫只有 2 格，薄縫內速度偏高，該組結果的不確定性最大。沒有做網格收斂測試。</li>
-<li><b>2D 的紊流：</b>2D 大渦模擬的紊流結構和真實 3D 不同；這次結果用來<b>排序與比較</b>四種噴嘴，不是預測實際數值。</li>
-<li><b>假設值：</b>風機曲線、濾材壓損、煙粒徑分布、側風速度都是假設，換成實際數據後要重算。</li>
+<li><b>只算了一個剖面（2D）：</b>連續出風縫的情況比較接近；如果出風口是一個個圓孔，氣流會散得更快，乾淨空氣比例會更低。</li>
+<li><b>沒有算溫度：</b>真實火場的煙是熱的、送出的空氣相對是冷的，冷空氣會往下沉。這會改變氣流路線。</li>
+<li><b>沒有算呼吸：</b>吸氣時會把口鼻周圍的空氣一起吸進來，吸得比送風多時，會吸到更多周圍空氣。</li>
+<li><b>人是不動的：</b>人沿著扶手走（約 1 m/s）帶起的風，2D 模型算不到，這很可能是最大的干擾。</li>
+<li><b>格子大小：</b>1 mm 的格子對氣流倍增式的細縫還是太粗（細縫從 2 mm 放寬成 3 mm），這一組的不確定性最大。也還沒有做「格子再切細，結果會不會變」的檢查。</li>
+<li><b>假設的數字：</b>風機曲線、濾網阻力、煙粒大小、側風速度都是先假設的，換成實際型號和量測值後要重算。</li>
 </ul>
-<h3>建議的下一步</h3>
+<p>所以這次的結果，適合用來<b>比較四種出風口的高低</b>、<b>排除不可行的方案</b>，不適合當成真實火場的預測數字。</p></div>
+  <figure class="fig">
+<svg class="graphic" viewBox="0 0 760 300" role="img" aria-label="桌上型實驗：箱內釋放 CO2，出風口送乾淨空氣，在假人口鼻處量測 CO2">
+
+<defs>
+  <marker id="ta" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="g-accent-fill"/></marker>
+  <marker id="tm" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="g-muted-fill"/></marker>
+  <marker id="tc" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="g-crit-fill"/></marker>
+</defs>
+  <rect x="150" y="40" width="460" height="220" rx="10" class="g-box"/>
+  <text x="380" y="30" text-anchor="middle" class="g-t">透明壓克力箱</text>
+  <rect x="40" y="200" width="60" height="50" rx="6" class="g-box"/>
+  <text x="70" y="270" text-anchor="middle" class="g-s">CO₂ 鋼瓶</text>
+  <line x1="100" y1="222" x2="170" y2="222" class="g-arrow" marker-end="url(#tm)"/>
+  <text x="180" y="226" class="g-s">釋放 CO₂ 當作「煙」</text>
+  <circle cx="220" cy="140" r="20" class="g-solid"/>
+  <rect x="238" y="135" width="16" height="10" class="g-solid"/>
+  <text x="220" y="185" text-anchor="middle" class="g-s">3D 列印出風口</text>
+  <text x="220" y="201" text-anchor="middle" class="g-s">A／B／C／D</text>
+  <line x1="60" y1="140" x2="198" y2="140" class="g-arrow-ok" marker-end="url(#ta)"/>
+  <text x="40" y="128" class="g-s">乾淨空氣</text>
+  <path d="M256,140 C320,136 380,134 430,136" class="g-core"/>
+  <circle cx="490" cy="140" r="52" class="g-head"/>
+  <text x="490" y="146" text-anchor="middle" class="g-s">頭模型</text>
+  <rect x="640" y="110" width="90" height="60" rx="6" class="g-box"/>
+  <text x="685" y="136" text-anchor="middle" class="g-t">CO₂ 感測器</text>
+  <text x="685" y="156" text-anchor="middle" class="g-s">口鼻取樣</text>
+  <path d="M440,146 L440,240 L685,240 L685,172" class="g-tube"/>
+  <rect x="555" y="196" width="50" height="22" rx="4" class="g-box"/>
+  <text x="580" y="212" text-anchor="middle" class="g-s">小風扇</text>
+  <line x1="568" y1="192" x2="568" y2="140" class="g-arrow" marker-end="url(#tm)"/>
+  <text x="576" y="168" class="g-s">側風</text>
+</svg><figcaption>建議的桌上型實驗：用 CO₂ 當作「煙」，量頭模型口鼻處的濃度，用和電腦相同的方法算乾淨空氣比例。</figcaption></figure>
+  <div class="points prose">
+<p><b>建議的下一步：</b></p>
 <ol>
-<li><b>桌上型示蹤氣體實驗：</b>用 3D 列印做 A–D 四種出風口（同供氣量），配頭模型、口鼻取樣管與 CO₂ 感測器；環境釋放 CO₂、出風口送乾淨空氣，用本報告同一個 SAF 定義量測。再加小風扇做側風，必要時加上呼吸模擬器。</li>
-<li><b>3D 含浮力 CFD：</b>以 OpenFOAM 類工具模擬熱煙層與冷供氣、行走速度，確認 2D 排序是否成立。</li>
-<li><b>確定扶手斷面：</b>依 S1 結果先保留風道內徑（建議不小於 34 mm）與均流層空間，再做外觀造型。</li>
-<li><b>氣源決策：</b>在室外進氣、壓縮空氣、或改用認證逃生頭罩之間做選擇，並找消防設備師確認法規。</li>
-<li><b>不進行任何真實煙霧或火場測試</b>，直到上述實驗與專業評估完成。</li>
-</ol>
-</div>
+<li><b>桌上型實驗（上圖）：</b>3D 列印四種出風口（同樣送風量），配頭模型、口鼻取樣管和 CO₂ 感測器。箱子裡放 CO₂、出風口送乾淨空氣，用和電腦相同的方法算乾淨空氣比例；再用小風扇加側風。</li>
+<li><b>3D、含溫度的電腦模擬：</b>確認熱煙層、冷空氣下沉、人走動時，四種出風口的排名有沒有改變。</li>
+<li><b>先決定扶手剖面：</b>保留風道內徑（建議 ≥ 34 mm）和均流層的空間，再做外型。</li>
+<li><b>決定氣源：</b>在室外進氣、壓縮空氣、或改用認證逃生頭罩之間選擇，並請消防設備師確認法規。</li>
+<li><b>完成以上之前，不做任何真實煙霧或火場測試。</b></li>
+</ol></div>
 </section>
 
 <footer>
-  <p>模擬程式與原始資料：<code>stairwell-airflow-sim/</code>（git 分支 <code>claude/new-session-qe5tom</code>）。<code>solver/lbm2d.c</code> 為 CFD 求解器，<code>cases/build.py</code> 產生幾何，<code>analysis/</code> 為 S1–S4 計算與繪圖，<code>report/make_report.py</code> 產生本頁。</p>
+  <p>模擬程式與原始資料：<code>stairwell-airflow-sim/</code>（git 分支 <code>claude/new-session-qe5tom</code>）。<code>solver/lbm2d.c</code> 是 CFD 程式，<code>cases/build.py</code> 產生出風口形狀，<code>analysis/</code> 是各項計算與畫圖，<code>report/</code> 產生本頁。</p>
   <p>本報告是設計研究用的電腦模擬，不是消防工程設計文件，也不是任何火場使用許可或安全認證。</p>
 </footer>
 </div>

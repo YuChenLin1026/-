@@ -48,10 +48,10 @@ def main():
                 Q = qmax(P, D, rho, nu)
                 res["cases"].append(dict(gas=gname, D_mm=D * 1000, P_Pa=P, Q_m3min=Q * 60,
                                          V_ms=Q / (np.pi * D * D / 4), ratio_to_door=Q * 60 / door))
-    ax.set_xlabel("風機可提供的總壓（Pa）")
+    ax.set_xlabel("風機的推力（總壓，Pa）")
     ax.set_ylabel("可排出風量（m³/min）")
     ax.set_ylim(0, 0.8)
-    ax.set_title(f"S4｜整棟一根扶手（70 m）最多只能排不到 1 m³/min；一扇敞開的門約 {door:.0f} m³/min", loc="left", fontsize=11.5)
+    ax.set_title(f"整棟一根扶手（70 m）再怎麼加壓，排風量都不到 1 m³/min", loc="left", fontsize=11.5)
     ax.legend(fontsize=9, loc="upper left")
     save(fig, "s4_exhaust.png")
     with open(os.path.join(OUT, "s4_results.json"), "w") as f:

@@ -104,8 +104,8 @@ def main():
     ax.minorticks_off()
     ax.set_ylim(0, 105)
     ax.set_xlabel("粒徑（µm）")
-    ax.set_ylabel("捕集效率（%）")
-    ax.set_title("S3｜火災煙粒多半小於 1 µm：氣旋幾乎抓不到，HEPA 抓得到", loc="left", fontsize=12)
+    ax.set_ylabel("抓得到的比例（%）")
+    ax.set_title("火災煙粒大多小於 1 µm：氣旋抓不到，HEPA 抓得到", loc="left", fontsize=12)
     ax.legend(loc="center left", fontsize=9)
     save(fig, "s3_filtration.png")
 
