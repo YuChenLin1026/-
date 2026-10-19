@@ -1,0 +1,7 @@
+runs/
+solver/lbm2d
+solver/lbm2d.new
+report/_preview.html
+out/_*
+out/geom_check.png
+__pycache__/
