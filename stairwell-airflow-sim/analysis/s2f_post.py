@@ -37,10 +37,13 @@ def load(name):
     half = len(pc) // 2
     t, c = np.load(os.path.join(d, "type.npy")), rd("mean_c.f32")
     reach = clean_reach(m, t, c)
+    # 整個模型範圍的平均濃度：無側風、大風量時，送出的空氣出不去，會把整個範圍慢慢「填滿」，口鼻的數字就不代表送風能力
+    fill = float(c[t == 0].mean())
     return dict(meta=m, t=t, c=c,
                 ux=rd("mean_ux.f32") * m["vel_scale"], uy=rd("mean_uy.f32") * m["vel_scale"],
                 res=dict(mean=float(pc.mean()), p10=float(np.percentile(pc, 10)),
-                         first_half=float(pc[:half].mean()), second_half=float(pc[half:].mean()), **reach))
+                         first_half=float(pc[:half].mean()), second_half=float(pc[half:].mean()),
+                         fill=fill, filling=m["vc_ms"] == 0 and fill > 0.25, **reach))
 
 
 def clean_reach(m, t, c):
@@ -156,6 +159,10 @@ def bars(allres):
                 ax.text(3, yk, "計算中", va="center", fontsize=9, color=MUTED)
                 continue
             v = s["mean"] * 100
+            if s.get("filling"):
+                ax.barh(yk, v, height=0.62, color="none", edgecolor=COLOR[nz], hatch="///", lw=0.8, zorder=3)
+                ax.text(min(v, 100) + 2.5, yk, f"{v:.0f}%（未穩定＊）", va="center", fontsize=10, color=MUTED, zorder=5)
+                continue
             ax.barh(yk, v, height=0.62, color=COLOR[nz], zorder=3)
             ax.plot([s["p10"] * 100] * 2, [yk - 0.36, yk + 0.36], color=TEXT1, lw=1.6, zorder=4)
             ax.text(min(v, 100) + 2.5, yk, f"{v:.0f}%", va="center", fontsize=10.5, color=TEXT1, zorder=5)
@@ -167,6 +174,9 @@ def bars(allres):
     axs[0].set_yticks(range(len(rows)), [LABEL[n].split("（")[0].replace(" L/s/m", "") for n in reversed(rows)])
     fig.suptitle("臉在扶手斜上方時，吸到的空氣有幾成來自出風口（彩色＝平均，黑線＝最差 10% 的時刻；虛線下方是送風量 4～8 倍的空氣牆）",
                  x=0.01, ha="left", fontsize=11.5)
+    if any(v.get("filling") for v in allres.values()):
+        fig.text(0.01, -0.02, "＊斜線：沒有側風時空氣牆送出的空氣出不去，把整個模型範圍慢慢填滿，數字一直往上爬，不代表送風能力。",
+                 ha="left", fontsize=10, color=MUTED)
     fig.tight_layout()
     save(fig, "s2f_saf_bars.png")
 
@@ -215,6 +225,9 @@ def reach_chart(allres):
             if s is None:
                 ax.text(1, yk, "計算中", va="center", fontsize=9, color=MUTED)
                 continue
+            if s.get("filling"):
+                ax.text(1, yk, "未穩定＊", va="center", fontsize=9, color=MUTED)
+                continue
             ax.barh(yk, s["reach25"], height=0.62, color=COLOR[nz], alpha=0.45, zorder=3)
             ax.barh(yk, s["reach50"], height=0.62, color=COLOR[nz], zorder=4)
             ax.text(max(s["reach25"], 0) + 1.2, yk, f"{s['reach25']:.0f} cm", va="center", fontsize=9.5, color=TEXT1, zorder=5)
@@ -228,6 +241,8 @@ def reach_chart(allres):
     axs[0].set_yticks(range(len(rows)), [LABEL[n].split("（")[0].replace(" L/s/m", "") for n in reversed(rows)])
     fig.suptitle("在臉的高度，乾淨空氣層從出風口往樓梯側延伸多遠（淺色＝乾淨 ≥ 25%，深色＝≥ 50%；紅虛線＝這次假設的臉）",
                  x=0.01, ha="left", fontsize=11.5)
+    if any(v.get("filling") for v in allres.values()):
+        fig.text(0.01, -0.02, "＊沒有側風時空氣牆送出的空氣把整個模型範圍填滿，看不出乾淨空氣層的邊界。", ha="left", fontsize=10, color=MUTED)
     fig.tight_layout()
     save(fig, "s2f_reach.png")
 
@@ -275,7 +290,7 @@ def main():
             loaded[f"{nz}_{c}"] = r
             allres[f"{nz}_{c}"] = r["res"]
             s = r["res"]
-            print(f"{nz}_{c}: 口鼻 {s['mean']*100:5.1f}%  最差10% {s['p10']*100:5.1f}%  前/後半 {s['first_half']*100:.1f}/{s['second_half']*100:.1f}")
+            print(f"{nz}_{c}: 填滿 {s['fill']*100:4.1f}%  口鼻 {s['mean']*100:5.1f}%  最差10% {s['p10']*100:5.1f}%  前/後半 {s['first_half']*100:.1f}/{s['second_half']*100:.1f}")
     for c, lbl in CONDS:
         field_panel(loaded, c, lbl)
     wall_panel(loaded)

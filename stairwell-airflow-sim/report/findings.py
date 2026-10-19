@@ -274,10 +274,18 @@ def build_findings(ctx):
     n_done = len(f2)
     rows = []
     for k in FL:
-        cells = "".join(f'<td class="num">{pct(f2[f"{k}_{c}"]["mean"]) if f"{k}_{c}" in f2 else "計算中"}</td>' for c, _ in CL)
+        def cell(n):
+            if n not in f2:
+                return "計算中"
+            return pct(f2[n]["mean"]) + ("＊" if f2[n].get("filling") else "")
+        cells = "".join(f'<td class="num">{cell(f"{k}_{c}")}</td>' for c, _ in CL)
         rows.append(f'<tr><th scope="row">{FL[k]}</th>{cells}</tr>')
     face_table = ('<div class="table-wrap"><table><thead><tr><th scope="col">出風口（數字＝口鼻吸到的乾淨空氣比例）</th>'
                   + "".join(f'<th scope="col">{l}</th>' for _, l in CL) + '</tr></thead><tbody>' + "".join(rows) + '</tbody></table></div>')
+    if any(v.get("filling") for v in f2.values()):
+        face_table += ('<p class="muted">＊未穩定：沒有側風時，空氣牆送出的大量空氣在模型裡出不去，把整個 68 × 82 cm 的範圍慢慢填滿'
+                       f'（整個範圍平均已達 {max(v["fill"] for v in f2.values() if v.get("filling"))*100:.0f}%），口鼻的數字一路往上爬，'
+                       '反映的是「範圍被填滿」而不是「送得到臉」，所以不拿來比較。真實樓梯間空間大得多，也幾乎都有上升氣流。</p>')
     windy = [v["mean"] for k, v in f2.items() if not k.endswith("vc00") and not k.startswith("W")]
     all_done = n_done == n_total
     if n_done == 0:
@@ -286,7 +294,7 @@ def build_findings(ctx):
         face_one = (f"臉在扶手斜上方時，沒有側風最好的是低混合出風口（{pct(fv('C_vc00'))}）；"
                     f"一有側風，每公尺 5 L/s 的出風口全部是 0%，只有每公尺 40 L/s 的空氣牆送得到臉（側風 0.15：{pct(fv('W40_vc15'))}）。")
     else:
-        best = max(f2, key=lambda n: f2[n]["mean"])
+        best = max((n for n in f2 if not f2[n].get("filling")), key=lambda n: f2[n]["mean"])
         bk, bc = best.split("_")
         face_one = (f"臉在扶手斜上方時（已完成 {n_done}/{n_total} 組），目前口鼻乾淨空氣最高的是 "
                     f"{FL[bk]}（{dict(CL)[bc]}）：{pct(f2[best]['mean'])}。")
@@ -303,7 +311,8 @@ def build_findings(ctx):
 <li><b>有側風：</b>A、B、C、D 在 0.15 和 0.30 m/s 的側風下<b>全部是 0%</b>。乾淨空氣並沒有消失，而是一離開出風口就被由下往上的氣流帶著<b>貼著扶手正上方往上走</b>（看下面的動畫），到不了往樓梯側 28 cm 外的臉。{tag("sim")}</li>
 <li><b>康達往上：</b>有側風時確實沿著圓角轉向上、貼著導風腔往上走（往下轉時做不到），但轉上去之後一樣沿著扶手正上方往上，沒有往臉的方向偏。沒有側風時，以每公尺 5 L/s 的風速<b>不會自己轉上去</b>，而是沿著導風腔底面水平往外吹；口鼻的 {pct(fv('B_vc00'))} 主要是慢慢累積的背景。康達轉彎需要上升氣流幫忙，或更細的縫、更快的風。{tag("sim")}</li>
 <li><b>空氣牆每公尺 40 L/s：</b>側風 0.15 m/s 時口鼻 {pct(w15['mean'])}，是有側風時唯一送得到臉的做法。但乾淨空氣是一陣一陣送到的：前半段 {pct(w15['first_half'])}、後半段 {pct(w15['second_half'])}，最差的 10% 時刻是 {pct(w15['p10'])}。側風加到 0.30 時，乾淨空氣層在臉的高度只延伸到出風口外 {fv('W40_vc30', 'reach25') or 0:.0f} cm，臉在 28 cm，所以是 {pct(fv('W40_vc30'))}。{tag("sim")}</li>
-<li><b>空氣牆每公尺 20 L/s：</b>側風下都送不到臉（{pct(fv('W20_vc15'))}／{pct(fv('W20_vc30'))}）；乾淨空氣層只延伸 {fv('W20_vc15', 'reach25') or 0:.0f} cm。沒有側風時 {pct(fv('W20_vc00'))}。{tag("sim")}</li>
+<li><b>空氣牆每公尺 20 L/s：</b>側風下都送不到臉（{pct(fv('W20_vc15'))}／{pct(fv('W20_vc30'))}）；乾淨空氣層只延伸 {fv('W20_vc15', 'reach25') or 0:.0f} cm。{tag("sim")}</li>
+<li><b>空氣牆沒有側風時：</b>數字不拿來比較（表中＊）。送出的風量是 A–D 的 4–8 倍，2D 模型裡又沒有氣流把它帶走，整個範圍會被慢慢填滿。{tag("sim")}</li>
 <li><b>對設計的意思：</b>在臉的位置，乾淨空氣層「延伸多遠」比「出風口朝哪裡」更重要。要讓斜上方的臉吸得到，需要寬的空氣牆、每公尺約 40 L/s，<b>而且臉要在出風口外約 30 cm 內</b>。可以把出風口往樓梯側外推（平台轉角的外凸出風罩），或讓扶手的握持位置更靠近出風口。{tag("inf")}</li>
 </ul>
 {wall_note}
