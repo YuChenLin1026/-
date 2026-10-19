@@ -35,10 +35,25 @@ def load(name):
     w = p[:, 0] * m["dt"] >= m["t_warm"]
     pc = p[w, 1]
     half = len(pc) // 2
-    return dict(meta=m, t=np.load(os.path.join(d, "type.npy")), c=rd("mean_c.f32"),
+    t, c = np.load(os.path.join(d, "type.npy")), rd("mean_c.f32")
+    reach = clean_reach(m, t, c)
+    return dict(meta=m, t=t, c=c,
                 ux=rd("mean_ux.f32") * m["vel_scale"], uy=rd("mean_uy.f32") * m["vel_scale"],
                 res=dict(mean=float(pc.mean()), p10=float(np.percentile(pc, 10)),
-                         first_half=float(pc[:half].mean()), second_half=float(pc[half:].mean())))
+                         first_half=float(pc[:half].mean()), second_half=float(pc[half:].mean()), **reach))
+
+
+def clean_reach(m, t, c):
+    """臉的高度（口鼻上下 3 cm 的水平帶）上，平均乾淨空氣比例 ≥ 25%／50% 的範圍，從出風口出口往樓梯側最遠到幾公分。"""
+    x = (np.arange(m["nx"]) + 0.5) * m["dx"]
+    y = (np.arange(m["ny"]) + 0.5) * m["dx"]
+    band = np.abs(y - m["mouth"][1]) <= 0.03
+    cb = np.nanmean(np.where(t[band] == 1, np.nan, c[band]), axis=0)
+    out = {}
+    for thr in (25, 50):
+        ok = (x > m["x0"]) & (cb >= thr / 100)
+        out[f"reach{thr}"] = float((x[ok].max() - m["x0"]) * 100) if ok.any() else 0.0
+    return out
 
 
 def field_panel(loaded, cond, lbl, nzs=NZ, fname=None):
@@ -156,6 +171,37 @@ def bars(allres):
     save(fig, "s2f_saf_bars.png")
 
 
+def reach_chart(allres):
+    """每個算例在臉的高度，乾淨空氣層（≥25%）從出風口往樓梯側延伸多遠；虛線是臉的位置。"""
+    if not allres:
+        return
+    rows = NZ + WALLS
+    face = 28.0
+    fig, axs = plt.subplots(1, 3, figsize=(12.5, 4.6), sharey=True)
+    for ax, (c, lbl) in zip(axs, CONDS):
+        for k, nz in enumerate(rows):
+            s = allres.get(f"{nz}_{c}")
+            yk = len(rows) - 1 - k
+            if s is None:
+                ax.text(1, yk, "計算中", va="center", fontsize=9, color=MUTED)
+                continue
+            ax.barh(yk, s["reach25"], height=0.62, color=COLOR[nz], alpha=0.45, zorder=3)
+            ax.barh(yk, s["reach50"], height=0.62, color=COLOR[nz], zorder=4)
+            ax.text(max(s["reach25"], 0) + 1.2, yk, f"{s['reach25']:.0f} cm", va="center", fontsize=9.5, color=TEXT1, zorder=5)
+        ax.axvline(face, color=CRIT, lw=1.4, ls="--", zorder=6)
+        ax.text(face + 0.8, len(rows) - 0.45, "臉", color=CRIT, fontsize=10, va="center")
+        ax.axhline(len(WALLS) - 0.5, color=MUTED, lw=0.8, ls=":")
+        ax.set_xlim(0, 60)
+        ax.set_xticks([0, 10, 20, 30, 40, 50, 60], ["0", "10", "20", "30", "40", "50", "60 cm"])
+        ax.set_title(lbl, loc="left", fontsize=11)
+        ax.grid(axis="y", visible=False)
+    axs[0].set_yticks(range(len(rows)), [LABEL[n].split("（")[0].replace(" L/s/m", "") for n in reversed(rows)])
+    fig.suptitle("在臉的高度，乾淨空氣層從出風口往樓梯側延伸多遠（淺色＝乾淨 ≥ 25%，深色＝≥ 50%；紅虛線＝這次假設的臉）",
+                 x=0.01, ha="left", fontsize=11.5)
+    fig.tight_layout()
+    save(fig, "s2f_reach.png")
+
+
 def video(cond, fname):
     frames = {nz: sorted(glob.glob(os.path.join(RUNS, f"{nz}_{cond}", "frames", "f*.u8"))) for nz in NZ}
     n = min(len(v) for v in frames.values())
@@ -204,6 +250,7 @@ def main():
         field_panel(loaded, c, lbl)
     wall_panel(loaded)
     bars(allres)
+    reach_chart(allres)
     json.dump(allres, open(os.path.join(OUT, "s2f_results.json"), "w"), indent=1)
     if "--video" in sys.argv:
         print("video:", video("vc15", "s2f_vc15.mp4"))
