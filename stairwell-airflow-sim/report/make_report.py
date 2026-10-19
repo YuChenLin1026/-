@@ -198,6 +198,47 @@ SETUP_SVG = """
 
 
 
+# 臉在斜上方的模型（第 04 章）：比例 1 cm = 5 px，剖面 68 × 82 cm，原點在左下 (60, 460)
+SETUP_FACE_SVG = """
+<svg class="graphic" viewBox="0 0 760 520" role="img" aria-label="臉在扶手斜上方的電腦模型剖面：左下是扶手和出風口，往樓梯側 28 公分、往上 35 公分是口鼻，旁邊是頭">
+  <defs>
+    <marker id="fah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="g-accent-fill"/></marker>
+    <marker id="fah2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="g-muted-fill"/></marker>
+  </defs>
+  <rect x="60" y="50" width="340" height="410" class="g-domain"/>
+  <rect x="79" y="69" width="302" height="372" class="g-sponge"/>
+  <circle cx="100" cy="360" r="12.5" class="g-solid"/>
+  <rect x="112" y="350" width="28" height="20" class="g-solid"/>
+  <line x1="142" y1="358" x2="270" y2="198" class="g-arrow-ok" marker-end="url(#fah)"/>
+  <circle cx="310" cy="148" r="40" class="g-head"/>
+  <text x="310" y="152" text-anchor="middle" class="g-t">頭</text>
+  <rect x="275" y="179" width="10" height="12" class="g-probe" transform="rotate(-51 280 185)"/>
+  <line x1="140" y1="360" x2="280" y2="360" class="g-leader" stroke-dasharray="4 3"/>
+  <line x1="280" y1="360" x2="280" y2="196" class="g-leader" stroke-dasharray="4 3"/>
+  <text x="210" y="380" text-anchor="middle" class="g-t">28 cm</text>
+  <text x="288" y="285" class="g-t">35 cm</text>
+  <text x="100" y="400" text-anchor="middle" class="g-s">扶手＋出風口</text>
+  <g class="g-cross">
+    <line x1="130" y1="505" x2="130" y2="468" marker-end="url(#fah2)"/>
+    <line x1="230" y1="505" x2="230" y2="468" marker-end="url(#fah2)"/>
+    <line x1="330" y1="505" x2="330" y2="468" marker-end="url(#fah2)"/>
+  </g>
+  <text x="60" y="36" class="g-s">模型範圍 68 × 82 cm 的剖面，切成 1.5 mm 小格（約 24.8 萬格）；邊緣 3.75 cm 是吸收層</text>
+  <text x="430" y="92" class="g-t">口鼻：出風口往樓梯側 28 cm、往上 35 cm</text>
+  <text x="430" y="110" class="g-s">直線距離約 45 cm、仰角約 51°（扶著內側扶手下樓時）</text>
+  <text x="430" y="146" class="g-t">頭：直徑 16 cm 的圓</text>
+  <text x="430" y="182" class="g-t">口鼻量測框（紅框）</text>
+  <text x="430" y="200" class="g-s">頭朝出風口那一側、離頭表面 0.5–2.5 cm、寬 2.4 cm</text>
+  <text x="430" y="236" class="g-t">出風口</text>
+  <text x="430" y="254" class="g-s">A、C、D：朝向口鼻吹（箭頭）</text>
+  <text x="430" y="272" class="g-s">B：藏在導風腔底面，沿圓角往上轉</text>
+  <text x="430" y="290" class="g-s">W 空氣牆：寬 80 mm，水平往樓梯側吹</text>
+  <text x="430" y="326" class="g-t">送風量（每公尺出風口）</text>
+  <text x="430" y="344" class="g-s">A–D：5 L/s；空氣牆：20 或 40 L/s</text>
+  <text x="430" y="380" class="g-t">側風：0／0.15／0.30 m/s（由下往上）</text>
+  <text x="430" y="398" class="g-s">代表樓梯間的上升氣流、人走動的擾動</text>
+</svg>"""
+
 # ---------------- 計算進度條（台灣時間 UTC+8） ----------------
 import datetime as _dt
 import re as _re
@@ -369,17 +410,18 @@ PAGE = f"""<title>扶手送風模擬報告</title>
     <p>有了這個比例，口鼻吸到的污染就能直接算：</p>
   </div>
   <div class="formula">口鼻的污染 ＝ 乾淨空氣比例 × 送出空氣的污染 ＋（1 − 乾淨空氣比例）× 周圍的污染</div>
-  {graphic(SETUP_SVG, "電腦模型：扶手剖面在左，逃生者低姿勢時臉在出風口前 35 cm。紅框是量測口鼻的位置。")}
-  {fig("s2_geometry.png", "四種出風口的剖面", "四種出風口。為了公平，每一種每公尺都送出一樣多的風（5 L/s），只有形狀不同。")}
+  {graphic(SETUP_FACE_SVG, "電腦模型（比例正確）：扶手與出風口在左下，扶著內側扶手下樓時，口鼻在出風口往樓梯側 28 cm、往上 35 cm。紅框是量測口鼻的位置。")}
+  {fig("s2f_geometry.png", "模型裡的五種出風口", "模型裡的五種出風口。A–D 每公尺都送出一樣多的風（5 L/s），只有形狀不同；空氣牆每公尺送 20 或 40 L/s。")}
   <div class="points prose">
     <p><b>電腦裡做了這些事：</b></p>
     <ul>
-      <li>把 64 × 40 cm 的剖面切成 25.6 萬個 1 mm 小格，逐格計算空氣怎麼流動。</li>
+      <li>把 68 × 82 cm 的剖面切成約 24.8 萬個 1.5 mm 小格，逐格計算空氣怎麼流動。</li>
       <li>出風口的空氣濃度設成 100%，周圍空氣設成 0%，讓這個「顏色」跟著氣流跑。</li>
-      <li>每 0.01 秒記錄一次口鼻框裡的濃度，算 10 秒（慢的同軸組算 16 秒），前 3–4 秒不算，取後面的平均。</li>
-      <li>4 種出風口 × 4 種情況（沒有人、有人無側風、側風 0.15、側風 0.30）＝ 16 組。</li>
+      <li>每 0.01 秒記錄一次口鼻框裡的濃度。有側風的算 10 秒、前 3 秒不算；沒有側風時氣流慢，算 24 秒、前 8 秒不算。取剩下時間的平均。</li>
+      <li>4 種出風口 × 3 種側風（0、0.15、0.30 m/s）＝ 12 組，再加空氣牆 2 種風量 × 3 種側風 ＝ 6 組，共 18 組。</li>
       <li>扶手管子、風機、濾網、排煙容量則用管路與過濾的公式計算（不需要 CFD）。</li>
     </ul>
+    <p class="muted">早期版本把臉放在出風口正前方 35 cm（64 × 40 cm、1 mm 小格、16 組），結果保留在第 04 章的展開區當對照。第 05 章「擴大保護範圍」用同一支程式、2.5 mm 小格算 90 × 130 cm 的大範圍，不放人頭，看整片區域。</p>
     <p>實體實驗可以用一模一樣的方法量：在箱子裡放 CO₂ 當作「煙」，出風口送乾淨空氣，在頭模型口鼻處量 CO₂。電腦和實驗用同一把尺，之後才能互相對照（見第 09 章）。</p>
   </div>
   {details("展開技術細節：模型設定、驗證方法、修正紀錄", method_tech)}
@@ -424,6 +466,8 @@ PAGE = f"""<title>扶手送風模擬報告</title>
   {fig("s2f_wall_fields.png", "空氣牆放進臉在斜上方的測試", "第 05 章的空氣牆（寬 80 mm、水平往樓梯側吹）放進同樣的頭部與口鼻位置。上排每公尺 20 L/s，下排 40 L/s；左到右是無側風、側風 0.15、側風 0.30。")}
   {details("展開早期設定：臉在出風口正前方 35 cm（舊版 S2）",
            '<p class="prose">早期把臉放在出風口正前方、同一高度（蹲低的姿勢）。這組結果保留作為對照：低混合同軸在無側風時 91%，但只要有 0.15 m/s 側風，四種都是 0%。</p>' +
+           graphic(SETUP_SVG, "早期模型：扶手剖面在左，臉在出風口正前方 35 cm（64 × 40 cm、1 mm 小格）。") +
+           fig("s2_geometry.png", "早期設定的四種出風口剖面", "早期設定的四種出風口（水平往臉吹），每公尺都送 5 L/s。") +
            fig("s2_saf_bars.png", "早期設定的乾淨空氣比例", "早期設定（臉在正前方 35 cm）。") +
            fig("s2_head_vc00_fields.png", "早期設定、無側風", "早期設定、無側風。") +
            fig("s2_head_vc15_fields.png", "早期設定、側風 0.15", "早期設定、側風 0.15 m/s：送出的空氣被吹到扶手上方。") +

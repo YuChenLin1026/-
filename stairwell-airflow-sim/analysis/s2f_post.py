@@ -171,6 +171,36 @@ def bars(allres):
     save(fig, "s2f_saf_bars.png")
 
 
+def geometry():
+    """五種出風口在模型裡的樣子（出風口附近 30 × 30 cm），藍色是送風的入口格。"""
+    names = [("A", "A_vc00"), ("B", "B_vc00"), ("C", "C_vc00"), ("D", "D_vc00"), ("W40", "W40_vc00")]
+    names = [(k, n) for k, n in names if os.path.exists(os.path.join(RUNS, n, "type.npy"))]
+    if not names:
+        return
+    fig, axs = plt.subplots(1, len(names), figsize=(2.0 * len(names), 2.9))
+    for ax, (k, n) in zip(np.atleast_1d(axs), names):
+        m = json.load(open(os.path.join(RUNS, n, "meta.json")))
+        t = np.load(os.path.join(RUNS, n, "type.npy"))
+        ext = [0, m["nx"] * m["dx"] * 100, 0, m["ny"] * m["dx"] * 100]
+        ax.imshow(np.ma.masked_where(t != 1, np.ones_like(t, float)), origin="lower", extent=ext, cmap=SOLID_CMAP, vmin=0, vmax=1)
+        ax.imshow(np.ma.masked_where(t != 2, np.ones_like(t, float)), origin="lower", extent=ext,
+                  cmap=LinearSegmentedColormap.from_list("inl", [SERIES[0], SERIES[0]]), vmin=0, vmax=1)
+        x0, y0 = m["x0"] * 100, m["y0"] * 100
+        mx, my = np.array(m["mouth"]) * 100
+        ax.annotate("", xy=(x0 + (mx - x0) * 0.33, y0 + (my - y0) * 0.33), xytext=(x0, y0),
+                    arrowprops=dict(arrowstyle="->", color=CRIT, lw=1.2))
+        ax.set_xlim(x0 - 17, x0 + 13)
+        ax.set_ylim(y0 - 10, y0 + 20)
+        ax.set_aspect("equal")
+        ax.grid(False)
+        ax.set_xticks([]); ax.set_yticks([])
+        ax.set_title(LABEL[k].split("（")[0].replace(" 40 L/s/m", ""), loc="left", fontsize=11)
+    fig.suptitle("模型裡的五種出風口（每格 30 × 30 cm）\n灰＝扶手與出風口，藍＝送風入口，紅箭頭＝往口鼻的方向",
+                 x=0.01, ha="left", fontsize=11, linespacing=1.5)
+    fig.tight_layout()
+    save(fig, "s2f_geometry.png")
+
+
 def reach_chart(allres):
     """每個算例在臉的高度，乾淨空氣層（≥25%）從出風口往樓梯側延伸多遠；虛線是臉的位置。"""
     if not allres:
@@ -251,6 +281,7 @@ def main():
     wall_panel(loaded)
     bars(allres)
     reach_chart(allres)
+    geometry()
     json.dump(allres, open(os.path.join(OUT, "s2f_results.json"), "w"), indent=1)
     if "--video" in sys.argv:
         print("video:", video("vc15", "s2f_vc15.mp4"))
