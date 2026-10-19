@@ -196,6 +196,77 @@ SETUP_SVG = """
   <text x="60" y="30" class="g-s">模型範圍 64 × 40 cm 的剖面，切成 1 mm 小格（共 25.6 萬格）</text>
 </svg>"""
 
+
+
+# ---------------- 計算進度條（台灣時間 UTC+8） ----------------
+import datetime as _dt
+import re as _re
+
+
+def progress_html():
+    rdir = os.path.join(ROOT, "runs_face")
+    if not os.path.isdir(rdir):
+        return ""
+    order = ["B_vc00", "B_vc15", "B_vc30", "A_vc30", "C_vc30", "D_vc30", "A_vc00", "A_vc15", "D_vc00", "D_vc15", "C_vc15", "C_vc00"]
+    label = {"A": "A 一般", "B": "B 康達往上", "C": "C 低混合", "D": "D 倍增"}
+    cond = {"vc00": "無側風", "vc15": "側風 0.15", "vc30": "側風 0.30"}
+    durations = {}
+    runlog = os.path.join(rdir, "run.log")
+    if os.path.exists(runlog):
+        for line in open(runlog):
+            m = _re.match(r"\S+ (\S+) rc=\d+ (\d+)s", line)
+            if m:
+                durations[m.group(1)] = int(m.group(2))
+    items, done_steps, total_steps = [], 0, 0
+    rates = []
+    for name in order:
+        cfg = os.path.join(rdir, name, "case.cfg")
+        if not os.path.exists(cfg):
+            continue
+        tot = int(float(next(l.split()[1] for l in open(cfg) if l.startswith("steps "))))
+        logf = os.path.join(rdir, name, "log.txt")
+        if os.path.exists(os.path.join(rdir, name, "mean_c.f32")):
+            cur, st = tot, "done"
+            if name in durations and durations[name] > 0:
+                rates.append(tot / durations[name])
+        elif os.path.exists(logf):
+            steps = _re.findall(r"step (\d+)/", open(logf).read())
+            cur, st = (int(steps[-1]) if steps else 0), "run"
+        else:
+            cur, st = 0, "wait"
+        items.append((name, cur, tot, st))
+        done_steps += cur
+        total_steps += tot
+    if not items:
+        return ""
+    n_done = sum(1 for i in items if i[3] == "done")
+    frac = done_steps / total_steps
+    rate = (sum(rates) / len(rates)) if rates else 2000 / 60.0      # 每個行程每秒步數
+    # 以 4 個並行行程模擬剩下的排程，估計完成時間
+    workers = sorted([(tot - cur) / rate for _, cur, tot, st in items if st == "run"])
+    workers += [0.0] * (4 - len(workers))
+    for _, cur, tot, st in items:
+        if st == "wait":
+            workers.sort()
+            workers[0] += tot / rate
+    remain = max(workers) if workers else 0
+    now_tw = _dt.datetime.now(_dt.timezone.utc).replace(tzinfo=None) + _dt.timedelta(hours=8)
+    eta_tw = now_tw + _dt.timedelta(seconds=remain)
+    chips = []
+    for name, cur, tot, st in items:
+        nz, c = name.split("_")
+        txt = {"done": "完成", "run": f"{cur/tot*100:.0f}%", "wait": "排隊中"}[st]
+        chips.append(f'<span class="chip chip-{st}"><b>{label[nz]}</b>・{cond[c]}　{txt}</span>')
+    if n_done == len(items):
+        head = f"臉在斜上方的出風口重算：12 組全部完成（台灣時間 {now_tw:%H:%M} 更新）"
+    else:
+        head = (f"臉在斜上方的出風口重算：已完成 {n_done}/{len(items)} 組，整體約 {frac*100:.0f}%，"
+                f"預計台灣時間 <b>{eta_tw:%H:%M}</b> 前後完成")
+    return (f'<div class="progress" role="status"><p>{head}</p>'
+            f'<div class="bar" aria-hidden="true"><span style="width:{frac*100:.1f}%"></span></div>'
+            f'<div class="chips">{"".join(chips)}</div>'
+            f'<p class="muted small">進度在每次更新報告時重新計算（最後更新：台灣時間 {now_tw:%m/%d %H:%M}）。</p></div>')
+
 from findings import build_findings  # noqa: E402
 
 FIND = build_findings(dict(s1=s1, s2=s2, s3=s3, s4=s4, saf=saf, pct=pct, tag=tag, CFD_DONE=CFD_DONE, NZ_LABEL=NZ_LABEL))
@@ -206,6 +277,7 @@ flux_txt = f"{min(flux_vals):.2f}–{max(flux_vals):.2f}" if flux_vals else "計
 conv_vals = [abs(r["first_half"] - r["second_half"]) for k, r in s2.items() if "head" in k]
 conv_txt = f"{max(conv_vals)*100:.1f} 個百分點" if conv_vals else "計算中"
 status_note = "" if CFD_DONE else '<p class="banner">出風口的電腦模擬（CFD）還在計算，標示「計算中」的地方完成後會更新。</p>'
+status_note += progress_html()
 
 cards = "".join(
     f'<article class="tcard"><div class="tcard-top"><h3>{c["name"]}</h3><span class="pill {c["cls"]}">{c["verdict"]}</span></div>'

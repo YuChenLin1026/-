@@ -156,6 +156,14 @@ footer { margin-top: 48px; padding-top: 20px; border-top: 1px solid var(--line);
 .g-dimline { stroke: var(--accent); stroke-width: 1; }
 .g-dim { fill: var(--accent); font-size: 13px; font-weight: 600; }
 .g-slot { fill: var(--accent); }
+.progress { border: 1px solid var(--line); border-radius: 10px; background: var(--surface); padding: 14px 16px; display: grid; gap: 10px; }
+.progress .bar { height: 12px; border-radius: 999px; background: var(--surface2); overflow: hidden; border: 1px solid var(--line); }
+.progress .bar span { display: block; height: 100%; background: var(--accent); border-radius: 999px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { font-size: 12.5px; padding: 2px 9px; border-radius: 999px; border: 1px solid var(--line); color: var(--fg2); white-space: nowrap; }
+.chip-done { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+.chip-run { border-color: var(--warn); color: var(--warn); background: var(--warn-soft); }
+.small { font-size: 12.5px; }
 
 </style>
 
@@ -165,7 +173,7 @@ footer { margin-top: 48px; padding-top: 20px; border-top: 1px solid var(--line);
   <h1>扶手送風模擬報告</h1>
   <p class="question">一根貫穿整棟樓的扶手，平時能不能流通、淨化空氣？火災時能幫逃生者做到什麼？用電腦模擬一項一項檢查。</p>
   <div class="meta"><span>日期 <b>2026-10-19</b></span><span>專案 <b>長庚大學工業設計學系 林煜宸</b></span><span>模擬與撰寫 <b>Claude（AI）</b></span></div>
-  
+  <div class="progress" role="status"><p>臉在斜上方的出風口重算：已完成 0/12 組，整體約 27%，預計台灣時間 <b>22:52</b> 前後完成</p><div class="bar" aria-hidden="true"><span style="width:26.9%"></span></div><div class="chips"><span class="chip chip-run"><b>B 康達往上</b>・無側風　65%</span><span class="chip chip-run"><b>B 康達往上</b>・側風 0.15　61%</span><span class="chip chip-run"><b>B 康達往上</b>・側風 0.30　58%</span><span class="chip chip-run"><b>A 一般</b>・側風 0.30　64%</span><span class="chip chip-wait"><b>C 低混合</b>・側風 0.30　排隊中</span><span class="chip chip-wait"><b>D 倍增</b>・側風 0.30　排隊中</span><span class="chip chip-wait"><b>A 一般</b>・無側風　排隊中</span><span class="chip chip-wait"><b>A 一般</b>・側風 0.15　排隊中</span><span class="chip chip-wait"><b>D 倍增</b>・無側風　排隊中</span><span class="chip chip-wait"><b>D 倍增</b>・側風 0.15　排隊中</span><span class="chip chip-wait"><b>C 低混合</b>・側風 0.15　排隊中</span><span class="chip chip-wait"><b>C 低混合</b>・無側風　排隊中</span></div><p class="muted small">進度在每次更新報告時重新計算（最後更新：台灣時間 10/19 22:04）。</p></div>
 </header>
 <nav class="toc" aria-label="章節">
   <a href="#summary">一頁看懂</a><a href="#method">怎麼測的</a><a href="#daily">平時：新風帶</a><a href="#fire">火災：守護路線</a>

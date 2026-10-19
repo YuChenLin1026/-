@@ -150,3 +150,11 @@ footer { margin-top: 48px; padding-top: 20px; border-top: 1px solid var(--line);
 .g-dimline { stroke: var(--accent); stroke-width: 1; }
 .g-dim { fill: var(--accent); font-size: 13px; font-weight: 600; }
 .g-slot { fill: var(--accent); }
+.progress { border: 1px solid var(--line); border-radius: 10px; background: var(--surface); padding: 14px 16px; display: grid; gap: 10px; }
+.progress .bar { height: 12px; border-radius: 999px; background: var(--surface2); overflow: hidden; border: 1px solid var(--line); }
+.progress .bar span { display: block; height: 100%; background: var(--accent); border-radius: 999px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { font-size: 12.5px; padding: 2px 9px; border-radius: 999px; border: 1px solid var(--line); color: var(--fg2); white-space: nowrap; }
+.chip-done { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+.chip-run { border-color: var(--warn); color: var(--warn); background: var(--warn-soft); }
+.small { font-size: 12.5px; }
