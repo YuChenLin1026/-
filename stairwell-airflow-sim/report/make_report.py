@@ -243,19 +243,21 @@ PAGE = f"""<title>扶手送風模擬報告</title>
 
 <div class="wrap">
 <header class="top">
-  <div class="eyebrow">樓梯逃生導引扶手系統｜第二階段送風研究</div>
+  <div class="eyebrow">樓梯逃生導引扶手系統｜送風與通風研究</div>
   <h1>扶手送風模擬報告</h1>
-  <p class="question">扶手送風，到底能不能讓低姿勢逃生的人吸到比較乾淨的空氣？用電腦模擬一項一項檢查。</p>
+  <p class="question">一根貫穿整棟樓的扶手，平時能不能流通、淨化空氣？火災時能幫逃生者做到什麼？用電腦模擬一項一項檢查。</p>
   <div class="meta"><span>日期 <b>2026-10-19</b></span><span>專案 <b>長庚大學工業設計學系 林煜宸</b></span><span>模擬與撰寫 <b>Claude（AI）</b></span></div>
   {status_note}
 </header>
 <nav class="toc" aria-label="章節">
-  <a href="#summary">一頁看懂</a><a href="#method">怎麼測的</a><a href="#nozzle">四種出風口</a><a href="#source">空氣從哪來</a>
-  <a href="#filter">濾網擋什麼</a><a href="#duct">風機與管子</a><a href="#exhaust">能不能排煙</a><a href="#next">下一步</a>
+  <a href="#summary">一頁看懂</a><a href="#method">怎麼測的</a><a href="#daily">平時：新風帶</a><a href="#fire">火災：守護路線</a>
+  <a href="#nozzle">四種出風口</a><a href="#source">空氣從哪來</a><a href="#filter">濾網擋什麼</a><a href="#exhaust">能不能排煙</a><a href="#next">下一步</a>
 </nav>
 
 <section id="summary">
   <h2><span class="no">00</span>一頁看懂</h2>
+  {oneliner("平時流通與淨化空氣，火災時標示並守護一條乾淨的疏散路線。")}
+  {graphic(D.dual_mode(), "同一套扶手系統的兩種模式。左：平時有人的樓層送風、其他樓層細流。右：火災時每層偵測空氣，燈光只指向乾淨的路，有煙的樓層關閉風門。")}
   <div class="takes">{takeaways}</div>
   <h3>每項技術的判定</h3>
   <div class="tcards">{cards}</div>
@@ -263,6 +265,7 @@ PAGE = f"""<title>扶手送風模擬報告</title>
     <h3>名詞小抄</h3>
     <dl>
       <dt>乾淨空氣比例</dt><dd>吸進去的空氣裡，有幾成是出風口送出來的。報告裡最重要的數字（英文 SAF）。</dd>
+      <dt>導風腔</dt><dd>做在扶手握把下方、跟扶手一體的空心風道，從頂樓貫穿到底層。</dd>
       <dt>側風</dt><dd>樓梯間本來就有的氣流，例如熱煙往上升、人走過帶動的風。</dd>
       <dt>壓損</dt><dd>風在管子、濾網裡被擋掉的力氣，單位 Pa。越大，風機要越用力。</dd>
       <dt>均流層</dt><dd>出風口內的一層多孔板或網子，讓每一段出風口出一樣多的風。</dd>
@@ -291,23 +294,47 @@ PAGE = f"""<title>扶手送風模擬報告</title>
       <li>出風口的空氣濃度設成 100%，周圍空氣設成 0%，讓這個「顏色」跟著氣流跑。</li>
       <li>每 0.01 秒記錄一次口鼻框裡的濃度，算 10 秒（慢的同軸組算 16 秒），前 3–4 秒不算，取後面的平均。</li>
       <li>4 種出風口 × 4 種情況（沒有人、有人無側風、側風 0.15、側風 0.30）＝ 16 組。</li>
+      <li>扶手管子、風機、濾網、排煙容量則用管路與過濾的公式計算（不需要 CFD）。</li>
     </ul>
-    <p>實體實驗可以用一模一樣的方法量：在箱子裡放 CO₂ 當作「煙」，出風口送乾淨空氣，在頭模型口鼻處量 CO₂。電腦和實驗用同一把尺，之後才能互相對照（見第 07 章）。</p>
+    <p>實體實驗可以用一模一樣的方法量：在箱子裡放 CO₂ 當作「煙」，出風口送乾淨空氣，在頭模型口鼻處量 CO₂。電腦和實驗用同一把尺，之後才能互相對照（見第 08 章）。</p>
   </div>
   {details("展開技術細節：模型設定、驗證方法、修正紀錄", method_tech)}
 </section>
 
+<section id="daily">
+  <h2><span class="no">02</span>平時：扶手新風帶</h2>
+  {oneliner(FIND["vent_one"])}
+  {graphic(D.handrail_section(), "扶手斷面：握把、導引燈、線路和導風腔整合在同一根扶手裡。")}
+  <div class="points prose">{FIND["vent_points"]}</div>
+  {fig("s5_spacing.png", "增壓機間距", "10 層同時送風時，頂樓主機和增壓機需要的壓力。150×60 mm 導風腔不裝增壓機也只要約 140–300 Pa。")}
+  {fig("s5_ondemand.png", "有人才送風", "只送有人的樓層：同時開 1–3 層時，頂樓主機只需要 40–90 Pa，耗電 0.6–5 W。")}
+  {FIND["vent_modes"]}
+  {design_box(FIND["vent_design"])}
+  {details("展開基礎計算：為什麼一般圓扶手不夠、出風口為什麼要均流層",
+           FIND["round_points"] +
+           graphic(D.uniformity(s1["uniformity"]["34mm"]["2.0"], s1["uniformity"]["34mm"]["30.0"], 2, 30), "出風口裡沒有均流層時，風會擠到末端才衝出來。") +
+           fig("s1_uniformity.png", "均流層與出風均勻度", "左：均流層阻力越大，出風越平均。右：沒有均流層（2 Pa）和有均流層（30 Pa）時，每一段出風口的出風量。") +
+           fig("s1_diameter.png", "管徑與壓損", "內徑從 38 mm 縮到 30 mm，阻力大約變成 2.5–3 倍。") +
+           fig("s1_fan_system.png", "風機與阻力曲線（每層主機方案）", "早期「每層一台主機、34 mm 圓扶手」方案的風機工作點。") + op_table())}
+</section>
+
+<section id="fire">
+  <h2><span class="no">03</span>火災：標示並守護一條乾淨的疏散路線</h2>
+  {oneliner(FIND["fire_one"])}
+  <div class="points prose">{FIND["fire_points"]}</div>
+  {design_box(FIND["fire_design"])}
+</section>
+
 <section id="nozzle">
-  <h2><span class="no">02</span>四種出風口比一比</h2>
+  <h2><span class="no">04</span>四種出風口比一比</h2>
   {oneliner(FIND["nozzle_one"])}
   {fig("s2_saf_bars.png", "四種出風口在三種側風下的乾淨空氣比例", "每條橫條代表 100% 的吸入空氣，彩色部分是來自出風口的乾淨空氣。黑色短線是最差 10% 的時刻（氣流晃開的瞬間）。")}
   <div class="points prose">{FIND["nozzle_points"]}</div>
   {fig("s2_head_vc00_fields.png", "無側風時的平均乾淨空氣分布", "無側風時，平均下乾淨空氣分布在哪裡。顏色越深，代表出風口的空氣越多；灰色細線是平均氣流方向。")}
-  {fig("s2_head_vc15_fields.png", "側風 0.15 m/s 時的平均乾淨空氣分布", "加上由下往上 0.15 m/s 的側風（大約是人慢慢走過帶起的風），送出的空氣被吹彎。")}
+  {fig("s2_head_vc15_fields.png", "側風 0.15 m/s 時的平均乾淨空氣分布", "加上由下往上 0.15 m/s 的側風（大約是人慢慢走過帶起的風），送出的空氣被吹到扶手上方，到不了臉前。")}
   {video("s2_head_vc15.mp4", "動畫（側風 0.15 m/s）：平均圖看不到的晃動與渦旋。每格 0.08 秒。")}
-  <h3>康達曲面的教訓</h3>
-  {graphic(D.coanda_lesson(), "示意圖：曲面半徑和出風縫寬度的比例，決定氣流會不會沿曲面轉彎。")}
-  {fig("s2_coanda_lesson.png", "康達第一版與修正版的模擬比較", "實際模擬：第一版 R15 和修正版 R45（無側風）。")}
+  <h3>康達曲面：這次沒有成功</h3>
+  {fig("s2_coanda_lesson.png", "康達第一版與修正版的模擬比較", "兩種曲面半徑（無側風）：氣流都沒有沿曲面轉向臉部，而是直接往下衝。")}
   <div class="points prose">{FIND["coanda_points"]}</div>
   {design_box(FIND["nozzle_design"])}
   {details("展開更多圖：側風 0.30 m/s、沒有人時的氣流、完整數字表",
@@ -318,16 +345,16 @@ PAGE = f"""<title>扶手送風模擬報告</title>
 </section>
 
 <section id="source">
-  <h2><span class="no">03</span>空氣從哪裡來，比出風口更重要</h2>
-  {oneliner("吸樓梯間的空氣過濾後再送出，口鼻的 CO 一點都不會少。只有獨立的乾淨氣源才有用。")}
+  <h2><span class="no">05</span>空氣從哪裡來，比出風口更重要</h2>
+  {oneliner("吸樓梯間的空氣過濾後再送出，口鼻的 CO 一點都不會少。只有確認乾淨的氣源才有用。")}
   {graphic(D.source_compare(FIND["saf_example"]), "濾網只擋得住煙粒，擋不住 CO。送出去的空氣如果本來就含 CO，再好的出風口也沒用。")}
-  {fig("s2_exposure.png", "兩種氣源下口鼻的 CO", "口鼻 CO ÷ 周圍 CO。紅：吸樓梯間空氣＋濾網；藍：獨立乾淨氣源。用側風 0.15 m/s 的乾淨空氣比例代入公式計算。")}
+  {fig("s2_exposure.png", "兩種氣源下口鼻的 CO", "口鼻 CO ÷ 周圍 CO。紅：吸樓梯間空氣＋濾網；藍：乾淨氣源。用無側風時的乾淨空氣比例代入公式計算。")}
   <div class="points prose">{FIND["source_points"]}</div>
   {design_box(FIND["source_design"])}
 </section>
 
 <section id="filter">
-  <h2><span class="no">04</span>濾網能擋什麼</h2>
+  <h2><span class="no">06</span>濾網能擋什麼</h2>
   {oneliner("HEPA 擋得住煙粒，擋不住 CO。氣旋連煙粒都抓不到，不採用。")}
   {graphic(D.size_ruler(s3["cyclone"]["d50_um"]), "火災煙粒比氣旋能抓的大小小了好幾倍；HEPA 則整段都抓得到。")}
   {fig("s3_filtration.png", "各種過濾方式能抓到的粒子大小", "曲線：每種方式對各種大小的粒子抓得到幾成。灰色山形：兩種火災煙的粒子大小分布（假設值）。")}
@@ -336,20 +363,8 @@ PAGE = f"""<title>扶手送風模擬報告</title>
   {design_box(FIND["filter_design"])}
 </section>
 
-<section id="duct">
-  <h2><span class="no">05</span>風機與扶手管子</h2>
-  {oneliner(FIND["duct_one"])}
-  {graphic(D.stair_layout(), "建議配置：每層平台一台主機，出風口集中在平台附近，其他扶手只負責導引。")}
-  {fig("s1_fan_system.png", "風機與阻力曲線", "黑線是三種風機（假設值）的能力，彩色線是管子＋濾網的阻力。交點就是實際能送出的風量；紅色虛線是需要的 6 L/s。")}
-  {graphic(D.uniformity(s1["uniformity"]["34mm"]["2.0"], s1["uniformity"]["34mm"]["30.0"], 2, 30), "出風口裡沒有均流層時，風會擠到末端才衝出來。")}
-  {fig("s1_uniformity.png", "均流層與出風均勻度", "左：均流層阻力越大，出風越平均。右：沒有均流層（2 Pa）和有均流層（30 Pa）時，每一段出風口的出風量。")}
-  <div class="points prose">{FIND["duct_points"]}</div>
-  {design_box(FIND["duct_design"])}
-  {details("展開更多：管子粗細的影響、各風機工作點表", fig("s1_diameter.png", "管徑與壓損", "內徑從 38 mm 縮到 30 mm，阻力大約變成 2.5–3 倍。") + op_table())}
-</section>
-
 <section id="exhaust">
-  <h2><span class="no">06</span>扶手能不能拿來排煙</h2>
+  <h2><span class="no">07</span>扶手能不能拿來排煙</h2>
   {oneliner(FIND["exhaust_one"])}
   {graphic(D.exhaust_scale(FIND["door_m3min"], FIND["rail_m3min"]), "一扇敞開的門和扶手排煙量的比較。")}
   {fig("s4_exhaust.png", "扶手排煙容量", "整棟一根扶手（70 m）在不同風機推力下最多能排多少。")}
@@ -358,8 +373,8 @@ PAGE = f"""<title>扶手送風模擬報告</title>
 </section>
 
 <section id="next">
-  <h2><span class="no">07</span>還不知道的事，和下一步</h2>
-  {oneliner("電腦模擬適合用來比較和排除方案，真正的效果要靠實驗確認。")}
+  <h2><span class="no">08</span>還不知道的事，和下一步</h2>
+  {oneliner("下一階段的目標：扶手周圍 40–60 cm 內，乾淨空氣比例至少 50%，讓可逃生的時間至少多一倍。")}
   <div class="points prose">{FIND["limits_points"]}</div>
   {graphic(D.test_rig(), "建議的桌上型實驗：用 CO₂ 當作「煙」，量頭模型口鼻處的濃度，用和電腦相同的方法算乾淨空氣比例。")}
   <div class="points prose">{FIND["next_points"]}</div>

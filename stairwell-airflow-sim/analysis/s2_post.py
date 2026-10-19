@@ -187,7 +187,7 @@ def coanda_compare():
     axs[0].set_ylabel("cm")
     if im is not None:
         fig.colorbar(im, ax=axs, shrink=0.85, pad=0.015).set_label("乾淨空氣比例")
-    fig.suptitle("康達曲面：半徑太小時，氣流不轉彎、直接往下衝（無側風）", x=0.01, ha="left", fontsize=12)
+    fig.suptitle("康達曲面：兩種半徑的氣流都沒有沿曲面轉彎，直接往下衝（無側風）", x=0.01, ha="left", fontsize=12)
     return save(fig, "s2_coanda_lesson.png")
 
 
@@ -263,7 +263,7 @@ def main():
     wbar = 0.36
     labels = []
     for k, nz in enumerate(NOZZLES):
-        s = allres.get(f"{nz}_head_vc15")
+        s = allres.get(f"{nz}_head_vc00")
         if s is None:
             continue
         saf = s["mean"]

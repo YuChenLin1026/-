@@ -140,6 +140,15 @@ code { font-family: var(--f-mono); font-size: .9em; background: var(--surface2);
 .g-accent-fill { fill: var(--accent); }
 .g-muted-fill { fill: var(--muted); }
 .g-crit-fill { fill: var(--crit); }
+.g-led { fill: none; stroke: var(--accent); stroke-width: 5; stroke-linecap: round; }
+.g-cavity { fill: var(--accent-soft); stroke: var(--muted); stroke-width: 1.4; }
+.g-mesh { stroke: var(--fg2); stroke-width: 3; stroke-dasharray: 2 3; }
+.g-railv { stroke: var(--muted); stroke-width: 5; stroke-linecap: round; }
+.g-node-ok { fill: var(--accent); }
+.g-node-idle { fill: var(--surface2); stroke: var(--accent); stroke-width: 2; }
+.g-node-warn { fill: var(--warn); }
+.g-node-crit { fill: var(--crit); }
+.g-sep { stroke: var(--line); stroke-width: 1; stroke-dasharray: 4 4; }
 footer { margin-top: 48px; padding-top: 20px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; display: grid; gap: 6px; }
 @media (max-width: 560px) { .gloss dl { grid-template-columns: 1fr; gap: 0; } .gloss dd { margin-bottom: 8px; } tbody th { white-space: normal; } }
 
@@ -147,26 +156,33 @@ footer { margin-top: 48px; padding-top: 20px; border-top: 1px solid var(--line);
 
 <div class="wrap">
 <header class="top">
-  <div class="eyebrow">樓梯逃生導引扶手系統｜第二階段送風研究</div>
+  <div class="eyebrow">樓梯逃生導引扶手系統｜送風與通風研究</div>
   <h1>扶手送風模擬報告</h1>
-  <p class="question">扶手送風，到底能不能讓低姿勢逃生的人吸到比較乾淨的空氣？用電腦模擬一項一項檢查。</p>
+  <p class="question">一根貫穿整棟樓的扶手，平時能不能流通、淨化空氣？火災時能幫逃生者做到什麼？用電腦模擬一項一項檢查。</p>
   <div class="meta"><span>日期 <b>2026-10-19</b></span><span>專案 <b>長庚大學工業設計學系 林煜宸</b></span><span>模擬與撰寫 <b>Claude（AI）</b></span></div>
-  <p class="banner">出風口的電腦模擬（CFD）還在計算，標示「計算中」的地方完成後會更新。</p>
+  
 </header>
 <nav class="toc" aria-label="章節">
-  <a href="#summary">一頁看懂</a><a href="#method">怎麼測的</a><a href="#nozzle">四種出風口</a><a href="#source">空氣從哪來</a>
-  <a href="#filter">濾網擋什麼</a><a href="#duct">風機與管子</a><a href="#exhaust">能不能排煙</a><a href="#next">下一步</a>
+  <a href="#summary">一頁看懂</a><a href="#method">怎麼測的</a><a href="#daily">平時：新風帶</a><a href="#fire">火災：守護路線</a>
+  <a href="#nozzle">四種出風口</a><a href="#source">空氣從哪來</a><a href="#filter">濾網擋什麼</a><a href="#exhaust">能不能排煙</a><a href="#next">下一步</a>
 </nav>
 
 <section id="summary">
   <h2><span class="no">00</span>一頁看懂</h2>
-  <div class="takes"><div class="take"><div class="big">0%</div><p>吸樓梯間的空氣、用濾網過濾再送出，口鼻的 CO <b>一點都不會減少</b>。CO 是氣體，濾網擋不住。</p></div><div class="take"><div class="big">24%</div><p>出風口的電腦模擬計算中。</p></div><div class="take"><div class="big">≈ 153</div><p>一扇敞開的門的風量，相當於約 153 根扶手同時全力排煙。扶手當排煙管<b>不可行</b>。</p></div></div>
+  <p class="oneliner">平時流通與淨化空氣，火災時標示並守護一條乾淨的疏散路線。</p>
+  <figure class="fig">
+<svg class="graphic" viewBox="0 0 820 340" role="img" aria-label="同一套扶手系統，平時依有人與否送風，火災時各層偵測空氣並用燈光標示乾淨路線、有煙的樓層關閉風門">
+<text x="20" y="26" class="g-b">平時：流通與淨化空氣</text><text x="20" y="44" class="g-s">有人的樓層送風，其他樓層細流</text><rect x="100" y="58" width="70" height="26" rx="4" class="g-host"/><text x="135" y="76" text-anchor="middle" class="g-on">頂樓主機</text><line x1="135" y1="84" x2="135" y2="96" class="g-railv"/><line x1="135" y1="96" x2="275" y2="140" class="g-railv"/><circle cx="275" cy="140" r="9" class="g-node-idle"/><text x="205" y="132" text-anchor="middle" class="g-s">5F</text><text x="291" y="144" text-anchor="start" class="g-s">細流 0.5 L/s</text><line x1="275" y1="140" x2="135" y2="184" class="g-railv"/><circle cx="135" cy="184" r="9" class="g-node-ok"/><text x="205" y="176" text-anchor="middle" class="g-s">4F</text><text x="119" y="188" text-anchor="end" class="g-s">有人：送風 5 L/s</text><line x1="135" y1="184" x2="275" y2="228" class="g-railv"/><circle cx="275" cy="228" r="9" class="g-node-ok"/><text x="205" y="220" text-anchor="middle" class="g-s">3F</text><text x="291" y="232" text-anchor="start" class="g-s">有人：送風 5 L/s</text><line x1="275" y1="228" x2="135" y2="272" class="g-railv"/><circle cx="135" cy="272" r="9" class="g-node-idle"/><text x="205" y="264" text-anchor="middle" class="g-s">2F</text><text x="119" y="276" text-anchor="end" class="g-s">細流 0.5 L/s</text><line x1="135" y1="272" x2="275" y2="316" class="g-railv"/><circle cx="275" cy="316" r="9" class="g-node-idle"/><text x="205" y="308" text-anchor="middle" class="g-s">1F</text><text x="291" y="320" text-anchor="start" class="g-s">細流 0.5 L/s</text><text x="425" y="26" class="g-b">火災：標示並守護疏散路線</text><text x="425" y="44" class="g-s">各層偵測站判斷，燈光只指向乾淨的路</text><rect x="505" y="58" width="70" height="26" rx="4" class="g-host"/><text x="540" y="76" text-anchor="middle" class="g-on">頂樓主機</text><line x1="540" y1="84" x2="540" y2="96" class="g-railv"/><line x1="540" y1="96" x2="680" y2="140" class="g-railv"/><circle cx="680" cy="140" r="9" class="g-node-warn"/><text x="610" y="132" text-anchor="middle" class="g-s">5F</text><text x="696" y="144" text-anchor="start" class="g-s">不確定：琥珀燈</text><line x1="680" y1="140" x2="540" y2="184" class="g-railv"/><circle cx="540" cy="184" r="9" class="g-node-crit"/><text x="610" y="176" text-anchor="middle" class="g-s">4F</text><text x="524" y="188" text-anchor="end" class="g-s">有煙：風門關閉</text><line x1="540" y1="184" x2="680" y2="228" class="g-railv"/><circle cx="680" cy="228" r="9" class="g-node-ok"/><text x="610" y="220" text-anchor="middle" class="g-s">3F</text><text x="696" y="232" text-anchor="start" class="g-s">乾淨：綠光標示</text><line x1="680" y1="228" x2="540" y2="272" class="g-railv"/><circle cx="540" cy="272" r="9" class="g-node-ok"/><text x="610" y="264" text-anchor="middle" class="g-s">2F</text><text x="524" y="276" text-anchor="end" class="g-s">乾淨：綠光標示</text><line x1="540" y1="272" x2="680" y2="316" class="g-railv"/><circle cx="680" cy="316" r="9" class="g-node-ok"/><text x="610" y="308" text-anchor="middle" class="g-s">1F</text><text x="696" y="320" text-anchor="start" class="g-s">乾淨：綠光標示</text>
+  <line x1="410" y1="20" x2="410" y2="330" class="g-sep"/>
+</svg><figcaption>同一套扶手系統的兩種模式。左：平時有人的樓層送風、其他樓層細流。右：火災時每層偵測空氣，燈光只指向乾淨的路，有煙的樓層關閉風門。</figcaption></figure>
+  <div class="takes"><div class="take"><div class="big">5 W</div><p><b>平時：</b>頂樓一台主機經扶手導風腔送風，不必另拉管、不必每層裝增壓機。有人才送風時，同時 3 層也只要約 5 W。</p></div><div class="take"><div class="big">91%</div><p><b>火災（無側風）：</b>低混合率出風口在臉前 35 cm 送到 91% 的乾淨空氣，可逃生時間理論上可延長很多倍。</p></div><div class="take"><div class="big">0%</div><p><b>但只要有 0.15 m/s 的側風</b>，四種出風口都送不到臉前。下一步要讓扶手周圍 40–60 cm 守得住。</p></div><div class="take"><div class="big">0%</div><p>吸樓梯間的空氣過濾後再送，口鼻的 CO <b>一點都不會減少</b>。氣源一定要先確認乾淨。</p></div></div>
   <h3>每項技術的判定</h3>
-  <div class="tcards"><article class="tcard"><div class="tcard-top"><h3>緊湊型離心風機</h3><span class="pill ok">可行</span></div><p>每層一台中型鼓風機就夠：濾網堵塞時還有 10.6 L/s（需要 6 L/s），耗電約 19 W。</p><span class="tsrc">第 05 章</span></article><article class="tcard"><div class="tcard-top"><h3>低混合率同軸噴嘴</h3><span class="pill mid">計算中</span></div><p>電腦模擬還在計算。</p><span class="tsrc">第 02 章</span></article><article class="tcard"><div class="tcard-top"><h3>康達曲面導流</h3><span class="pill mid">計算中</span></div><p>電腦模擬還在計算。</p><span class="tsrc">第 02 章</span></article><article class="tcard"><div class="tcard-top"><h3>一般定向噴嘴</h3><span class="pill mid">計算中</span></div><p>電腦模擬還在計算。</p><span class="tsrc">第 02 章</span></article><article class="tcard"><div class="tcard-top"><h3>氣流倍增式噴嘴</h3><span class="pill mid">計算中</span></div><p>電腦模擬還在計算。</p><span class="tsrc">第 02 章</span></article><article class="tcard"><div class="tcard-top"><h3>初濾＋HEPA</h3><span class="pill mid">只擋煙粒</span></div><p>火災煙粒擋下 99.9% 以上；CO 擋下 0%。</p><span class="tsrc">第 04 章</span></article><article class="tcard"><div class="tcard-top"><h3>活性碳、觸媒</h3><span class="pill mid">要做實驗</span></div><p>電腦算不出來。活性碳幾乎擋不住 CO；觸媒有機會，但怕濕氣、有壽命，必須實測。</p><span class="tsrc">第 04 章</span></article><article class="tcard"><div class="tcard-top"><h3>氣源</h3><span class="pill ok">必須獨立</span></div><p>吸樓梯間空氣過濾後送出，CO 一點都沒少。只有獨立乾淨氣源，出風口才有意義。</p><span class="tsrc">第 03 章</span></article><article class="tcard"><div class="tcard-top"><h3>氣旋分離</h3><span class="pill bad">不採用</span></div><p>火災煙粒太小，氣旋只抓到約 3%（重量），還要 856 Pa 的推力。</p><span class="tsrc">第 04 章</span></article><article class="tcard"><div class="tcard-top"><h3>扶手當排煙管</h3><span class="pill bad">不採用</span></div><p>風機開到 3000 Pa，整根扶手也只排得出約 0.71 m³/min，是一扇門的 0.7%。</p><span class="tsrc">第 06 章</span></article><article class="tcard"><div class="tcard-top"><h3>吸樓梯間空氣過濾後送去呼吸</h3><span class="pill bad">不採用</span></div><p>CO、缺氧、高溫，濾網都處理不了。</p><span class="tsrc">第 03 章</span></article></div>
+  <div class="tcards"><article class="tcard"><div class="tcard-top"><h3>扶手一體導風腔（150×60 mm）</h3><span class="pill ok">可行</span></div><p>頂樓一台主機就推得動 10 層（全開約 304 Pa），不必另拉管、不必裝增壓機。</p><span class="tsrc">第 02 章</span></article><article class="tcard"><div class="tcard-top"><h3>有人才送風＋細流＋預測預開</h3><span class="pill ok">可行</span></div><p>細流讓管內空氣約 2 分鐘換一次，有人時立刻有新鮮風；一天約 0.05 度電。</p><span class="tsrc">第 02 章</span></article><article class="tcard"><div class="tcard-top"><h3>一般圓扶手當風管</h3><span class="pill bad">太細</span></div><p>整棟只送得出每層約 0.5 L/s，必須改成一體導風腔斷面。</p><span class="tsrc">第 02 章</span></article><article class="tcard"><div class="tcard-top"><h3>低混合率同軸噴嘴</h3><span class="pill ok">無風時最好</span></div><p>臉前 35 cm 的乾淨空氣：無側風 91%，有側風 0%。準，但怕風。</p><span class="tsrc">第 04 章</span></article><article class="tcard"><div class="tcard-top"><h3>一般定向噴嘴</h3><span class="pill mid">效果有限</span></div><p>臉前 35 cm 的乾淨空氣：無側風 24%，有側風 0%。</p><span class="tsrc">第 04 章</span></article><article class="tcard"><div class="tcard-top"><h3>氣流倍增式（Dyson 式）</h3><span class="pill bad">火災不適用</span></div><p>臉前 35 cm 的乾淨空氣：無側風 23%，有側風 0%。借來的是周圍空氣；平時用來散開新鮮空氣可以。</p><span class="tsrc">第 04 章</span></article><article class="tcard"><div class="tcard-top"><h3>康達曲面導流</h3><span class="pill bad">這次失敗</span></div><p>臉前 35 cm 的乾淨空氣：無側風 4%，有側風 0%。氣流沒有沿曲面轉彎。</p><span class="tsrc">第 04 章</span></article><article class="tcard"><div class="tcard-top"><h3>氣源</h3><span class="pill mid">要確認乾淨</span></div><p>進氣口要有 CO／煙霧感測，量到污染就關閉。濾網擋不住 CO。</p><span class="tsrc">第 05 章</span></article><article class="tcard"><div class="tcard-top"><h3>初濾＋HEPA</h3><span class="pill mid">只擋煙粒</span></div><p>平時淨化 PM2.5 很好；火災煙粒擋下 99.9% 以上，但 CO 擋下 0%。</p><span class="tsrc">第 06 章</span></article><article class="tcard"><div class="tcard-top"><h3>活性碳、觸媒</h3><span class="pill mid">要做實驗</span></div><p>活性碳幾乎擋不住 CO；觸媒有機會，但怕濕氣、有壽命。</p><span class="tsrc">第 06 章</span></article><article class="tcard"><div class="tcard-top"><h3>氣旋分離</h3><span class="pill bad">不採用</span></div><p>火災煙粒太小，只抓到約 3%（重量），還要 856 Pa 的推力。</p><span class="tsrc">第 06 章</span></article><article class="tcard"><div class="tcard-top"><h3>扶手當排煙管</h3><span class="pill bad">不採用</span></div><p>整根扶手全力排煙只有一扇門的 0.7%。</p><span class="tsrc">第 07 章</span></article></div>
   <div class="gloss">
     <h3>名詞小抄</h3>
     <dl>
       <dt>乾淨空氣比例</dt><dd>吸進去的空氣裡，有幾成是出風口送出來的。報告裡最重要的數字（英文 SAF）。</dd>
+      <dt>導風腔</dt><dd>做在扶手握把下方、跟扶手一體的空心風道，從頂樓貫穿到底層。</dd>
       <dt>側風</dt><dd>樓梯間本來就有的氣流，例如熱煙往上升、人走過帶動的風。</dd>
       <dt>壓損</dt><dd>風在管子、濾網裡被擋掉的力氣，單位 Pa。越大，風機要越用力。</dd>
       <dt>均流層</dt><dd>出風口內的一層多孔板或網子，讓每一段出風口出一樣多的風。</dd>
@@ -265,15 +281,16 @@ footer { margin-top: 48px; padding-top: 20px; border-top: 1px solid var(--line);
       <li>出風口的空氣濃度設成 100%，周圍空氣設成 0%，讓這個「顏色」跟著氣流跑。</li>
       <li>每 0.01 秒記錄一次口鼻框裡的濃度，算 10 秒（慢的同軸組算 16 秒），前 3–4 秒不算，取後面的平均。</li>
       <li>4 種出風口 × 4 種情況（沒有人、有人無側風、側風 0.15、側風 0.30）＝ 16 組。</li>
+      <li>扶手管子、風機、濾網、排煙容量則用管路與過濾的公式計算（不需要 CFD）。</li>
     </ul>
-    <p>實體實驗可以用一模一樣的方法量：在箱子裡放 CO₂ 當作「煙」，出風口送乾淨空氣，在頭模型口鼻處量 CO₂。電腦和實驗用同一把尺，之後才能互相對照（見第 07 章）。</p>
+    <p>實體實驗可以用一模一樣的方法量：在箱子裡放 CO₂ 當作「煙」，出風口送乾淨空氣，在頭模型口鼻處量 CO₂。電腦和實驗用同一把尺，之後才能互相對照（見第 08 章）。</p>
   </div>
-  <details class="more"><summary>展開技術細節：模型設定、驗證方法、修正紀錄</summary><div class="more-body"><h4>電腦模型的設定</h4><div class="table-wrap"><table><thead><tr><th scope="col">項目</th><th scope="col">設定</th><th scope="col">性質</th></tr></thead><tbody><tr><th scope="row">網格</th><td>1 mm 正方格，640 × 400 ＝ 25.6 萬格</td><td><span class="tag tag-asm">假設值</span></td></tr><tr><th scope="row">流場方法</th><td>D2Q9 格子波茲曼法（LBM），正則化碰撞＋Smagorinsky 大渦模擬（Cs = 0.17）</td><td><span class="tag tag-inf">工程推論</span></td></tr><tr><th scope="row">示蹤劑</th><td>有限體積 MUSCL（minmod 限制器），對流形式 u·∇c＋擴散；分子擴散 2×10⁻⁵ m²/s，紊流擴散＝渦黏度/0.7</td><td><span class="tag tag-inf">工程推論</span></td></tr><tr><th scope="row">空氣</th><td>20 °C，動黏度 1.5×10⁻⁵ m²/s，等溫、不含浮力</td><td><span class="tag tag-asm">假設值</span></td></tr><tr><th scope="row">送風量</th><td>每公尺出風口 5 L/s（四種出風口相同，公平比較）</td><td><span class="tag tag-asm">假設值</span></td></tr><tr><th scope="row">模擬時間</th><td>10 秒（同軸組 16 秒，因為氣流慢），前 3 秒（同軸組 4 秒）為暖機不列入平均</td><td><span class="tag tag-asm">假設值</span></td></tr><tr><th scope="row">時間步長</th><td>依各組最高速度換算，格子速度上限 0.1（控制壓縮性誤差）</td><td><span class="tag tag-inf">工程推論</span></td></tr><tr><th scope="row">邊界</th><td>四周開放＋ 2.5 cm 吸收層（提高黏度並往遠場狀態鬆弛，避免渦旋與壓力波反射）；側風由下邊界均勻送入</td><td><span class="tag tag-inf">工程推論</span></td></tr><tr><th scope="row">固體</th><td>半格反彈（halfway bounce-back）：扶手、噴嘴壁、頭部</td><td><span class="tag tag-inf">工程推論</span></td></tr><tr><th scope="row">取樣</th><td>口鼻區方框每 0.01 秒記錄一次平均濃度</td><td><span class="tag tag-asm">假設值</span></td></tr></tbody></table></div><h4>怎麼確認模型算得對</h4>
+  <details class="more"><summary>展開技術細節：模型設定、驗證方法、修正紀錄</summary><div class="more-body"><h4>電腦模型的設定</h4><div class="table-wrap"><table><thead><tr><th scope="col">項目</th><th scope="col">設定</th><th scope="col">性質</th></tr></thead><tbody><tr><th scope="row">網格</th><td>1 mm 正方格，640 × 400 ＝ 25.6 萬格</td><td><span class="tag tag-asm">假設值</span></td></tr><tr><th scope="row">流場方法</th><td>D2Q9 格子波茲曼法（LBM），正則化碰撞＋Smagorinsky 大渦模擬（Cs = 0.17）</td><td><span class="tag tag-inf">工程推論</span></td></tr><tr><th scope="row">示蹤劑</th><td>有限體積 MUSCL（minmod 限制器），對流形式 u·∇c＋擴散；分子擴散 2×10⁻⁵ m²/s，紊流擴散＝渦黏度/0.7</td><td><span class="tag tag-inf">工程推論</span></td></tr><tr><th scope="row">空氣</th><td>20 °C，動黏度 1.5×10⁻⁵ m²/s，等溫、不含浮力</td><td><span class="tag tag-asm">假設值</span></td></tr><tr><th scope="row">送風量</th><td>每公尺出風口 5 L/s（四種出風口相同，公平比較）</td><td><span class="tag tag-asm">假設值</span></td></tr><tr><th scope="row">模擬時間</th><td>10 秒（同軸組 16 秒，因為氣流慢；但側風 0.30 的同軸組為 10 秒），前 3 秒（16 秒組為 4 秒）為暖機不列入平均</td><td><span class="tag tag-asm">假設值</span></td></tr><tr><th scope="row">時間步長</th><td>依各組最高速度換算（側風以 2.5 倍計入，因為繞過頭部會加速），格子速度上限 0.1（控制壓縮性誤差）</td><td><span class="tag tag-inf">工程推論</span></td></tr><tr><th scope="row">邊界</th><td>四周開放＋ 2.5 cm 吸收層（提高黏度並往遠場狀態鬆弛，避免渦旋與壓力波反射）；側風由下邊界均勻送入</td><td><span class="tag tag-inf">工程推論</span></td></tr><tr><th scope="row">固體</th><td>半格反彈（halfway bounce-back）：扶手、噴嘴壁、頭部</td><td><span class="tag tag-inf">工程推論</span></td></tr><tr><th scope="row">取樣</th><td>口鼻區方框每 0.01 秒記錄一次平均濃度</td><td><span class="tag tag-asm">假設值</span></td></tr></tbody></table></div><h4>怎麼確認模型算得對</h4>
 <ul>
 <li><b>先考一題有標準答案的：</b>用同一支程式算「兩片平板之間的氣流」，這題有數學解答。結果速度分布和解析解差 0.4%，流量差 0.5%。<span class="tag tag-sim">模擬結果</span></li>
-<li><b>空氣有沒有憑空消失：</b>出風口外 1 mm 量到的送風量，除以設定的送風量，16 組落在 0.81–0.96（1.00 代表完全吻合）。<span class="tag tag-sim">模擬結果</span></li>
-<li><b>算得夠不夠久：</b>把平均時段切成前後兩半各算一次，差距最多 5.5 個百分點。差距小代表數字已經穩定。<span class="tag tag-sim">模擬結果</span></li>
-</ul><figure class="fig"><img class="img-light" src="assets/val_poiseuille.png" alt="平板間氣流的驗證" loading="lazy"><img class="img-dark" src="assets/val_poiseuille_dark.png" alt="平板間氣流的驗證" loading="lazy"><figcaption>考題：兩片平板之間的速度分布。點＝本程式，虛線＝數學解答。</figcaption></figure><div class="table-wrap"><table><thead><tr><th scope="col">算例</th><th scope="col">出口通量 ÷ 設定送風量</th><th scope="col">口鼻乾淨空氣比例：前半段 / 後半段</th></tr></thead><tbody><tr><th scope="row">amp_head_vc30</th><td class="num">0.81</td><td class="num">0.0% / 0.0%</td></tr><tr><th scope="row">plain_head_vc00</th><td class="num">0.96</td><td class="num">21.3% / 26.8%</td></tr></tbody></table></div><h4>計算途中發現並修正的問題</h4>
+<li><b>空氣有沒有憑空消失：</b>出風口外 1 mm 量到的送風量，除以設定的送風量，16 組落在 -0.00–1.01（1.00 代表完全吻合）。<span class="tag tag-sim">模擬結果</span></li>
+<li><b>算得夠不夠久：</b>把平均時段切成前後兩半各算一次，差距最多 15.4 個百分點。差距小代表數字已經穩定。<span class="tag tag-sim">模擬結果</span></li>
+</ul><figure class="fig"><img class="img-light" src="assets/val_poiseuille.png" alt="平板間氣流的驗證" loading="lazy"><img class="img-dark" src="assets/val_poiseuille_dark.png" alt="平板間氣流的驗證" loading="lazy"><figcaption>考題：兩片平板之間的速度分布。點＝本程式，虛線＝數學解答。</figcaption></figure><div class="table-wrap"><table><thead><tr><th scope="col">算例</th><th scope="col">出口通量 ÷ 設定送風量</th><th scope="col">口鼻乾淨空氣比例：前半段 / 後半段</th></tr></thead><tbody><tr><th scope="row">amp_head_vc00</th><td class="num">0.91</td><td class="num">15.6% / 31.0%</td></tr><tr><th scope="row">amp_head_vc15</th><td class="num">0.88</td><td class="num">0.0% / 0.0%</td></tr><tr><th scope="row">amp_head_vc30</th><td class="num">0.81</td><td class="num">0.0% / 0.0%</td></tr><tr><th scope="row">coanda_head_vc00</th><td class="num">-0.00</td><td class="num">0.4% / 7.6%</td></tr><tr><th scope="row">coanda_head_vc15</th><td class="num">0.96</td><td class="num">0.0% / 0.0%</td></tr><tr><th scope="row">coanda_head_vc30</th><td class="num">0.95</td><td class="num">0.0% / 0.0%</td></tr><tr><th scope="row">coax_free</th><td class="num">0.97</td><td class="num">86.4% / 86.9%</td></tr><tr><th scope="row">coax_head_vc00</th><td class="num">0.97</td><td class="num">91.1% / 90.8%</td></tr><tr><th scope="row">coax_head_vc15</th><td class="num">1.01</td><td class="num">0.0% / 0.0%</td></tr><tr><th scope="row">coax_head_vc30</th><td class="num">1.01</td><td class="num">0.0% / 0.0%</td></tr><tr><th scope="row">plain_head_vc00</th><td class="num">0.96</td><td class="num">21.3% / 26.8%</td></tr><tr><th scope="row">plain_head_vc15</th><td class="num">0.92</td><td class="num">0.0% / 0.0%</td></tr><tr><th scope="row">plain_head_vc30</th><td class="num">1.00</td><td class="num">0.0% / 0.0%</td></tr></tbody></table></div><h4>計算途中發現並修正的問題</h4>
 <p>每次修正後都全部重新計算，報告裡的數字都來自最後的版本。</p>
 <ol>
 <li>出風口的設定會讓空氣慢慢「漏掉」，風送不出去 → 改寫出風口的計算方式。</li>
@@ -281,6 +298,7 @@ footer { margin-top: 48px; padding-top: 20px; border-top: 1px solid var(--line);
 <li>出風口通道內的「染色」濃度會自己慢慢變淡 → 改用不會漂移的寫法，通道內維持 100%。</li>
 <li>模型邊緣會把渦旋反彈回來，康達組計算爆掉 → 邊緣加上吸收層。修正後考題誤差從 2.3% 降到 0.45%。</li>
 <li>康達第一版曲面太彎，氣流不轉彎（這是物理結果，不是程式錯誤）→ 保留結果當設計教訓，另做修正版比較。</li>
+<li>同軸組在側風 0.30 m/s 時，側風比出風還快，繞過頭部加速後超出穩定範圍 → 時間步長改以 2.5 倍側風換算，該組重算。</li>
 </ol>
 <h4>其他三組模擬怎麼算</h4>
 <div class="cols">
@@ -290,46 +308,150 @@ footer { margin-top: 48px; padding-top: 20px; border-top: 1px solid var(--line);
 </div></div></details>
 </section>
 
-<section id="nozzle">
-  <h2><span class="no">02</span>四種出風口比一比</h2>
-  <p class="oneliner">出風口的電腦模擬還在計算。</p>
-  <figure class="fig"><img class="img-any" src="assets/s2_saf_bars.png" alt="四種出風口在三種側風下的乾淨空氣比例" loading="lazy"><figcaption>每條橫條代表 100% 的吸入空氣，彩色部分是來自出風口的乾淨空氣。黑色短線是最差 10% 的時刻（氣流晃開的瞬間）。</figcaption></figure>
-  <div class="points prose"><p>目前結果（臉在 35 cm 處吸到的乾淨空氣比例）：</p><ul><li><b>A 一般定向噴嘴</b>：計算中</li><li><b>B 康達曲面導流</b>：計算中</li><li><b>C 低混合率同軸噴嘴</b>：計算中</li><li><b>D 氣流倍增式</b>：計算中</li></ul></div>
-  <figure class="fig"><img class="img-any" src="assets/s2_head_vc00_fields.png" alt="無側風時的平均乾淨空氣分布" loading="lazy"><figcaption>無側風時，平均下乾淨空氣分布在哪裡。顏色越深，代表出風口的空氣越多；灰色細線是平均氣流方向。</figcaption></figure>
-  <figure class="fig"><img class="img-any" src="assets/s2_head_vc15_fields.png" alt="側風 0.15 m/s 時的平均乾淨空氣分布" loading="lazy"><figcaption>加上由下往上 0.15 m/s 的側風（大約是人慢慢走過帶起的風），送出的空氣被吹彎。</figcaption></figure>
-  <figure class="fig"><div class="pending-box">動畫計算中</div><figcaption>動畫（側風 0.15 m/s）：平均圖看不到的晃動與渦旋。每格 0.08 秒。</figcaption></figure>
-  <h3>康達曲面的教訓</h3>
+<section id="daily">
+  <h2><span class="no">02</span>平時：扶手新風帶</h2>
+  <p class="oneliner">把扶手做成「握把＋一體導風腔」，頂樓一台主機就能把過濾過的室外空氣送到每一層，不用另外拉管。</p>
   <figure class="fig">
-<svg class="graphic" viewBox="0 0 760 250" role="img" aria-label="曲面半徑只有出風縫 2.5 倍時氣流直接往下衝，不會沿曲面轉彎">
+<svg class="graphic" viewBox="0 0 760 330" role="img" aria-label="扶手斷面：上方是握把和導引燈，細頸下方是 150 乘 60 毫米的導風腔，內含均流層和線路槽，出風縫朝使用者">
 
 <defs>
-  <marker id="ka" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="g-accent-fill"/></marker>
-  <marker id="km" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="g-muted-fill"/></marker>
-  <marker id="kc" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="g-crit-fill"/></marker>
+  <marker id="ha" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="g-accent-fill"/></marker>
+  <marker id="hm" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="g-muted-fill"/></marker>
+  <marker id="hc" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="g-crit-fill"/></marker>
 </defs>
-  <text x="40" y="26" class="g-b">第一版：R 15 mm（縫寬的 2.5 倍）</text>
-  <path d="M110,60 L110,110 A30,30 0 0 0 140,140 L140,60 Z" class="g-solid"/>
-  <rect x="92" y="60" width="4" height="50" class="g-solid"/>
-  <line x1="103" y1="64" x2="103" y2="210" class="g-crit-arrow" marker-end="url(#kc)"/>
-  <path d="M106,118 C120,138 140,145 220,145" class="g-dash"/>
-  <text x="150" y="190" class="g-crit-t">氣流直接往下衝</text>
-  <text x="150" y="208" class="g-s">沒有轉彎，臉收不到</text>
-  <text x="228" y="149" class="g-s">（預期的路徑）</text>
-  <text x="420" y="26" class="g-b">修正版：R 45 mm（縫寬的 7.5 倍）</text>
-  <path d="M470,50 L470,100 A80,80 0 0 0 550,180 L550,50 Z" class="g-solid"/>
-  <rect x="452" y="50" width="4" height="50" class="g-solid"/>
-  <path d="M463,54 L463,104 A88,88 0 0 0 551,190 L700,190" class="g-ok-arrow" marker-end="url(#ka)"/>
-  <text x="740" y="226" text-anchor="end" class="g-s">曲面夠緩，氣流才有機會貼著轉彎</text>
-</svg><figcaption>示意圖：曲面半徑和出風縫寬度的比例，決定氣流會不會沿曲面轉彎。</figcaption></figure>
-  <figure class="fig"><div class="pending-box">計算中：康達第一版與修正版的模擬比較</div><figcaption>實際模擬：第一版 R15 和修正版 R45（無側風）。</figcaption></figure>
-  <div class="points prose"><p>計算中。</p></div>
-  <aside class="design"><h4>對設計的意思</h4><ul><li>結果完成後補上。</li></ul></aside>
-  <details class="more"><summary>展開更多圖：側風 0.30 m/s、沒有人時的氣流、完整數字表</summary><div class="more-body"><figure class="fig"><img class="img-any" src="assets/s2_head_vc30_fields.png" alt="側風 0.30 m/s" loading="lazy"><figcaption>側風 0.30 m/s 時的平均分布。</figcaption></figure><figure class="fig"><div class="pending-box">計算中：自由噴流</div><figcaption>沒有人、沒有側風時，每種出風口本身的氣流能走多遠。</figcaption></figure><figure class="fig"><img class="img-any" src="assets/s2_decay.png" alt="乾淨空氣隨距離衰減" loading="lazy"><figcaption>沒有人、沒有側風時，各距離最乾淨的位置。</figcaption></figure><figure class="fig"><div class="pending-box">動畫計算中</div><figcaption>動畫：沒有人、沒有側風。</figcaption></figure><div class="table-wrap"><table><thead><tr><th scope="col">出風口</th><th scope="col">無側風</th><th scope="col">側風 0.15 m/s</th><th scope="col">側風 0.30 m/s</th><th scope="col">30 cm 處總風量 ÷ 送出風量</th></tr></thead><tbody><tr><th scope="row">A 一般定向噴嘴</th><td class="num">24%<span class="sub">最差 18%</span></td><td class="num muted">計算中</td><td class="num muted">計算中</td><td class="num">—</td></tr><tr><th scope="row">B 康達曲面導流</th><td class="num muted">計算中</td><td class="num muted">計算中</td><td class="num muted">計算中</td><td class="num">—</td></tr><tr><th scope="row">C 低混合率同軸噴嘴</th><td class="num muted">計算中</td><td class="num muted">計算中</td><td class="num muted">計算中</td><td class="num">—</td></tr><tr><th scope="row">D 氣流倍增式</th><td class="num muted">計算中</td><td class="num muted">計算中</td><td class="num">0%<span class="sub">最差 0%</span></td><td class="num">—</td></tr></tbody></table></div></div></details>
+  <circle cx="230" cy="70" r="24" class="g-solid"/>
+  <path d="M212,56 A24,24 0 0 1 248,56" class="g-led"/>
+  <rect x="223" y="94" width="14" height="40" class="g-solid"/>
+  <rect x="155" y="134" width="150" height="60" rx="10" class="g-cavity"/>
+  <rect x="165" y="144" width="28" height="16" rx="3" class="g-solid"/>
+  <line x1="290" y1="140" x2="290" y2="188" class="g-mesh"/>
+  <line x1="306" y1="164" x2="360" y2="164" class="g-arrow-ok" marker-end="url(#ha)"/>
+  <line x1="306" y1="178" x2="350" y2="196" class="g-arrow-ok" marker-end="url(#ha)"/>
+  <circle cx="210" cy="176" r="3" class="g-accent-fill"/><circle cx="240" cy="168" r="3" class="g-accent-fill"/><circle cx="262" cy="180" r="3" class="g-accent-fill"/>
+  <line x1="170" y1="226" x2="170" y2="236" class="g-leader"/><line x1="290" y1="226" x2="290" y2="236" class="g-leader"/>
+  <line x1="170" y1="231" x2="290" y2="231" class="g-leader"/>
+  <text x="230" y="252" text-anchor="middle" class="g-s">150 mm</text>
+
+  <line x1="256" y1="58" x2="420" y2="40" class="g-leader"/>
+  <text x="426" y="36" class="g-t">導引燈（燈罩下的 LED）</text>
+  <text x="426" y="54" class="g-s">平時顯示空氣品質，火災時標示路線</text>
+  <line x1="254" y1="76" x2="420" y2="84" class="g-leader"/>
+  <text x="426" y="80" class="g-t">握把 Ø45–50 mm</text>
+  <text x="426" y="98" class="g-s">表面觸覺紋理，一樓末端換紋理</text>
+  <line x1="238" y1="114" x2="420" y2="128" class="g-leader"/>
+  <text x="426" y="124" class="g-t">細頸</text>
+  <text x="426" y="142" class="g-s">留出手指握住的空間（法規要查證）</text>
+  <line x1="300" y1="150" x2="420" y2="172" class="g-leader"/>
+  <text x="426" y="168" class="g-t">均流層＋出風縫（朝使用者）</text>
+  <text x="426" y="186" class="g-s">阻力約 20–30 Pa，讓每段平均出風</text>
+  <line x1="240" y1="194" x2="420" y2="216" class="g-leader"/>
+  <text x="426" y="212" class="g-t">導風腔 150 × 60 mm</text>
+  <text x="426" y="230" class="g-s">從頂樓貫穿到底層，不另拉管</text>
+  <line x1="180" y1="152" x2="140" y2="270" class="g-leader"/>
+  <text x="40" y="288" class="g-t">線路槽</text>
+  <text x="40" y="306" class="g-s">燈光、感測器電源與訊號</text>
+  <text x="426" y="290" class="g-s">示意圖；可用鋁擠型一體成形</text>
+</svg><figcaption>扶手斷面：握把、導引燈、線路和導風腔整合在同一根扶手裡。</figcaption></figure>
+  <div class="points prose">
+<p>設定：頂樓一台主機（風機＋PM2.5 濾網）吸室外空氣，經扶手導風腔往下送 10 層；每層平台只有一個小風門、感測器和出風口。<span class="tag tag-asm">假設值</span></p>
+<ul>
+<li><b>不用每層裝增壓機：</b>導風腔 150×60 mm 時，10 層同時送風（每層 3–5 L/s）頂樓主機只需要約 136–304 Pa，中型風機就做得到。導風腔縮成 100×50 mm、每層 5 L/s 時要 1005 Pa，才需要每 3 層加一台增壓機。<span class="tag tag-sim">模擬結果</span></li>
+<li><b>有人才送風最省：</b>同時只開 1 層時主機只要 39 Pa、0.6 W；開 3 層 93 Pa、4.6 W。<span class="tag tag-sim">模擬結果</span></li>
+<li><b>細流讓管子保持新鮮：</b>每層一直送 0.5 L/s，整根導風腔約 2 分鐘換一次空氣，有人來時馬上就是新鮮的風。<span class="tag tag-sim">模擬結果</span></li>
+<li><b>要做出的是「新風帶」，不是整間換氣：</b>整個樓梯間每小時換氣 2 次大約每層要 33 L/s，扶手做不到；但沿著扶手每層 3–6 L/s 的新鮮風帶做得到。<span class="tag tag-inf">工程推論</span></li>
+</ul></div>
+  <figure class="fig"><img class="img-light" src="assets/s5_spacing.png" alt="增壓機間距" loading="lazy"><img class="img-dark" src="assets/s5_spacing_dark.png" alt="增壓機間距" loading="lazy"><figcaption>10 層同時送風時，頂樓主機和增壓機需要的壓力。150×60 mm 導風腔不裝增壓機也只要約 140–300 Pa。</figcaption></figure>
+  <figure class="fig"><img class="img-light" src="assets/s5_ondemand.png" alt="有人才送風" loading="lazy"><img class="img-dark" src="assets/s5_ondemand_dark.png" alt="有人才送風" loading="lazy"><figcaption>只送有人的樓層：同時開 1–3 層時，頂樓主機只需要 40–90 Pa，耗電 0.6–5 W。</figcaption></figure>
+  
+<div class="table-wrap"><table><thead><tr><th scope="col">模式</th><th scope="col">什麼時候</th><th scope="col">每層送風</th><th scope="col">主機耗電</th></tr></thead><tbody>
+<tr><th scope="row">① 細流待機</th><td>平時一直開</td><td class="num">0.5 L/s</td><td class="num">約 0.6 W</td></tr>
+<tr><th scope="row">② 預測預開</th><td>偵測到有人，先開前方 1–2 層</td><td class="num">5 L/s</td><td class="num">約 3.5 W</td></tr>
+<tr><th scope="row">③ 沖風</th><td>人到達該層的前後 15 秒</td><td class="num">10 L/s</td><td class="num">約 4 W</td></tr>
+<tr><th scope="row">④ 舒適送風</th><td>人在該層</td><td class="num">5 L/s</td><td class="num">約 3.5 W</td></tr>
+<tr><th scope="row">⑤ 定時／感測換氣</th><td>每幾小時，或濕度、CO₂ 偏高</td><td class="num">3 L/s × 10 分鐘</td><td class="num">約 14 W</td></tr>
+<tr><th scope="row">消防模式</th><td>收到火警訊號</td><td colspan="2">交給第 03 章的火災邏輯與建築消防系統</td></tr>
+</tbody></table></div>
+<div class="table-wrap"><table><thead><tr><th scope="col">時間</th><th scope="col">情境：有人從 1 樓往上走</th><th scope="col">系統動作</th></tr></thead><tbody>
+<tr><th scope="row">平時</th><td>沒人</td><td>每層細流</td></tr>
+<tr><th scope="row">0 秒</th><td>推開 1 樓樓梯門</td><td>1 樓沖風；2、3 樓預開</td></tr>
+<tr><th scope="row">15 秒</th><td>往 2 樓途中</td><td>1 樓降為舒適；2 樓沖風；4 樓預開</td></tr>
+<tr><th scope="row">30 秒</th><td>抵達 2 樓</td><td>2 樓舒適；3 樓沖風；5 樓預開</td></tr>
+<tr><th scope="row">走過 1 分鐘後</th><td>已離開</td><td>該層回到細流</td></tr>
+</tbody></table></div>
+<p class="prose muted">一天合計約 0.05 度電（24 小時全開約 1.2 度）。耗電以風機效率 30% 假設計算。</p>
+  <aside class="design"><h4>對設計的意思</h4><ul><li>扶手斷面＝握把（Ø45–50）＋細頸＋<b>導風腔 150×60 mm</b>，可以鋁擠型一體成形；導風腔同時收納線路。</li><li>每層平台不需要風機和濾網：只要<b>小風門、有人感應器、門磁、出風口＋均流層</b>。</li><li>濾網只有頂樓一組，保養集中；進氣口要架高、防雨、遮陽，並遠離屋頂排氣口。</li><li>Dyson 式借風出風口<b>平時</b>很適合（把新鮮空氣散開、吹起來柔和）。</li><li>台灣潮濕：要有定時換氣，避免樓梯間和導風腔悶濕、結露。</li></ul></aside>
+  <details class="more"><summary>展開基礎計算：為什麼一般圓扶手不夠、出風口為什麼要均流層</summary><div class="more-body">
+<div class="points prose"><p>早期方案是「每層一台主機、34 mm 圓扶手」。這些計算說明了為什麼要改成一體導風腔：</p>
+<ul>
+<li>一般圓扶手（內徑 38 mm）從頂樓往下送 10 層，風機 1000 Pa 也只送得出整棟 5 L/s，平均每層 0.5 L/s。<span class="tag tag-sim">模擬結果</span></li>
+<li>內徑從 38 mm 縮到 30 mm，阻力約變成 2.5–3 倍。<span class="tag tag-sim">模擬結果</span></li>
+<li>出風口沒有均流層時，最少的地方只有最多的 35%；加 20–30 Pa 均流層後達 94%。<span class="tag tag-sim">模擬結果</span></li>
+<li>每層主機方案：中型鼓風機在濾網堵塞時還有 10.6 L/s；小型的只剩 5.6 L/s。<span class="tag tag-sim">模擬結果</span><span class="tag tag-asm">假設值</span></li>
+</ul></div><figure class="fig">
+<svg class="graphic" viewBox="0 0 760 250" role="img" aria-label="沒有均流層時空氣大多從出風段末端衝出，加上均流層後每一段出風量接近">
+
+<defs>
+  <marker id="ua" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="g-accent-fill"/></marker>
+  <marker id="um" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="g-muted-fill"/></marker>
+  <marker id="uc" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="g-crit-fill"/></marker>
+</defs>
+  <rect x="120" y="110" width="540" height="14" rx="7" class="g-solid"/><line x1="150" y1="110" x2="150" y2="96" class="g-arrow-ok" marker-end="url(#ua)"/><line x1="212" y1="110" x2="212" y2="94" class="g-arrow-ok" marker-end="url(#ua)"/><line x1="274" y1="110" x2="274" y2="90" class="g-arrow-ok" marker-end="url(#ua)"/><line x1="336" y1="110" x2="336" y2="85" class="g-arrow-ok" marker-end="url(#ua)"/><line x1="398" y1="110" x2="398" y2="79" class="g-arrow-ok" marker-end="url(#ua)"/><line x1="460" y1="110" x2="460" y2="71" class="g-arrow-ok" marker-end="url(#ua)"/><line x1="522" y1="110" x2="522" y2="63" class="g-arrow-ok" marker-end="url(#ua)"/><line x1="584" y1="110" x2="584" y2="54" class="g-arrow-ok" marker-end="url(#ua)"/><line x1="646" y1="110" x2="646" y2="44" class="g-arrow-ok" marker-end="url(#ua)"/><text x="20" y="80" class="g-t">沒有均流層</text><text x="20" y="98" class="g-s">最少只有最多的 35%</text>
+  <rect x="120" y="220" width="540" height="14" rx="7" class="g-solid"/><line x1="150" y1="220" x2="150" y2="180" class="g-arrow-ok" marker-end="url(#ua)"/><line x1="212" y1="220" x2="212" y2="180" class="g-arrow-ok" marker-end="url(#ua)"/><line x1="274" y1="220" x2="274" y2="179" class="g-arrow-ok" marker-end="url(#ua)"/><line x1="336" y1="220" x2="336" y2="179" class="g-arrow-ok" marker-end="url(#ua)"/><line x1="398" y1="220" x2="398" y2="178" class="g-arrow-ok" marker-end="url(#ua)"/><line x1="460" y1="220" x2="460" y2="178" class="g-arrow-ok" marker-end="url(#ua)"/><line x1="522" y1="220" x2="522" y2="178" class="g-arrow-ok" marker-end="url(#ua)"/><line x1="584" y1="220" x2="584" y2="177" class="g-arrow-ok" marker-end="url(#ua)"/><line x1="646" y1="220" x2="646" y2="177" class="g-arrow-ok" marker-end="url(#ua)"/><text x="20" y="190" class="g-t">加一層均流層</text><text x="20" y="208" class="g-s">約 30 Pa，均勻度 94%</text>
+  <text x="120" y="134" class="g-s">← 風從主機這端進來</text>
+  <text x="660" y="134" text-anchor="end" class="g-s">出風段末端 →</text>
+  <text x="690" y="70" class="g-s">空氣擠到</text>
+  <text x="690" y="86" class="g-s">末端衝出</text>
+</svg><figcaption>出風口裡沒有均流層時，風會擠到末端才衝出來。</figcaption></figure><figure class="fig"><img class="img-light" src="assets/s1_uniformity.png" alt="均流層與出風均勻度" loading="lazy"><img class="img-dark" src="assets/s1_uniformity_dark.png" alt="均流層與出風均勻度" loading="lazy"><figcaption>左：均流層阻力越大，出風越平均。右：沒有均流層（2 Pa）和有均流層（30 Pa）時，每一段出風口的出風量。</figcaption></figure><figure class="fig"><img class="img-light" src="assets/s1_diameter.png" alt="管徑與壓損" loading="lazy"><img class="img-dark" src="assets/s1_diameter_dark.png" alt="管徑與壓損" loading="lazy"><figcaption>內徑從 38 mm 縮到 30 mm，阻力大約變成 2.5–3 倍。</figcaption></figure><figure class="fig"><img class="img-light" src="assets/s1_fan_system.png" alt="風機與阻力曲線（每層主機方案）" loading="lazy"><img class="img-dark" src="assets/s1_fan_system_dark.png" alt="風機與阻力曲線（每層主機方案）" loading="lazy"><figcaption>早期「每層一台主機、34 mm 圓扶手」方案的風機工作點。</figcaption></figure><div class="table-wrap"><table><thead><tr><th scope="col">風機</th><th scope="col">濾網狀態</th><th scope="col">風量 L/s</th><th scope="col">壓力 Pa</th><th scope="col">能供多長出風口 m</th><th scope="col">耗電約 W</th><th scope="col">需要 6 L/s</th></tr></thead><tbody><tr><th scope="row">S</th><td>無濾材</td><td class="num">7.0</td><td class="num">121</td><td class="num">1.39</td><td class="num">3</td><td><span class="pill ok">夠</span></td></tr><tr><th scope="row">M</th><td>無濾材</td><td class="num">12.6</td><td class="num">383</td><td class="num">2.53</td><td class="num">16</td><td><span class="pill ok">夠</span></td></tr><tr><th scope="row">L</th><td>無濾材</td><td class="num">21.3</td><td class="num">1064</td><td class="num">4.26</td><td class="num">76</td><td><span class="pill ok">夠</span></td></tr><tr><th scope="row">S</th><td>濾材全新</td><td class="num">6.2</td><td class="num">177</td><td class="num">1.24</td><td class="num">4</td><td><span class="pill ok">夠</span></td></tr><tr><th scope="row">M</th><td>濾材全新</td><td class="num">11.5</td><td class="num">470</td><td class="num">2.30</td><td class="num">18</td><td><span class="pill ok">夠</span></td></tr><tr><th scope="row">L</th><td>濾材全新</td><td class="num">19.7</td><td class="num">1169</td><td class="num">3.95</td><td class="num">77</td><td><span class="pill ok">夠</span></td></tr><tr><th scope="row">S</th><td>濾材堵塞（HEPA×2、初濾×3）</td><td class="num">5.6</td><td class="num">219</td><td class="num">1.12</td><td class="num">4</td><td><span class="pill bad">不夠</span></td></tr><tr><th scope="row">M</th><td>濾材堵塞（HEPA×2、初濾×3）</td><td class="num">10.6</td><td class="num">536</td><td class="num">2.12</td><td class="num">19</td><td><span class="pill ok">夠</span></td></tr><tr><th scope="row">L</th><td>濾材堵塞（HEPA×2、初濾×3）</td><td class="num">18.4</td><td class="num">1253</td><td class="num">3.67</td><td class="num">77</td><td><span class="pill ok">夠</span></td></tr></tbody></table></div></div></details>
+</section>
+
+<section id="fire">
+  <h2><span class="no">03</span>火災：標示並守護一條乾淨的疏散路線</h2>
+  <p class="oneliner">扶手系統造不出一整條乾淨的樓梯，但它知道哪裡乾淨，可以把人帶過去，並且不讓自己把煙帶到別層。</p>
+  <div class="points prose">
+<p><b>為什麼不是「提供」乾淨路線？</b>要讓整條樓梯保持乾淨，靠的是建築的加壓送風和防火門把煙擋在外面。扶手系統全開約 60 L/s，一扇開著的門要擋住煙大約要 1,800 L/s（以 1 m/s 粗估），差了約 30 倍。<span class="tag tag-inf">工程推論</span><span class="tag tag-asm">假設值</span></p>
+<div class="table-wrap"><table><thead><tr><th scope="col">做法</th><th scope="col">怎麼做到</th></tr></thead><tbody>
+<tr><th scope="row">標示</th><td>每層平台的感測器（CO、煙霧、溫度）就是一排「空氣偵測站」。扶手燈光顯示：綠＝這段乾淨，琥珀＝不確定，紅＝有煙。</td></tr>
+<tr><th scope="row">引導</th><td>結合消防系統的避難規劃和各層偵測結果，燈光只在確認的路線上給方向；不確定時不給方向。</td></tr>
+<tr><th scope="row">守護</th><td>火警時風門<b>預設關閉</b>，不讓煙走扶手導風腔跑到別層；只有進氣口確認乾淨、消防系統允許時才送風。</td></tr>
+<tr><th scope="row">配合</th><td>把各層空氣資料傳給建築消防系統，協助加壓送風與排煙判斷（介接方式要找消防設備師確認）。</td></tr>
+<tr><th scope="row">輔助</th><td>確認安全時，平台出風口用低混合方式送風；平台可收納認證逃生頭罩（例如 EN 403 類產品）。</td></tr>
+</tbody></table></div>
+<p><b>不追求完全乾淨，只求「多撐一段時間、足夠逃出去」：</b>CO 的危險大致是「濃度 × 時間」的累積，所以 CO 降到一半，能撐的時間大約變成兩倍。<span class="tag tag-inf">工程推論</span></p>
+<div class="table-wrap"><table><thead><tr><th scope="col">扶手旁的乾淨空氣比例</th><th scope="col">CO 剩下</th><th scope="col">可撐的時間大約</th></tr></thead><tbody>
+<tr><td class="num">25%</td><td class="num">75%</td><td class="num">1.3 倍</td></tr>
+<tr><td class="num">50%</td><td class="num">50%</td><td class="num">2 倍</td></tr>
+<tr><td class="num">75%</td><td class="num">25%</td><td class="num">4 倍</td></tr>
+<tr><td class="num">90%</td><td class="num">10%</td><td class="num">10 倍</td></tr>
+</tbody></table></div>
+<p class="muted">簡化估算，前提是送出的是乾淨氣源。實際火場還有缺氧、高溫、氰化氫與刺激性氣體，正式評估要用火災工程的可忍受性方法（例如 ISO 13571 的劑量計算）。<span class="tag tag-tbd">尚待驗證</span></p></div>
+  <aside class="design"><h4>對設計的意思</h4><ul><li>火災時的主角是<b>偵測＋燈光＋觸覺</b>：平時就在用的感測器和燈光，火災時直接變成逃生工具。</li><li>送風只當<b>輔助</b>：進氣口量到乾淨、消防系統允許才送；任何故障都預設關閉。</li><li>提案用語：「延長可逃生時間」「輔助」，<b>不要寫「保證可以呼吸」「無毒」</b>。</li><li>下一階段的設計目標：扶手周圍 40–60 cm 內乾淨空氣比例 ≥ 50%（可逃生時間至少多一倍），而且要在有側風時守得住。</li></ul></aside>
+</section>
+
+<section id="nozzle">
+  <h2><span class="no">04</span>四種出風口比一比</h2>
+  <p class="oneliner">沒有風時，低混合率出風口在臉前送到 91% 的乾淨空氣；但只要有 0.15 m/s 的側風，四種出風口都是 0%。</p>
+  <figure class="fig"><img class="img-any" src="assets/s2_saf_bars.png" alt="四種出風口在三種側風下的乾淨空氣比例" loading="lazy"><figcaption>每條橫條代表 100% 的吸入空氣，彩色部分是來自出風口的乾淨空氣。黑色短線是最差 10% 的時刻（氣流晃開的瞬間）。</figcaption></figure>
+  <div class="points prose">
+<ul>
+<li><b>低混合率同軸（C）最準：</b>寬出口、慢風速、外圈再加一圈更慢的風「護送」，送到臉前時幾乎沒有混到周圍空氣（91%，最差時刻也有 90%）。<span class="tag tag-sim">模擬結果</span></li>
+<li><b>一般出風口（A）和氣流倍增式（D）差不多：</b>都只有約 24%、23%。細縫高速吹出後一路把周圍空氣拉進來，到臉前只剩兩成多。<span class="tag tag-sim">模擬結果</span></li>
+<li><b>借風越多，乾淨比例越低：</b>沒有人擋時，30 cm 處的總風量是送出風量的：A 0.0 倍、D 0.0 倍、C 1.3 倍。多出來的都是周圍空氣，所以 Dyson 式「放大風量」在火災時幫不上忙。<span class="tag tag-sim">模擬結果</span></li>
+<li><b>最大的問題是側風：</b>加上由下往上 0.15 m/s 的側風（大約是人慢慢走過帶起的風），四種出風口送出的空氣都被吹到扶手上方，口鼻變成 0%。乾淨空氣並沒有消失，只是守在扶手旁約 10–15 cm 內，到不了 35 cm 外的臉。<span class="tag tag-sim">模擬結果</span></li>
+<li><b>沒有風時的「局部累積」：</b>無側風時，扶手和人頭之間會形成大渦旋，把送出的空氣困在附近，所以 A、D 的背景也有兩成左右。真實樓梯間煙會一直補充，有側風的結果比較保守。<span class="tag tag-inf">工程推論</span></li>
+</ul></div>
+  <figure class="fig"><img class="img-any" src="assets/s2_head_vc00_fields.png" alt="無側風時的平均乾淨空氣分布" loading="lazy"><figcaption>無側風時，平均下乾淨空氣分布在哪裡。顏色越深，代表出風口的空氣越多；灰色細線是平均氣流方向。</figcaption></figure>
+  <figure class="fig"><img class="img-any" src="assets/s2_head_vc15_fields.png" alt="側風 0.15 m/s 時的平均乾淨空氣分布" loading="lazy"><figcaption>加上由下往上 0.15 m/s 的側風（大約是人慢慢走過帶起的風），送出的空氣被吹到扶手上方，到不了臉前。</figcaption></figure>
+  <figure class="fig"><div class="pending-box">動畫計算中</div><figcaption>動畫（側風 0.15 m/s）：平均圖看不到的晃動與渦旋。每格 0.08 秒。</figcaption></figure>
+  <h3>康達曲面：這次沒有成功</h3>
+  <figure class="fig"><img class="img-any" src="assets/s2_coanda_lesson.png" alt="康達第一版與修正版的模擬比較" loading="lazy"><figcaption>兩種曲面半徑（無側風）：氣流都沒有沿曲面轉向臉部，而是直接往下衝。</figcaption></figure>
+  <div class="points prose"><p>第一版曲面半徑 15 mm（出風縫 6 mm 的 2.5 倍）、修正版 45 mm（7.5 倍），兩種氣流都<b>沒有沿曲面轉彎</b>，直接往下衝，臉前只有 — 和 4%。<span class="tag tag-sim">模擬結果</span></p><p>可能的原因是風速太低（0.83 m/s）：康達效應需要氣流有足夠的速度貼著曲面走，Dyson 類產品用的是約 1 mm 的細縫和高很多的風速。另外 1 mm 網格畫出來的曲面是階梯狀，也可能讓氣流提早分離。所以結論是「在這個風速下不可靠」，要用實體出風口測試才能確定。<span class="tag tag-tbd">尚待驗證</span></p></div>
+  <aside class="design"><h4>對設計的意思</h4><ul><li>火災模式的出風口要用<b>低混合方式</b>：出口寬、風速慢、內有整流層。</li><li>平時模式可以用<b>借風</b>把新鮮空氣散開；兩種吹法可以考慮做成同一個「可切換」的出風口。</li><li>要對抗側風，送出的風在 40–60 cm 處必須比側風快：風量大概要比現在（每公尺 5 L/s）多 3–6 倍，形狀要像一道沿扶手的「空氣牆」，而不是對著臉吹。這要用下一階段模擬確認。</li><li>風量有限時，火災模式把送風集中在<b>最需要的平台</b>（起火層上下、偵測到有煙的樓層）。</li></ul></aside>
+  <details class="more"><summary>展開更多圖：側風 0.30 m/s、沒有人時的氣流、完整數字表</summary><div class="more-body"><figure class="fig"><img class="img-any" src="assets/s2_head_vc30_fields.png" alt="側風 0.30 m/s" loading="lazy"><figcaption>側風 0.30 m/s 時的平均分布。</figcaption></figure><figure class="fig"><img class="img-any" src="assets/s2_free_fields.png" alt="自由噴流" loading="lazy"><figcaption>沒有人、沒有側風時，每種出風口本身的氣流能走多遠。</figcaption></figure><figure class="fig"><img class="img-any" src="assets/s2_decay.png" alt="乾淨空氣隨距離衰減" loading="lazy"><figcaption>沒有人、沒有側風時，各距離最乾淨的位置。</figcaption></figure><figure class="fig"><div class="pending-box">動畫計算中</div><figcaption>動畫：沒有人、沒有側風。</figcaption></figure><div class="table-wrap"><table><thead><tr><th scope="col">出風口</th><th scope="col">無側風</th><th scope="col">側風 0.15 m/s</th><th scope="col">側風 0.30 m/s</th><th scope="col">30 cm 處總風量 ÷ 送出風量</th></tr></thead><tbody><tr><th scope="row">A 一般定向噴嘴</th><td class="num">24%<span class="sub">最差 18%</span></td><td class="num">0%<span class="sub">最差 0%</span></td><td class="num">0%<span class="sub">最差 0%</span></td><td class="num">—</td></tr><tr><th scope="row">B 康達曲面導流</th><td class="num">4%<span class="sub">最差 0%</span></td><td class="num">0%<span class="sub">最差 0%</span></td><td class="num">0%<span class="sub">最差 0%</span></td><td class="num">—</td></tr><tr><th scope="row">C 低混合率同軸噴嘴</th><td class="num">91%<span class="sub">最差 90%</span></td><td class="num">0%<span class="sub">最差 0%</span></td><td class="num">0%<span class="sub">最差 0%</span></td><td class="num">1.3 倍</td></tr><tr><th scope="row">D 氣流倍增式</th><td class="num">23%<span class="sub">最差 4%</span></td><td class="num">0%<span class="sub">最差 0%</span></td><td class="num">0%<span class="sub">最差 0%</span></td><td class="num">—</td></tr></tbody></table></div></div></details>
 </section>
 
 <section id="source">
-  <h2><span class="no">03</span>空氣從哪裡來，比出風口更重要</h2>
-  <p class="oneliner">吸樓梯間的空氣過濾後再送出，口鼻的 CO 一點都不會少。只有獨立的乾淨氣源才有用。</p>
+  <h2><span class="no">05</span>空氣從哪裡來，比出風口更重要</h2>
+  <p class="oneliner">吸樓梯間的空氣過濾後再送出，口鼻的 CO 一點都不會少。只有確認乾淨的氣源才有用。</p>
   <figure class="fig">
 <svg class="graphic" viewBox="0 0 800 330" role="img" aria-label="取樓梯間空氣經濾網後，煙粒被擋下但一氧化碳全部穿過；獨立乾淨氣源才真的降低一氧化碳">
 
@@ -371,30 +493,30 @@ footer { margin-top: 48px; padding-top: 20px; border-top: 1px solid var(--line);
   <line x1="544" y1="260" x2="594" y2="260" class="g-arrow-ok" marker-end="url(#qa)"/>
   <circle cx="640" cy="260" r="40" class="g-head"/>
   <text x="640" y="266" text-anchor="middle" class="g-t">口鼻</text>
-  <text x="690" y="252" class="g-ok-t">CO 70%</text>
+  <text x="690" y="252" class="g-ok-t">CO 9%</text>
   <text x="690" y="270" class="g-s">降低的比例</text>
   <text x="690" y="286" class="g-s">＝乾淨空氣比例</text>
   <circle cx="30" cy="322" r="4.2" class="g-smoke"/><text x="40" y="326" class="g-s">煙粒</text>
   <circle cx="90" cy="322" r="4.2" class="g-co"/><text x="100" y="326" class="g-s">一氧化碳（CO）分子</text>
 </svg><figcaption>濾網只擋得住煙粒，擋不住 CO。送出去的空氣如果本來就含 CO，再好的出風口也沒用。</figcaption></figure>
-  <figure class="fig"><img class="img-any" src="assets/s2_exposure.png" alt="兩種氣源下口鼻的 CO" loading="lazy"><figcaption>口鼻 CO ÷ 周圍 CO。紅：吸樓梯間空氣＋濾網；藍：獨立乾淨氣源。用側風 0.15 m/s 的乾淨空氣比例代入公式計算。</figcaption></figure>
+  <figure class="fig"><img class="img-any" src="assets/s2_exposure.png" alt="兩種氣源下口鼻的 CO" loading="lazy"><figcaption>口鼻 CO ÷ 周圍 CO。紅：吸樓梯間空氣＋濾網；藍：乾淨氣源。用無側風時的乾淨空氣比例代入公式計算。</figcaption></figure>
   <div class="points prose">
-<p><b>為什麼？</b>出風口只決定「吸到的空氣有幾成來自出風口」，但送出去的空氣本身乾不乾淨，是氣源決定的。</p>
+<p><b>為什麼？</b>出風口只決定「吸到的空氣有幾成來自出風口」，送出去的空氣本身乾不乾淨，是氣源決定的。</p>
 <ul>
-<li><b>吸樓梯間的空氣：</b>濾網只擋得住煙粒。CO 照樣穿過去，送出的空氣 CO 和周圍一樣多，所以不管出風口設計多好，口鼻的 CO 都一樣。缺氧和高溫也一樣，濾網補不了氧氣、也降不了溫。<span class="tag tag-sim">模擬結果</span></li>
-<li><b>獨立乾淨氣源：</b>送出的空氣沒有 CO，口鼻的 CO 就降低「乾淨空氣比例」那麼多。例如比例 30%，CO 就剩 70%。<span class="tag tag-sim">模擬結果</span></li>
+<li><b>吸樓梯間的空氣：</b>濾網只擋得住煙粒，CO 照樣穿過去，所以不管出風口設計多好，口鼻的 CO 都一樣。缺氧和高溫也一樣。<span class="tag tag-sim">模擬結果</span></li>
+<li><b>確認乾淨的氣源：</b>送出的空氣沒有 CO，口鼻的 CO 就降低「乾淨空氣比例」那麼多。以低混合出風口無側風的 91% 來算，CO 只剩 9%。<span class="tag tag-sim">模擬結果</span></li>
 </ul>
-<p><b>乾淨氣源從哪來？</b></p>
+<p><b>這套系統的氣源：</b>平時是頂樓進氣口的室外空氣。火災時煙會往上跑，頂樓進氣口可能最先被污染，所以：</p>
 <ul>
-<li><b>室外進氣：</b>進氣口本身可能被火災煙污染，要遠離窗戶、開口和排煙口，進氣端也要裝 CO 感測，污染時自動關閉。<span class="tag tag-tbd">尚待驗證</span></li>
-<li><b>壓縮空氣鋼瓶：</b>空氣乾淨，但鋼瓶容量、壓力調節、認證與定期檢驗都要專業評估。之前討論的「約一小時」只是粗算。<span class="tag tag-tbd">尚待驗證</span></li>
-<li><b>換一個思路：</b>如果目標真的是「在濃煙中呼吸」，在轉角主機裡放經過認證的逃生頭罩（例如符合 EN 403 的產品），比開放式送風更直接，也已經有標準可以依循。台灣的法規和產品認證要另外查證。<span class="tag tag-inf">工程推論</span><span class="tag tag-tbd">尚待驗證</span></li>
+<li>進氣口要裝 CO、煙霧感測器，<b>量到污染就關閉</b>，絕不送出來源不明的空氣。<span class="tag tag-inf">工程推論</span></li>
+<li>可以考慮在低樓層或另一面外牆再設一個備用進氣口，由感測結果選擇比較乾淨的一個。<span class="tag tag-tbd">尚待驗證</span></li>
+<li>如果目標是「在濃煙中呼吸」，平台收納經認證的逃生頭罩（例如 EN 403 類），比開放式送風更直接。台灣的法規和產品認證要另外查證。<span class="tag tag-tbd">尚待驗證</span></li>
 </ul></div>
-  <aside class="design"><h4>對設計的意思</h4><ul><li>主機的進氣口<b>不能</b>從樓梯間吸氣後直接送給人；這條路已經被模擬排除。</li><li>如果保留送風，提案要先回答「乾淨空氣從哪裡來」，這比出風口造型更重要。</li><li>可以把「逃生頭罩收納」當成轉角主機的功能選項，跟送風方案並列比較。</li></ul></aside>
+  <aside class="design"><h4>對設計的意思</h4><ul><li>進氣口不能從樓梯間吸氣後直接送給人；這條路已經被模擬排除。</li><li>頂樓進氣口要有感測器與自動關閉，並考慮備用進氣口。</li><li>「逃生頭罩收納」可以做成平台出風口旁的一個格子，平時鎖著、定期自檢。</li></ul></aside>
 </section>
 
 <section id="filter">
-  <h2><span class="no">04</span>濾網能擋什麼</h2>
+  <h2><span class="no">06</span>濾網能擋什麼</h2>
   <p class="oneliner">HEPA 擋得住煙粒，擋不住 CO。氣旋連煙粒都抓不到，不採用。</p>
   <figure class="fig">
 <svg class="graphic" viewBox="0 0 760 230" role="img" aria-label="火災煙粒大多在 0.05 到 1 微米之間，比氣旋能抓的大小還小很多">
@@ -417,72 +539,16 @@ footer { margin-top: 48px; padding-top: 20px; border-top: 1px solid var(--line);
   <div class="table-wrap"><table><thead><tr><th scope="col">煙的種類</th><th scope="col">處理方式</th><th scope="col">煙粒擋下多少（重量）</th><th scope="col">CO 擋下多少</th></tr></thead><tbody><tr><td>有焰燃燒煙</td><td>氣旋（D=100 mm）</td><td class="num">2.9%</td><td class="num">0%</td></tr><tr><td>有焰燃燒煙</td><td>初濾</td><td class="num">11.2%</td><td class="num">0%</td></tr><tr><td>有焰燃燒煙</td><td>初濾 + HEPA H13</td><td class="num">100.0%</td><td class="num">0%</td></tr><tr><td>悶燒煙</td><td>氣旋（D=100 mm）</td><td class="num">17.1%</td><td class="num">0%</td></tr><tr><td>悶燒煙</td><td>初濾</td><td class="num">33.2%</td><td class="num">0%</td></tr><tr><td>悶燒煙</td><td>初濾 + HEPA H13</td><td class="num">100.0%</td><td class="num">0%</td></tr></tbody></table></div>
   <div class="points prose">
 <ul>
-<li><b>HEPA 擋得住煙粒：</b>初濾＋HEPA 對兩種假設的火災煙，煙粒都擋下 99.9% 以上。<span class="tag tag-sim">模擬結果</span><span class="tag tag-std">外部標準</span></li>
-<li><b>氣旋擋不住：</b>氣旋靠旋轉把粒子甩出去，粒子越小越甩不出去。一般 10 cm 大小的氣旋，一半抓得到、一半抓不到的粒子大小約 2.9 µm，但火災煙粒大多不到 1 µm，所以有焰燃燒的煙只抓到約 3%。做小一點可以抓更小的粒子，但需要的推力會暴增到約 6.6 kPa。<span class="tag tag-sim">模擬結果</span></li>
-<li><b>CO 擋不住：</b>CO 是氣體分子，比任何濾網的孔都小很多。活性碳靠「吸附」抓氣體，但對 CO 幾乎沒用。<span class="tag tag-inf">工程推論</span></li>
-<li><b>觸媒有機會，但要實驗：</b>霍加拉（Hopcalite）類觸媒能把 CO 變成 CO₂，認證的逃生頭罩就用這類材料。不過它怕濕氣、有壽命、反應會發熱，而且頭罩是密閉、只給一個人用的小風量裝置。這份報告不算它的效果。<span class="tag tag-tbd">尚待驗證</span></li>
+<li><b>HEPA 擋得住煙粒：</b>初濾＋HEPA 對兩種假設的火災煙，煙粒都擋下 99.9% 以上；平時淨化 PM2.5 也很好用。<span class="tag tag-sim">模擬結果</span><span class="tag tag-std">外部標準</span></li>
+<li><b>氣旋擋不住：</b>氣旋靠旋轉把粒子甩出去，粒子越小越甩不出去。10 cm 大小的氣旋，一半抓得到、一半抓不到的粒子大小約 2.9 µm，但火災煙粒大多不到 1 µm，所以有焰燃燒的煙只抓到約 3%。做小一點可以抓更小的粒子，但推力要暴增到約 6.6 kPa。<span class="tag tag-sim">模擬結果</span></li>
+<li><b>CO 擋不住：</b>CO 是氣體分子，比任何濾網的孔都小很多。活性碳對 CO 幾乎沒用。<span class="tag tag-inf">工程推論</span></li>
+<li><b>觸媒有機會，但要實驗：</b>霍加拉（Hopcalite）類觸媒能把 CO 變成 CO₂，認證逃生頭罩就用這類材料；但它怕濕氣、有壽命、會發熱，而且頭罩是密閉的小風量裝置，跟開放式送風不同。這份報告不算它的效果。<span class="tag tag-tbd">尚待驗證</span></li>
 </ul></div>
-  <aside class="design"><h4>對設計的意思</h4><ul><li>主機的濾網區可以保留（HEPA 處理煙粒），但宣傳上<b>不能說「淨化火場空氣」</b>。</li><li>氣旋從設計中拿掉，省下體積和風機推力。</li><li>濾網會堵塞：要有好換的濾網門，以及「濾網該換了」的提示燈（第 05 章的風機要能撐住堵塞時的阻力）。</li></ul></aside>
-</section>
-
-<section id="duct">
-  <h2><span class="no">05</span>風機與扶手管子</h2>
-  <p class="oneliner">每層一台約 19 W 的中型風機就夠，但扶手管子要夠粗，出風口裡要加一層均流層。</p>
-  <figure class="fig">
-<svg class="graphic" viewBox="0 0 760 320" role="img" aria-label="每層平台一台主機，出風口集中在平台上下各 0.6 公尺">
-
-<defs>
-  <marker id="la" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="g-accent-fill"/></marker>
-  <marker id="lm" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="g-muted-fill"/></marker>
-  <marker id="lc" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="g-crit-fill"/></marker>
-</defs>
-  <path d="M40,290 L120,290 L120,270 L160,270 L160,250 L200,250 L200,230 L240,230 L240,210 L280,210 L280,190 L320,190 L320,170 L420,170" class="g-stair"/>
-  <path d="M420,170 L460,170 L460,150 L500,150 L500,130 L540,130 L540,110 L580,110 L580,90 L620,90 L620,70 L720,70" class="g-stair"/>
-  <path d="M60,250 L330,130 L430,130 L720,30" class="g-rail"/>
-  <path d="M262,160 L330,130 L430,130 L470,116" class="g-outlet"/>
-  <rect x="352" y="134" width="58" height="36" rx="4" class="g-host"/>
-  <text x="381" y="157" text-anchor="middle" class="g-on">主機</text>
-  <line x1="381" y1="172" x2="381" y2="232" class="g-leader"/>
-  <text x="381" y="250" text-anchor="middle" class="g-t">每層平台一台（約 20 W）</text>
-  <text x="381" y="268" text-anchor="middle" class="g-s">風機、控制、預留空氣模組</text>
-  <line x1="290" y1="140" x2="230" y2="80" class="g-leader"/>
-  <text x="150" y="66" class="g-ok-t">出風口集中在平台附近</text>
-  <text x="150" y="84" class="g-s">往上、往下各約 0.6 m</text>
-  <line x1="600" y1="56" x2="640" y2="20" class="g-leader"/>
-  <text x="560" y="16" class="g-s">其餘扶手只做導引（光、觸覺）</text>
-  <text x="40" y="314" class="g-s">示意圖，比例不精確</text>
-</svg><figcaption>建議配置：每層平台一台主機，出風口集中在平台附近，其他扶手只負責導引。</figcaption></figure>
-  <figure class="fig"><img class="img-light" src="assets/s1_fan_system.png" alt="風機與阻力曲線" loading="lazy"><img class="img-dark" src="assets/s1_fan_system_dark.png" alt="風機與阻力曲線" loading="lazy"><figcaption>黑線是三種風機（假設值）的能力，彩色線是管子＋濾網的阻力。交點就是實際能送出的風量；紅色虛線是需要的 6 L/s。</figcaption></figure>
-  <figure class="fig">
-<svg class="graphic" viewBox="0 0 760 250" role="img" aria-label="沒有均流層時空氣大多從出風段末端衝出，加上均流層後每一段出風量接近">
-
-<defs>
-  <marker id="ua" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="g-accent-fill"/></marker>
-  <marker id="um" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="g-muted-fill"/></marker>
-  <marker id="uc" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="g-crit-fill"/></marker>
-</defs>
-  <rect x="120" y="110" width="540" height="14" rx="7" class="g-solid"/><line x1="150" y1="110" x2="150" y2="96" class="g-arrow-ok" marker-end="url(#ua)"/><line x1="212" y1="110" x2="212" y2="94" class="g-arrow-ok" marker-end="url(#ua)"/><line x1="274" y1="110" x2="274" y2="90" class="g-arrow-ok" marker-end="url(#ua)"/><line x1="336" y1="110" x2="336" y2="85" class="g-arrow-ok" marker-end="url(#ua)"/><line x1="398" y1="110" x2="398" y2="79" class="g-arrow-ok" marker-end="url(#ua)"/><line x1="460" y1="110" x2="460" y2="71" class="g-arrow-ok" marker-end="url(#ua)"/><line x1="522" y1="110" x2="522" y2="63" class="g-arrow-ok" marker-end="url(#ua)"/><line x1="584" y1="110" x2="584" y2="54" class="g-arrow-ok" marker-end="url(#ua)"/><line x1="646" y1="110" x2="646" y2="44" class="g-arrow-ok" marker-end="url(#ua)"/><text x="20" y="80" class="g-t">沒有均流層</text><text x="20" y="98" class="g-s">最少只有最多的 35%</text>
-  <rect x="120" y="220" width="540" height="14" rx="7" class="g-solid"/><line x1="150" y1="220" x2="150" y2="180" class="g-arrow-ok" marker-end="url(#ua)"/><line x1="212" y1="220" x2="212" y2="180" class="g-arrow-ok" marker-end="url(#ua)"/><line x1="274" y1="220" x2="274" y2="179" class="g-arrow-ok" marker-end="url(#ua)"/><line x1="336" y1="220" x2="336" y2="179" class="g-arrow-ok" marker-end="url(#ua)"/><line x1="398" y1="220" x2="398" y2="178" class="g-arrow-ok" marker-end="url(#ua)"/><line x1="460" y1="220" x2="460" y2="178" class="g-arrow-ok" marker-end="url(#ua)"/><line x1="522" y1="220" x2="522" y2="178" class="g-arrow-ok" marker-end="url(#ua)"/><line x1="584" y1="220" x2="584" y2="177" class="g-arrow-ok" marker-end="url(#ua)"/><line x1="646" y1="220" x2="646" y2="177" class="g-arrow-ok" marker-end="url(#ua)"/><text x="20" y="190" class="g-t">加一層均流層</text><text x="20" y="208" class="g-s">約 30 Pa，均勻度 94%</text>
-  <text x="120" y="134" class="g-s">← 風從主機這端進來</text>
-  <text x="660" y="134" text-anchor="end" class="g-s">出風段末端 →</text>
-  <text x="690" y="70" class="g-s">空氣擠到</text>
-  <text x="690" y="86" class="g-s">末端衝出</text>
-</svg><figcaption>出風口裡沒有均流層時，風會擠到末端才衝出來。</figcaption></figure>
-  <figure class="fig"><img class="img-light" src="assets/s1_uniformity.png" alt="均流層與出風均勻度" loading="lazy"><img class="img-dark" src="assets/s1_uniformity_dark.png" alt="均流層與出風均勻度" loading="lazy"><figcaption>左：均流層阻力越大，出風越平均。右：沒有均流層（2 Pa）和有均流層（30 Pa）時，每一段出風口的出風量。</figcaption></figure>
-  <div class="points prose">
-<p>設定：每層平台一台主機，往上、往下各送一段；只在靠近平台的 0.6 m 開出風口。照每公尺 5 L/s 計算，一台主機要送 <b>6 L/s（約 22 m³/h）</b>。<span class="tag tag-asm">假設值</span></p>
-<ul>
-<li><b>風機：</b>中型鼓風機（假設曲線 M）在濾網堵塞時還有 10.6 L/s；小型的（曲線 S）濾網新的時候夠用，堵塞後只剩 5.6 L/s，不夠。<span class="tag tag-sim">模擬結果</span><span class="tag tag-asm">假設值</span></li>
-<li><b>管子粗細：</b>扶手內的風道從 38 mm 縮到 30 mm，阻力大約變成 2.5–3 倍。外觀可以改，風道截面要先保住。<span class="tag tag-sim">模擬結果</span></li>
-<li><b>均流層：</b>沒有均流層時，風會擠到出風段末端，最少的地方只有最多的 35%。加一層約 20–30 Pa 阻力的均流層（多孔板、金屬網或蜂巢），每一段才會平均出風（94%）。這層同時也是低混合率噴嘴需要的整流層。<span class="tag tag-sim">模擬結果</span></li>
-<li><b>出風口不能整條都開：</b>一台主機的風只夠約 2 m 出風口，應該集中在平台轉角、會停留或低姿勢的地方。<span class="tag tag-inf">工程推論</span></li>
-</ul></div>
-  <aside class="design"><h4>對設計的意思</h4><ul><li>扶手風道內徑建議<b>不小於 34 mm</b>，在畫外型前先保留。</li><li>出風口內加一層均流層（阻力約 20–30 Pa），可以和出風格柵整合成一個零件。</li><li>每層一台主機、出風口集中在平台上下各約 0.6 m，其餘扶手只做光與觸覺導引。</li><li>風機選型要用「濾網堵塞時」的阻力來選，不是用新濾網。</li></ul></aside>
-  <details class="more"><summary>展開更多：管子粗細的影響、各風機工作點表</summary><div class="more-body"><figure class="fig"><img class="img-light" src="assets/s1_diameter.png" alt="管徑與壓損" loading="lazy"><img class="img-dark" src="assets/s1_diameter_dark.png" alt="管徑與壓損" loading="lazy"><figcaption>內徑從 38 mm 縮到 30 mm，阻力大約變成 2.5–3 倍。</figcaption></figure><div class="table-wrap"><table><thead><tr><th scope="col">風機</th><th scope="col">濾網狀態</th><th scope="col">風量 L/s</th><th scope="col">壓力 Pa</th><th scope="col">能供多長出風口 m</th><th scope="col">耗電約 W</th><th scope="col">需要 6 L/s</th></tr></thead><tbody><tr><th scope="row">S</th><td>無濾材</td><td class="num">7.0</td><td class="num">121</td><td class="num">1.39</td><td class="num">3</td><td><span class="pill ok">夠</span></td></tr><tr><th scope="row">M</th><td>無濾材</td><td class="num">12.6</td><td class="num">383</td><td class="num">2.53</td><td class="num">16</td><td><span class="pill ok">夠</span></td></tr><tr><th scope="row">L</th><td>無濾材</td><td class="num">21.3</td><td class="num">1064</td><td class="num">4.26</td><td class="num">76</td><td><span class="pill ok">夠</span></td></tr><tr><th scope="row">S</th><td>濾材全新</td><td class="num">6.2</td><td class="num">177</td><td class="num">1.24</td><td class="num">4</td><td><span class="pill ok">夠</span></td></tr><tr><th scope="row">M</th><td>濾材全新</td><td class="num">11.5</td><td class="num">470</td><td class="num">2.30</td><td class="num">18</td><td><span class="pill ok">夠</span></td></tr><tr><th scope="row">L</th><td>濾材全新</td><td class="num">19.7</td><td class="num">1169</td><td class="num">3.95</td><td class="num">77</td><td><span class="pill ok">夠</span></td></tr><tr><th scope="row">S</th><td>濾材堵塞（HEPA×2、初濾×3）</td><td class="num">5.6</td><td class="num">219</td><td class="num">1.12</td><td class="num">4</td><td><span class="pill bad">不夠</span></td></tr><tr><th scope="row">M</th><td>濾材堵塞（HEPA×2、初濾×3）</td><td class="num">10.6</td><td class="num">536</td><td class="num">2.12</td><td class="num">19</td><td><span class="pill ok">夠</span></td></tr><tr><th scope="row">L</th><td>濾材堵塞（HEPA×2、初濾×3）</td><td class="num">18.4</td><td class="num">1253</td><td class="num">3.67</td><td class="num">77</td><td><span class="pill ok">夠</span></td></tr></tbody></table></div></div></details>
+  <aside class="design"><h4>對設計的意思</h4><ul><li>頂樓主機保留初濾＋HEPA：平時淨化 PM2.5，但宣傳上<b>不能說「淨化火場空氣」</b>。</li><li>氣旋從設計中拿掉，省下體積和風機推力。</li><li>濾網會堵塞：風機要用「堵塞時」的阻力來選，並有「該換濾網」提示。</li></ul></aside>
 </section>
 
 <section id="exhaust">
-  <h2><span class="no">06</span>扶手能不能拿來排煙</h2>
+  <h2><span class="no">07</span>扶手能不能拿來排煙</h2>
   <p class="oneliner">不行。整棟一根扶手全力排煙，量也只有一扇敞開的門的 0.7%。</p>
   <figure class="fig">
 <svg class="graphic" viewBox="0 0 760 240" role="img" aria-label="一扇敞開的門的風量相當於約 153 根扶手同時全力排煙">
@@ -499,26 +565,26 @@ footer { margin-top: 48px; padding-top: 20px; border-top: 1px solid var(--line);
   <div class="points prose">
 <ul>
 <li>假設整棟 10 層共用一根 70 m 的扶手管子。就算風機推到 3000 Pa、內徑 38 mm，200 °C 的熱煙也只排得出約 <b>0.71 m³/min</b>，管內風速已經 10 m/s。<span class="tag tag-sim">模擬結果</span></li>
-<li>一扇敞開的門（0.9 × 2.0 m）以 1 m/s 通過的風量約 108 m³/min，差了兩個數量級。<span class="tag tag-asm">假設值</span></li>
-<li>熱煙流過金屬扶手會把扶手加熱，手握上去可能燙傷（燙傷溫度門檻要依 ISO 13732-1 查證）；管子有任何漏縫，煙也會直接漏到逃生路線上。<span class="tag tag-inf">工程推論</span><span class="tag tag-tbd">尚待驗證</span></li>
+<li>一扇敞開的門（0.9 × 2.0 m）以 1 m/s 通過的風量約 108 m³/min，相當於約 153 根扶手。<span class="tag tag-asm">假設值</span></li>
+<li>熱煙流過金屬扶手會把握把加熱，可能燙手（燙傷溫度門檻要依 ISO 13732-1 查證）；管子有漏縫，煙也會漏到逃生路線上。<span class="tag tag-inf">工程推論</span><span class="tag tag-tbd">尚待驗證</span></li>
 </ul></div>
-  <aside class="design"><h4>對設計的意思</h4><ul><li>提案中拿掉「扶手排煙」，排煙交給建築原有的排煙設備。</li><li>扶手主機可以接收消防系統的訊號，只負責導引與狀態顯示。</li></ul></aside>
+  <aside class="design"><h4>對設計的意思</h4><ul><li>排煙交給建築原有的排煙設備；扶手系統只提供偵測資料與導引。</li><li>火警時扶手導風腔的風門預設關閉，避免變成煙的通道。</li></ul></aside>
 </section>
 
 <section id="next">
-  <h2><span class="no">07</span>還不知道的事，和下一步</h2>
-  <p class="oneliner">電腦模擬適合用來比較和排除方案，真正的效果要靠實驗確認。</p>
+  <h2><span class="no">08</span>還不知道的事，和下一步</h2>
+  <p class="oneliner">下一階段的目標：扶手周圍 40–60 cm 內，乾淨空氣比例至少 50%，讓可逃生的時間至少多一倍。</p>
   <div class="points prose">
 <p><b>這次電腦模擬做不到的事：</b></p>
 <ul>
-<li><b>只算了一個剖面（2D）：</b>連續出風縫的情況比較接近；如果出風口是一個個圓孔，氣流會散得更快，乾淨空氣比例會更低。</li>
-<li><b>沒有算溫度：</b>真實火場的煙是熱的、送出的空氣相對是冷的，冷空氣會往下沉。這會改變氣流路線。</li>
-<li><b>沒有算呼吸：</b>吸氣時會把口鼻周圍的空氣一起吸進來，吸得比送風多時，會吸到更多周圍空氣。</li>
-<li><b>人是不動的：</b>人沿著扶手走（約 1 m/s）帶起的風，2D 模型算不到，這很可能是最大的干擾。</li>
-<li><b>格子大小：</b>1 mm 的格子對氣流倍增式的細縫還是太粗（細縫從 2 mm 放寬成 3 mm），這一組的不確定性最大。也還沒有做「格子再切細，結果會不會變」的檢查。</li>
-<li><b>假設的數字：</b>風機曲線、濾網阻力、煙粒大小、側風速度都是先假設的，換成實際型號和量測值後要重算。</li>
+<li><b>只算了一個剖面（2D）：</b>連續出風縫比較接近；如果出風口是一個個圓孔，氣流會散得更快，乾淨空氣比例會更低。</li>
+<li><b>沒有算溫度：</b>火場的煙是熱的、送出的空氣相對是冷的，冷空氣會往下沉，會改變氣流路線。</li>
+<li><b>沒有算呼吸：</b>吸氣會把口鼻周圍的空氣一起吸進來。</li>
+<li><b>人是不動的：</b>人沿著扶手走（約 1 m/s）帶起的風，2D 模型算不到。</li>
+<li><b>格子大小：</b>1 mm 的格子對細縫和曲面還是偏粗（氣流倍增式細縫放寬成 3 mm、康達曲面呈階梯狀），也還沒做「格子切細結果會不會變」的檢查。</li>
+<li><b>假設的數字：</b>風機曲線、濾網阻力、煙粒大小、側風速度、風機效率都是先假設的，換成實際型號和量測值後要重算。</li>
 </ul>
-<p>所以這次的結果，適合用來<b>比較四種出風口的高低</b>、<b>排除不可行的方案</b>，不適合當成真實火場的預測數字。</p></div>
+<p>所以這次的結果適合用來<b>比較方案、排除不可行的做法、訂出下一步的設計目標</b>，不適合當成真實火場的預測數字。</p></div>
   <figure class="fig">
 <svg class="graphic" viewBox="0 0 760 300" role="img" aria-label="桌上型實驗：箱內釋放 CO2，出風口送乾淨空氣，在假人口鼻處量測 CO2">
 
@@ -554,10 +620,12 @@ footer { margin-top: 48px; padding-top: 20px; border-top: 1px solid var(--line);
   <div class="points prose">
 <p><b>建議的下一步：</b></p>
 <ol>
-<li><b>桌上型實驗（上圖）：</b>3D 列印四種出風口（同樣送風量），配頭模型、口鼻取樣管和 CO₂ 感測器。箱子裡放 CO₂、出風口送乾淨空氣，用和電腦相同的方法算乾淨空氣比例；再用小風扇加側風。</li>
-<li><b>3D、含溫度的電腦模擬：</b>確認熱煙層、冷空氣下沉、人走動時，四種出風口的排名有沒有改變。</li>
-<li><b>先決定扶手剖面：</b>保留風道內徑（建議 ≥ 34 mm）和均流層的空間，再做外型。</li>
-<li><b>決定氣源：</b>在室外進氣、壓縮空氣、或改用認證逃生頭罩之間選擇，並請消防設備師確認法規。</li>
+<li><b>「守住扶手旁 40–60 cm」的模擬：</b>把量測從臉前一個點改成扶手周圍 40–60 cm 的整個區域，測送風量每公尺 5／10／20／40 L/s、低混合／一般／「空氣牆」三種出風口、側風 0／0.15／0.30 m/s，找出「要多少風量才守得住」。約 24–36 組，建議用有顯示卡的電腦執行。</li>
+<li><b>可切換吹法的出風口：</b>平時寬角度借風、火災時收窄成低混合，作為工業設計重點。</li>
+<li><b>桌上型實驗（上圖）：</b>3D 列印出風口，箱內放 CO₂、出風口送乾淨空氣、量頭模型口鼻的 CO₂，用和電腦相同的方法算乾淨空氣比例，再用小風扇加側風。</li>
+<li><b>扶手斷面打樣：</b>握把＋細頸＋150×60 mm 導風腔，確認握持感與法規（扶手尺寸、下方障礙物）。</li>
+<li><b>3D、含溫度的電腦模擬：</b>確認熱煙層、冷空氣下沉、人走動時的結果。</li>
+<li><b>找消防設備師確認：</b>與火警系統、加壓送風的介接，以及逃生頭罩的法規。</li>
 <li><b>完成以上之前，不做任何真實煙霧或火場測試。</b></li>
 </ol></div>
 </section>

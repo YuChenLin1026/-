@@ -256,3 +256,76 @@ def test_rig():
   <line x1="568" y1="192" x2="568" y2="140" class="g-arrow" marker-end="url(#tm)"/>
   <text x="576" y="168" class="g-s">側風</text>
 </svg>"""
+
+
+def handrail_section():
+    """扶手一體導風腔斷面（示意，1 px ≈ 1 mm）。"""
+    return f"""
+<svg class="graphic" viewBox="0 0 760 330" role="img" aria-label="扶手斷面：上方是握把和導引燈，細頸下方是 150 乘 60 毫米的導風腔，內含均流層和線路槽，出風縫朝使用者">
+{defs("h")}
+  <circle cx="230" cy="70" r="24" class="g-solid"/>
+  <path d="M212,56 A24,24 0 0 1 248,56" class="g-led"/>
+  <rect x="223" y="94" width="14" height="40" class="g-solid"/>
+  <rect x="155" y="134" width="150" height="60" rx="10" class="g-cavity"/>
+  <rect x="165" y="144" width="28" height="16" rx="3" class="g-solid"/>
+  <line x1="290" y1="140" x2="290" y2="188" class="g-mesh"/>
+  <line x1="306" y1="164" x2="360" y2="164" class="g-arrow-ok" marker-end="url(#ha)"/>
+  <line x1="306" y1="178" x2="350" y2="196" class="g-arrow-ok" marker-end="url(#ha)"/>
+  <circle cx="210" cy="176" r="3" class="g-accent-fill"/><circle cx="240" cy="168" r="3" class="g-accent-fill"/><circle cx="262" cy="180" r="3" class="g-accent-fill"/>
+  <line x1="170" y1="226" x2="170" y2="236" class="g-leader"/><line x1="290" y1="226" x2="290" y2="236" class="g-leader"/>
+  <line x1="170" y1="231" x2="290" y2="231" class="g-leader"/>
+  <text x="230" y="252" text-anchor="middle" class="g-s">150 mm</text>
+
+  <line x1="256" y1="58" x2="420" y2="40" class="g-leader"/>
+  <text x="426" y="36" class="g-t">導引燈（燈罩下的 LED）</text>
+  <text x="426" y="54" class="g-s">平時顯示空氣品質，火災時標示路線</text>
+  <line x1="254" y1="76" x2="420" y2="84" class="g-leader"/>
+  <text x="426" y="80" class="g-t">握把 Ø45–50 mm</text>
+  <text x="426" y="98" class="g-s">表面觸覺紋理，一樓末端換紋理</text>
+  <line x1="238" y1="114" x2="420" y2="128" class="g-leader"/>
+  <text x="426" y="124" class="g-t">細頸</text>
+  <text x="426" y="142" class="g-s">留出手指握住的空間（法規要查證）</text>
+  <line x1="300" y1="150" x2="420" y2="172" class="g-leader"/>
+  <text x="426" y="168" class="g-t">均流層＋出風縫（朝使用者）</text>
+  <text x="426" y="186" class="g-s">阻力約 20–30 Pa，讓每段平均出風</text>
+  <line x1="240" y1="194" x2="420" y2="216" class="g-leader"/>
+  <text x="426" y="212" class="g-t">導風腔 150 × 60 mm</text>
+  <text x="426" y="230" class="g-s">從頂樓貫穿到底層，不另拉管</text>
+  <line x1="180" y1="152" x2="140" y2="270" class="g-leader"/>
+  <text x="40" y="288" class="g-t">線路槽</text>
+  <text x="40" y="306" class="g-s">燈光、感測器電源與訊號</text>
+  <text x="426" y="290" class="g-s">示意圖；可用鋁擠型一體成形</text>
+</svg>"""
+
+
+def dual_mode():
+    """平時／火災雙模式的建築剖面示意。"""
+    def building(x0, floors_state, title, sub, fire=False):
+        out = [f'<text x="{x0}" y="26" class="g-b">{title}</text><text x="{x0}" y="44" class="g-s">{sub}</text>']
+        out.append(f'<rect x="{x0 + 80}" y="58" width="70" height="26" rx="4" class="g-host"/>'
+                   f'<text x="{x0 + 115}" y="76" text-anchor="middle" class="g-on">頂樓主機</text>')
+        out.append(f'<line x1="{x0 + 115}" y1="84" x2="{x0 + 115}" y2="96" class="g-railv"/>')
+        top, h = 96, 44
+        for k, st in enumerate(floors_state):
+            y = top + k * h
+            fl = 5 - k
+            x1, x2 = (x0 + 115, x0 + 255) if k % 2 == 0 else (x0 + 255, x0 + 115)
+            out.append(f'<line x1="{x1}" y1="{y}" x2="{x2}" y2="{y + h}" class="g-railv"/>')
+            nx = x2
+            cls = {"on": "g-node-ok", "trickle": "g-node-idle", "clean": "g-node-ok", "unk": "g-node-warn",
+                   "smoke": "g-node-crit"}[st]
+            out.append(f'<circle cx="{nx}" cy="{y + h}" r="9" class="{cls}"/>')
+            out.append(f'<text x="{x0 + 185}" y="{y + h - 8}" text-anchor="middle" class="g-s">{fl}F</text>')
+            lab = {"on": "有人：送風 5 L/s", "trickle": "細流 0.5 L/s", "clean": "乾淨：綠光標示",
+                   "unk": "不確定：琥珀燈", "smoke": "有煙：風門關閉"}[st]
+            tx = nx + 16 if nx > x0 + 185 else nx - 16
+            anchor = "start" if nx > x0 + 185 else "end"
+            out.append(f'<text x="{tx}" y="{y + h + 4}" text-anchor="{anchor}" class="g-s">{lab}</text>')
+        return "".join(out)
+    left = building(20, ["trickle", "on", "on", "trickle", "trickle"], "平時：流通與淨化空氣", "有人的樓層送風，其他樓層細流")
+    right = building(425, ["unk", "smoke", "clean", "clean", "clean"], "火災：標示並守護疏散路線", "各層偵測站判斷，燈光只指向乾淨的路")
+    return f"""
+<svg class="graphic" viewBox="0 0 820 340" role="img" aria-label="同一套扶手系統，平時依有人與否送風，火災時各層偵測空氣並用燈光標示乾淨路線、有煙的樓層關閉風門">
+{left}{right}
+  <line x1="410" y1="20" x2="410" y2="330" class="g-sep"/>
+</svg>"""

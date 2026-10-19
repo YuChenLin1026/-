@@ -40,7 +40,7 @@ p { margin: 0; }
 .oneliner { font-family: var(--f-display); font-size: clamp(19px, 2.6vw, 23px); font-weight: 700; line-height: 1.55; max-width: 34ch; text-wrap: balance; }
 .muted { color: var(--muted); }
 .banner { background: var(--warn-soft); border: 1px solid var(--warn); border-radius: 8px; padding: 10px 14px; font-size: 14px; }
-.takes { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+.takes { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; }
 .take { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 18px; display: grid; gap: 8px; align-content: start; }
 .take .big { font-family: var(--f-mono); font-size: clamp(32px, 5vw, 42px); font-weight: 500; line-height: 1.1; color: var(--accent); font-variant-numeric: tabular-nums; }
 .take p { font-size: 15px; }
@@ -134,5 +134,14 @@ code { font-family: var(--f-mono); font-size: .9em; background: var(--surface2);
 .g-accent-fill { fill: var(--accent); }
 .g-muted-fill { fill: var(--muted); }
 .g-crit-fill { fill: var(--crit); }
+.g-led { fill: none; stroke: var(--accent); stroke-width: 5; stroke-linecap: round; }
+.g-cavity { fill: var(--accent-soft); stroke: var(--muted); stroke-width: 1.4; }
+.g-mesh { stroke: var(--fg2); stroke-width: 3; stroke-dasharray: 2 3; }
+.g-railv { stroke: var(--muted); stroke-width: 5; stroke-linecap: round; }
+.g-node-ok { fill: var(--accent); }
+.g-node-idle { fill: var(--surface2); stroke: var(--accent); stroke-width: 2; }
+.g-node-warn { fill: var(--warn); }
+.g-node-crit { fill: var(--crit); }
+.g-sep { stroke: var(--line); stroke-width: 1; stroke-dasharray: 4 4; }
 footer { margin-top: 48px; padding-top: 20px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; display: grid; gap: 6px; }
 @media (max-width: 560px) { .gloss dl { grid-template-columns: 1fr; gap: 0; } .gloss dd { margin-bottom: 8px; } tbody th { white-space: normal; } }
