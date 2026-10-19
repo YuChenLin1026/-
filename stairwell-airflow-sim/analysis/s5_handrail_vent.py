@@ -130,9 +130,10 @@ def main():
         ax.set_title(cname + "，10 層全開", loc="left", fontsize=11)
         ax.set_xlabel("增壓機裝多密")
     axs[0].set_ylabel("需要的壓力（Pa）")
-    axs[1].legend(fontsize=8.5, loc="upper right")
+    h, l = axs[1].get_legend_handles_labels()
     fig.suptitle("增壓機不必每層裝：導風腔夠大時，頂樓主機一台就推得動", x=0.01, ha="left", fontsize=12)
-    fig.tight_layout()
+    fig.tight_layout(rect=(0, 0.1, 1, 1))
+    fig.legend(h, l, loc="lower center", ncol=4, fontsize=9, frameon=False)
     save(fig, "s5_spacing.png")
 
     # ---- 圖：有人才啟動 ----
