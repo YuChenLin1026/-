@@ -102,14 +102,14 @@ def wall_panel(loaded):
     """第 05 章的空氣牆，放進「臉在斜上方＋有頭」的同一個測試：2 種送風量 × 3 種側風。"""
     if not any(k.split("_")[0] in WALLS for k in loaded):
         return
-    fig, axs = plt.subplots(2, 3, figsize=(11, 8.6), sharex=True, sharey=True)
+    fig, axs = plt.subplots(2, 3, figsize=(11, 7.3), sharex=True, sharey=True)
     im = None
     any_m = next(v["meta"] for k, v in loaded.items() if k.split("_")[0] in WALLS)
     for i, w in enumerate(WALLS):
         for j, (c, lbl) in enumerate(CONDS):
             ax = axs[i, j]
             ax.grid(False)
-            ax.set_title(f"{LABEL[w].split('（')[0]}・{lbl}", loc="left", fontsize=10)
+            ax.set_title(f"空氣牆 {w[1:]} L/s/m・{lbl}", loc="left", fontsize=10)
             r = loaded.get(f"{w}_{c}")
             if r is None:
                 ax.text(0.5, 0.5, "（計算中）", transform=ax.transAxes, ha="center", color=MUTED)
@@ -122,7 +122,7 @@ def wall_panel(loaded):
     for ax in axs[-1]:
         ax.set_xlabel("cm")
     if im is not None:
-        fig.colorbar(im, ax=axs, shrink=0.7, pad=0.02).set_label("乾淨空氣比例")
+        fig.colorbar(im, ax=axs, shrink=0.7, pad=0.04).set_label("乾淨空氣比例")
     fig.suptitle("第 05 章的空氣牆，放進同樣的「臉在斜上方＋有頭」測試", x=0.01, y=0.99, ha="left", fontsize=12)
     save(fig, "s2f_wall_fields.png")
 
