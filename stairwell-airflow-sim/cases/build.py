@@ -74,8 +74,9 @@ def nozzle_plain(X, Y, t, ux, uy):
 
 
 def nozzle_coanda(X, Y, t, ux, uy):
-    """B：6 mm 出風縫向下吹，沿半徑 15 mm 凸曲面轉 90°，在尖角處脫離後沿 +x 前進。"""
-    b, Rc, wall, H = 6e-3, 15e-3, 2e-3, 35e-3
+    """B：6 mm 出風縫向下吹，沿半徑 45 mm 凸曲面轉 90°，在尖角處脫離後沿 +x 前進。
+    （第一版 R=15 mm、R/b=2.5 時噴流直接分離往下吹，見 runs/coanda_r15_*；改為 R/b=7.5。）"""
+    b, Rc, wall, H = 6e-3, 45e-3, 2e-3, 35e-3
     U = Q_SUPPLY / b
     lcx, lcy = X0, Y0 + Rc + b / 2           # 曲面圓心：轉完 90° 後噴流中心正好在 y=Y0
     # 導流體：上方方塊 + 左下四分之一圓弧；右側垂直面與圓弧底點形成尖角（脫離點）

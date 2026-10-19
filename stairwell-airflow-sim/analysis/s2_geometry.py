@@ -12,7 +12,7 @@ import build as B  # noqa: E402
 
 NOTES = {
     "plain": "單一窄縫 6 mm\n出口平均 0.83 m/s\n整流段 25 mm",
-    "coanda": "向下吹的 6 mm 縫\n沿 R15 mm 凸面轉 90°\n在尖角脫離，0.83 m/s",
+    "coanda": "向下吹的 6 mm 縫\n沿 R45 mm 凸面轉 90°\n在尖角脫離，0.83 m/s",
     "coax": "總寬 32 mm\n中央 14 mm：0.23 m/s\n兩側 8 mm：0.11 m/s",
     "amp": "開口 40 mm、背面開放\n內壁兩道 3 mm 縫\n各 0.83 m/s",
 }
