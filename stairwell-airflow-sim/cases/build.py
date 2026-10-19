@@ -159,7 +159,8 @@ def build_case(name, nozzle, head=True, vc=0.0, frames=False, t_total=T_TOTAL, t
     probe = rect(X, Y, X0 + FACE_L - 0.025, X0 + FACE_L - 0.005, Y0 - 0.012, Y0 + 0.012)
     probe &= t != SOLID
 
-    u_ref = max(float(np.abs(ux).max()), float(np.abs(uy).max()), vc)
+    # 側風繞過頭部會加速到約 2 倍，換算時間步長時以 2.5 倍側風計入，避免尾流超出穩定範圍
+    u_ref = max(float(np.abs(ux).max()), float(np.abs(uy).max()), 2.5 * vc)
     vel_scale = u_ref / U_LAT_MAX            # m/s per lattice velocity
     dt = DX / vel_scale
     nu_lat = NU * dt / DX ** 2
@@ -200,6 +201,6 @@ if __name__ == "__main__":
     for name, nz, head, vc, fr in ALL_CASES:
         if sel and name not in sel and nz not in sel:
             continue
-        tt, tw = (16.0, 4.0) if nz == "coax" else (10.0, 3.0)
+        tt, tw = (16.0, 4.0) if nz == "coax" and vc < 0.3 else (10.0, 3.0)
         d, m = build_case(name, nz, head, vc, fr, t_total=tt, t_warm=tw)
         print(f"{name:20s} steps={m['steps']:7d} tau0={m['tau0']:.5f} U={m['U_exit']:.3f} m/s dt={m['dt']:.2e}")
