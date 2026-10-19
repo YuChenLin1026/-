@@ -64,7 +64,47 @@ def channel_outlet(X, Y, t, ux, uy, half_w, L, streams, angle_deg=0.0):
     t[rail & ~((s >= -L) & (s < 0) & (np.abs(n) < half_w))] = SOLID
 
 
+def coanda_up(q, X, Y, t, ux, uy):
+    """Ku：導風腔（150×60）底面藏出風縫，往使用者方向（+x）吹，經靠使用者側的下緣圓角 R30 轉向上。
+    握把（Ø48）＋細頸在導風腔上方。出口參考點 (X0, Y0) 為導風腔使用者側正面的中點。"""
+    b, R, Wc, Hc = 6e-3, 30e-3, 0.15, 0.06
+    U = q / b
+    xr, xl = X0, X0 - Wc
+    yb, yt = Y0 - Hc / 2, Y0 + Hc / 2
+    body = rect(X, Y, xl, xr, yb, yt)
+    # 下緣使用者側圓角：去掉角落、補上圓弧
+    cx, cy = xr - R, yb + R
+    corner = (X > cx) & (Y < cy)
+    body &= ~corner | ((X - cx) ** 2 + (Y - cy) ** 2 <= R * R)
+    t[body] = SOLID
+    # 出風縫：導風腔底面下方 6 mm 的水平通道，下方 3 格厚的唇板，出口在圓角起點 x = cx
+    L = 0.04
+    lip = rect(X, Y, cx - L, cx, yb - b - 3 * DX, yb - b)
+    t[lip] = SOLID
+    t[rect(X, Y, cx - L - 3 * DX, cx - L, yb - b - 3 * DX, yb)] = SOLID      # 背板
+    ch = rect(X, Y, cx - L, cx, yb - b, yb)
+    t[ch] = FLUID
+    inl = ch & (X < cx - L + 2 * DX)
+    t[inl] = INLET
+    ux[inl] = U
+    # 細頸與握把
+    gx = X0 - Wc / 2
+    t[rect(X, Y, gx - 8e-3, gx + 8e-3, yt, yt + 38e-3)] = SOLID
+    t[(X - gx) ** 2 + (Y - (yt + 38e-3 + 24e-3)) ** 2 <= 24e-3 ** 2] = SOLID
+    return dict(U_exit=U, width=b)
+
+
 def nozzle(kind, q, X, Y, t, ux, uy):
+    if kind == "Ku":
+        return coanda_up(q, X, Y, t, ux, uy)
+    if kind in ("C", "Cu"):
+        bc, bs = 15e-3, 7.5e-3
+        U1 = q / (bc + 2 * bs * 0.5)
+        U2 = 0.5 * U1
+        h = bc / 2 + DX + bs
+        streams = [(-bc / 2, bc / 2, U1), (bc / 2 + DX, h, U2), (-h, -bc / 2 - DX, U2)]
+        channel_outlet(X, Y, t, ux, uy, h, 30e-3, streams, angle_deg=(45.0 if kind == "Cu" else 0.0))
+        return dict(U_exit=U1, width=2 * h)
     if kind == "C":
         bc, bs = 15e-3, 7.5e-3
         U1 = q / (bc + 2 * bs * 0.5)
@@ -89,7 +129,7 @@ def build(name, kind, q, vc):
     u_ref = max(float(np.abs(ux).max()), float(np.abs(uy).max()), 2.5 * vc)
     vel_scale = u_ref / U_LAT_MAX
     dt = DX / vel_scale
-    t_total = 20.0 if vc == 0 else T_TOTAL      # 無側風時氣流慢，要算久一點
+    t_total = 20.0 if (vc == 0 and kind != "Ku") else T_TOTAL      # 無側風時氣流慢，要算久一點（Ku 風速快除外）
     # tau0 下限 0.504：大風量時分子黏度換算後太接近穩定邊界，以略放大的黏度換取穩定（報告中註明）
     tau0 = max(0.5 + 3 * NU * dt / DX ** 2, TAU_MIN)
     cfg = dict(nx=NX, ny=NY, steps=int(round(t_total / dt)), warmup=int(round(T_WARM / dt)),
@@ -120,6 +160,11 @@ for kind in ("C", "W"):
             CASES.append((f"{kind}_q{int(q*1000):02d}_vc{int(vc*100):02d}", kind, q, vc))
 for q in (20e-3, 40e-3):
     CASES.append((f"Wd_q{int(q*1000):02d}_vc30", "Wd", q, 0.30))
+# 往斜上方送風（臉在扶手斜上方）：康達往上 Ku、低混合斜上 45° Cu
+for kind in ("Ku", "Cu"):
+    for vc in (0.0, 0.15):
+        for q in (10e-3, 20e-3):
+            CASES.append((f"{kind}_q{int(q*1000):02d}_vc{int(vc*100):02d}", kind, q, vc))
 
 if __name__ == "__main__":
     sel = sys.argv[1:]
