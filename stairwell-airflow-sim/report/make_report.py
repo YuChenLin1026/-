@@ -375,7 +375,7 @@ PAGE = f"""<title>扶手送風模擬報告</title>
 </header>
 <nav class="toc" aria-label="章節">
   <a href="#summary">一頁看懂</a><a href="#method">怎麼測的</a><a href="#daily">平時：新風帶</a><a href="#fire">火災：守護路線</a>
-  <a href="#nozzle">四種出風口</a><a href="#zone">擴大保護範圍</a><a href="#source">空氣從哪來</a><a href="#filter">濾網擋什麼</a><a href="#exhaust">能不能排煙</a><a href="#next">下一步</a>
+  <a href="#nozzle">出風口比較</a><a href="#zone">擴大保護範圍</a><a href="#source">空氣從哪來</a><a href="#filter">濾網擋什麼</a><a href="#exhaust">能不能排煙</a><a href="#next">下一步</a>
 </nav>
 
 <section id="summary">
@@ -453,7 +453,7 @@ PAGE = f"""<title>扶手送風模擬報告</title>
 </section>
 
 <section id="nozzle">
-  <h2><span class="no">04</span>四種出風口比一比（臉在扶手斜上方）</h2>
+  <h2><span class="no">04</span>出風口比一比（臉在扶手斜上方）</h2>
   {oneliner(FIND["face_one"])}
   {render("render_nozzles.webp", "四種扶手側面出風口形式比較", "四種出風口的造型構想（設計渲染圖）。圖中文字是設計構想，實際結果以下方模擬為準。")}
   {fig("s2f_saf_bars.png", "臉在斜上方時四種出風口的乾淨空氣比例", "每條橫條代表 100% 的吸入空氣，彩色部分是來自出風口的乾淨空氣。黑色短線是最差 10% 的時刻。")}
