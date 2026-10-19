@@ -265,9 +265,17 @@ def build_findings(ctx):
         best = max(f2, key=lambda n: f2[n]["mean"])
         face_one = (f"臉在扶手斜上方時（已完成 {n_done}/12 組），目前口鼻乾淨空氣最高的是 "
                     f"{FL[best[0]]}（{dict(CL)[best[2:]]}）：{pct(f2[best]['mean'])}。")
+    windy = [v["mean"] for k, v in f2.items() if not k.endswith("vc00")]
+    face_interim = ""
+    if windy and max(windy) < 0.05:
+        face_interim = (f'<p><b>目前看到的現象（{len(windy)} 組有側風的結果）：</b>有側風時，出風口吹出的乾淨空氣一離開扶手，'
+                        f'就被由下往上的氣流帶著<b>貼著扶手正上方往上走</b>，到不了往樓梯側 28 cm 外的臉，口鼻都是 0%。'
+                        f'B 康達往上確實有沿圓角轉向上（下面的圖看得到深藍色貼著導風腔轉彎），但轉上去之後一樣直直往上，沒有往臉的方向偏。'
+                        f'{tag("sim")}</p>')
     face_points = f"""
 <p><b>為什麼重算：</b>人扶著內側扶手下樓時，臉在扶手的<b>斜上方</b>，不是正前方。這組把口鼻放在出風口往樓梯側 28 cm、往上 35 cm（距離約 45 cm、仰角約 51°）；A、C、D 出風口改成朝向口鼻，B 改用藏在底面、往上轉的康達出風口。每公尺送風量都是 5 L/s，網格 1.5 mm。{tag("sim")}</p>
 {face_table}
+{face_interim}
 <p class="muted">已完成 {n_done}/12 組，其餘計算中；每完成一批就會更新。</p>"""
 
     # ---------- S6：守住扶手旁 50 cm ----------

@@ -42,7 +42,7 @@ def load(name):
 def field_panel(loaded, cond, lbl):
     if not any(f"{nz}_{cond}" in loaded for nz in NZ):
         return
-    fig, axs = plt.subplots(1, 4, figsize=(15, 5.4), sharey=True)
+    fig, axs = plt.subplots(1, 4, figsize=(15, 3.85), sharey=True)
     im = None
     for ax, nz in zip(axs, NZ):
         ax.grid(False)
@@ -74,7 +74,7 @@ def field_panel(loaded, cond, lbl):
     axs[0].set_ylabel("cm")
     if im is not None:
         fig.colorbar(im, ax=axs, shrink=0.8, pad=0.01).set_label("乾淨空氣比例")
-    fig.suptitle(f"臉在扶手斜上方、{lbl}：紅圈是口鼻位置", x=0.01, ha="left", fontsize=12)
+    fig.suptitle(f"臉在扶手斜上方、{lbl}：紅圈是口鼻位置", x=0.01, y=0.99, ha="left", fontsize=12)
     save(fig, f"s2f_{cond}_fields.png")
 
 
